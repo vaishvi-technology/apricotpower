@@ -22,6 +22,7 @@
         href="{{ asset('favicon.svg') }}"
     >
     @livewireStyles
+    @stack('styles')
 </head>
 
 <body class="antialiased text-gray-900">
@@ -34,6 +35,7 @@
     <x-footer />
 
     @livewireScripts
+    @stack('scripts')
 </body>
 
 </html>
