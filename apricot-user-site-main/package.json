@@ -1,0 +1,52 @@
+{
+  "name": "apricot-power",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@paypal/react-paypal-js": "^8.8.3",
+    "@react-native-async-storage/async-storage": "^2.1.2",
+    "@reduxjs/toolkit": "^2.7.0",
+    "axios": "^1.10.0",
+    "bootstrap": "^5.3.3",
+    "coinbase-commerce-node": "^1.0.4",
+    "ip-info-react": "^1.0.0",
+    "moment": "^2.30.1",
+    "qs": "^6.14.0",
+    "react": "^18.3.1",
+    "react-bootstrap": "^2.10.7",
+    "react-cookie": "^8.0.1",
+    "react-dom": "^18.3.1",
+    "react-helmet-async": "^2.0.5",
+    "react-icons": "^5.5.0",
+    "react-input-mask": "^2.0.4",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.0.2",
+    "react-simple-star-rating": "^5.1.7",
+    "react-to-print": "^3.1.1",
+    "react-toastify": "^11.0.5",
+    "redux-persist": "^6.0.0",
+    "swiper": "^11.1.15"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/react": "^18.3.17",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "globals": "^15.13.0",
+    "vite": "^6.0.3"
+  }
+}

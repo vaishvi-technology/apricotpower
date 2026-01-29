@@ -1,0 +1,58 @@
+.inputWrapper {
+    margin-bottom: 1rem;
+}
+
+.mainLabel {
+    font-size: 15px;
+    color: #333;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+}
+
+.mainLabel span {
+    color: #d71201;
+}
+
+input[type="checkbox"] {
+    accent-color: #d71201;
+}
+
+.mainInput {
+    background: #fff;
+    border: none;
+    font-weight: 400;
+    box-shadow: 0px 2px 4px rgb(0 0 0 / 20%);
+    padding: 12px 15px;
+    font-size: 15px;
+    color: #141414;
+    width: 100%;
+    resize: none;
+    border-radius: 10px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+}
+
+.passwordWrapper {
+    position: relative;
+}
+
+.eyeButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0.5rem;
+    font-size: 1rem;
+    background: none;
+    border: none;
+    line-height: 1;
+}
+
+.passInput {
+    padding-right: 2rem;
+}
+
+.eyeButton {
+    color: var(--primaryColor);
+}

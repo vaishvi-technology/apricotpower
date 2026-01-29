@@ -1,0 +1,22 @@
+
+.b-map__inner, .b-page__container, .b-page__title, .b-siteContainer, .b-slider__inner {
+    position: relative;
+    margin: 0 auto;
+    padding: 0 10px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    max-width: 1200px !important;
+}
+
+.blogImage {
+    float: right;
+    margin-left: 20px;
+}
+
+.blogImage img {
+    max-width: 100%;
+}
+.blogg a, .blogg a>span {
+    color: #dea911 !important;
+}

@@ -1,0 +1,67 @@
+.verification-box {
+    display: flex;
+    gap: 15px;
+}
+
+input[type=number]::-webkit-inner-spin-button {
+    display: none;
+}
+
+
+.commentData h6 {
+    text-transform: capitalize;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+
+/* .verification-box input {
+    width: 75px;
+    height: 75px;
+} */
+
+/* 
+@media(max-width: 640px) {
+
+.verification-box input {
+    width: 50px;
+    height: 50px;
+}
+} */
+
+
+.custom-loader {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 8px solid;
+  border-color: #e4e4ed;
+  border-right-color: var(--primaryColor);
+  animation: s2 1s infinite linear;
+}
+  body {
+    position: relative;
+  }
+  @keyframes s2 {to{transform: rotate(1turn)}}
+
+  .loaderBox {
+    position: absolute;
+    background-color: #000000c2;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    z-index: 99;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ms-3.navbar-icons.navbar-nav {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.f-18 {
+    font-size: 26px;
+}

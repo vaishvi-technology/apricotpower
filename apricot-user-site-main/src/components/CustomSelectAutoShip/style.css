@@ -1,0 +1,15 @@
+.fieldData {
+    display: flex;
+    gap: 15px;
+    align-items: end;
+}
+
+.fieldData button {
+    background-color: transparent;
+    border: none;
+    color: #DF313C;
+}
+
+select.mainInput {
+    appearance: auto;
+}

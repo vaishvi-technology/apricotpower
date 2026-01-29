@@ -1,0 +1,61 @@
+.customButton {
+    display: inline-block;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 600;
+    text-transform: capitalize;
+    text-align: center;
+    border: 1px solid;
+    border-radius: 6px;
+    padding: 0.7rem 4.2rem;
+    min-width: 120px;
+    position: relative;
+    transition: 0.3s linear;
+    cursor: pointer;
+}
+
+.customButton2 {
+    display: inline-block;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 600;
+    text-transform: capitalize;
+    text-align: center;
+    border: 1px solid;
+    border-radius: 6px;
+    padding: 0.7rem 3.2rem;
+    min-width: 120px;
+    position: relative;
+    transition: 0.3s linear;
+    cursor: pointer;
+}
+
+.primaryButton {
+    background: var(--primaryColor);
+    color: #fff;
+    border-color: var(--primaryColor);
+}
+.primaryButton {
+    background: var(--primaryColor);
+    color: #fff;
+    border-color: var(--primaryColor);
+}
+
+.rounded-50 {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px;
+    padding: 0;
+    border-radius: 50px;
+}
+
+.secondaryButton {
+    background: #fff0;
+    color: #000;
+    border-color: var(--primaryColor);
+}
+.dangerButton {
+    background: red;
+    color: white;
+    border-color: white;
+}

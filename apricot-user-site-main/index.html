@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <link rel="stylesheet"
+    href="https://sdk.loyaltylion.net/sdk/css/custom/a8773d9c373d72cc9be06fcb7ccbce95/panel-b5496e7.css" media="all"
+    data-lion-custom-css="panel">
+  <link rel="stylesheet"
+    href="https://sdk-static.loyaltylion.net/static/2/themes/legacy/07fed88/css/main.id-isolated.css" media="all"
+    data-lion-css="theme">
+  <style type="text/css" data-lion-css="theme-configuration">
+    #loyaltylion,
+    .isolator,
+    div[data-lion-integrated-page],
+    div[data-lion-rules-list],
+    div[data-lion-claimed-rewards-list],
+    div[data-lion-history-table],
+    div[data-lion-tier-overview],
+    div[data-lion-tier-benefits-compare],
+    div[data-lion-tier-rewards-compare],
+    div[data-lion-tier-rules-compare],
+    div[data-lion-rewards-list] {
+      --lion-primary-color: rgba(128, 128, 128, 1);
+      --lion-primary-color-darker1: hsla(0, 0%, 48%, 1);
+      --lion-primary-color-darker2: hsla(0, 0%, 45%, 1);
+      --lion-primary-color-darker3: hsla(0, 0%, 43%, 1);
+      --lion-secondary-color: rgba(136, 194, 60, 1);
+      --lion-secondary-color-lighter1: hsla(86, 53%, 53%, 1);
+      --lion-secondary-color-darker1: hsla(86, 53%, 48%, 1);
+      --lion-secondary-color-darker2: hsla(86, 53%, 45%, 1);
+    }
+  </style>
+
+  <script>
+    !function (t, n) { function o(n) { var o = t.getElementsByTagName("script")[0], i = t.createElement("script"); i.src = n, i.crossOrigin = "", o.parentNode.insertBefore(i, o) } if (!n.isLoyaltyLion) { window.loyaltylion = n, void 0 === window.lion && (window.lion = n), n.version = 2, n.isLoyaltyLion = !0; var i = new Date, e = i.getFullYear().toString() + i.getMonth().toString() + i.getDate().toString(); o("https://sdk.loyaltylion.net/static/2/loader.js?t=" + e); var r = !1; n.init = function (t) { if (r) throw new Error("Cannot call loyaltylion.init more than once"); r = !0; var a = n._token = t.token; if (!a) throw new Error("Token must be supplied to loyaltylion.init"); for (var l = [], s = "_push configure bootstrap shutdown on removeListener authenticateCustomer".split(" "), c = 0; c < s.length; c += 1)!function (t, n) { t[n] = function () { l.push([n, Array.prototype.slice.call(arguments, 0)]) } }(n, s[c]); o("https://sdk.loyaltylion.net/sdk/start/" + a + ".js?t=" + e + i.getHours().toString()), n._initData = t, n._buffer = l } } }(document, window.loyaltylion || []);
+  </script>
+
+
+  <meta charset="UTF-8" />
+  <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
+  <link rel="icon" href="/src/assets/images/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script type="text/javascript" src="https://api.feefo.com/api/javascript/apricot-power" async></script>
+  <title>Apricot Power</title>
+  <meta NAME="rating" CONTENT="General" />
+  <meta NAME="MS.LOCALE" CONTENT="EN-US" />
+
+  <meta NAME="CATEGORY" CONTENT="home page" />
+
+  <meta NAME="robots" CONTENT="index,follow" />
+  <style>
+    #goog-gt-tt {
+      display: none !important;
+    }
+
+    #google_translate_element {
+      position: absolute !important;
+      /* z-index: 999 !important; */
+      top: 6px;
+      left: 73%;
+    }
+
+    .goog-logo-link {
+      display: none !important;
+    }
+
+    .goog-te-gadget {
+      font-size: 0 !important;
+    }
+
+    .goog-te-banner-frame.skiptranslate,
+    .goog-te-gadget span {
+      display: none !important;
+    }
+
+    .goog-te-gadget .goog-te-combo {
+      padding: 1px;
+      border: none;
+      background: transparent;
+    }
+
+    #google_translate_element select.goog-te-combo {
+      color: #fff;
+      width: 70%;
+    }
+
+    #google_translate_element select.goog-te-combo option {
+      color: black !important;
+    }
+  </style>
+  <!-- <script async type="text/javascript" src="https://static.klaviyo.com/onsite/js/UQqSAC/klaviyo.js"></script> -->
+  <script async type="text/javascript" src="https://static.klaviyo.com/onsite/js/KWJ4zU/klaviyo.js"></script>
+
+</head>
+
+<body>
+
+  <div id="google_translate_element"></div>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+  <script
+    src="https://www.paypal.com/sdk/js?client-id=AVIt6iioPGgh0DRvW3F89wcHwR4xYi75Gx7Gs7NlZernsq86hcYU1HXdRgnCtqf9aeaEFyUeLCOwLKFy&merchant-id=MQ78CLCRTAYZL&components=googlepay,buttons,funding-eligibility&enable-funding=venmo,card,credit,paylater,applepay"
+    data-sdk-integration-source="button-factory"></script>
+  <script type="text/javascript"
+    src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement(
+        { pageLanguage: "en" },
+        "google_translate_element"
+      );
+    }
+  </script>
+
+
+
+  <!-- <script>
+    loyaltylion.init({
+      token: '187b89fd99358b2deef2337972f7f790',
+
+
+    })
+  </script> -->
+
+</body>
+
+</html>

@@ -1,0 +1,187 @@
+{
+    "id": 1227636787,
+    "birthday": null,
+    "birthdaySetAt": null,
+    "blocked": false,
+    "email": "clnewhart@mindspring.com",
+    "enrolled": true,
+    "firstName": "",
+    "fullName": "",
+    "instagramId": null,
+    "merchantId": "1",
+    "pointsApproved": 0,
+    "pointsPending": 0,
+    "pointsSpent": 500,
+    "pointsReserved": 0,
+    "pointsExpiryDate": null,
+    "pointsExpiringNext": null,
+    "actions": [
+        {
+            "id": "1a44da0f-fff3-4e02-81c2-52dc747d11d9",
+            "type": "reward",
+            "date": "2025-09-23T23:45:25.025Z",
+            "points": 500,
+            "claimedRewardId": 53188533,
+            "rewardId": 220585,
+            "state": "approved"
+        },
+        {
+            "id": "970af8e6-13b5-42c8-9be7-f848867d3b94",
+            "type": "rule",
+            "date": "2025-09-23T22:05:05.263Z",
+            "points": 500,
+            "approveDate": null,
+            "completedRuleId": 0,
+            "ruleId": 240756,
+            "state": "approved",
+            "ruleKind": "signup",
+            "ruleTitle": "Create an account",
+            "expiresAt": null
+        }
+    ],
+    "referralUrls": {
+        "direct": "https://prz.io/PAlV2aKTm",
+        "facebook": "https://prz.io/zYQDoK6C1",
+        "twitter": "https://prz.io/m2NEo5gcV",
+        "email": "https://prz.io/k2kmrJRc1",
+        "whatsapp": "https://prz.io/Y4LoagKfo",
+        "device_share": "https://prz.io/d1aoNAeiD"
+    },
+    "campaigns": [],
+    "notificationReferralUrls": {
+        "352726": {
+            "direct": "https://prz.io/DylYm1zF1sEtgtBojp",
+            "facebook": "https://prz.io/eRnoyEbFqSOtxtA2yZ",
+            "twitter": "https://prz.io/GylNp26F5hGt2tnEYo",
+            "email": "https://prz.io/BndXkYPIEHJtEtorNd",
+            "whatsapp": "https://prz.io/y82doRKF6fmtrtDmAo",
+            "device_share": "https://prz.io/xgOQqaNuLhKt4tVBzk"
+        }
+    },
+    "integrations": {},
+    "loyaltyTierMembership": null,
+    "pendingNotifications": [],
+    "ruleContext": [
+        {
+            "id": 240756,
+            "limitReached": true,
+            "remaining": 0
+        }
+    ],
+    "completedRules": [
+        {
+            "date": "2025-09-23T22:05:05.263Z",
+            "ruleId": 240756
+        }
+    ],
+    "loyaltyTierEligiblePoints": null,
+    "loyaltyTierEligiblePointsAtMembershipExpiration": null,
+    "loyaltyTierEligibleSpend": null,
+    "loyaltyTierEligibleSpendAtMembershipExpiration": null,
+    "loyaltyTierEligibilityValidUntil": null,
+    "newsletter": {
+        "signedUp": false,
+        "firstKnownSignUpDate": null
+    },
+    "claimedRewards": [
+        {
+            "id": 53188533,
+            "claimed_at": "2025-09-23T23:45:25.025Z",
+            "point_cost": 500,
+            "state": "approved",
+            "session": null,
+            "reward": {
+                "id": 220585,
+                "title": "$5 voucher",
+                "description": null,
+                "site_id": 59788,
+                "target_site": {
+                    "id": 59788,
+                    "name": "Staging Apricot Power",
+                    "url": "https://staging.apricotpower.com/"
+                },
+                "sort_key": 1,
+                "content": {},
+                "supported_channels": [
+                    "mobile",
+                    "pos",
+                    "web"
+                ],
+                "kind": "cart_discount_voucher",
+                "point_cost": 500,
+                "method": "voucher",
+                "discount_type": "flat",
+                "discount_amount": 5,
+                "minimum_spend": null,
+                "max_free_shipping": null,
+                "min_redemption_amount": 1,
+                "max_redemption_amount": 1,
+                "order_type": "one_time",
+                "usage_limit": 1,
+                "recurring_cycle_limit": 1,
+                "target_type": "all",
+                "target_products": [],
+                "target_collections": [],
+                "session_options": null,
+                "auto_refund_seconds": null,
+                "expiry_options": {
+                    "kind": "does_not_expire",
+                    "seconds": null
+                },
+                "redeemable_expiry_options": null
+            },
+            "redeemable": {
+                "redeemable_type": "voucher",
+                "code": "AP-SZRAGCXWH",
+                "used_at": null,
+                "usage_count": 0,
+                "expires_on": null,
+                "discount_amount": 5,
+                "usage_limit": 1
+            },
+            "expires_at": null,
+            "auto_refund_at": null
+        }
+    ],
+    "createdAt": "2025-09-23T22:05:05.247Z",
+    "updatedAt": "2025-09-23T23:45:25.018Z",
+    "enrolledAt": "2025-09-23T22:05:05.263Z",
+    "guest": false,
+    "insightsSegment": null,
+    "properties": {},
+    "referralId": null,
+    "referredBy": null,
+    "instagramUsername": null,
+    "tiktokUsername": null,
+    "rewardContext": [
+        {
+            "id": 220585,
+            "claimLimit": {
+                "state": "limit_reached_forever"
+            }
+        },
+        {
+            "id": 220587,
+            "claimLimit": {
+                "state": "limit_not_reached",
+                "interval": null,
+                "claim_count_within_interval": 0,
+                "allowed_claims_within_interval": 1,
+                "remaining_claims_within_interval": 1
+            }
+        },
+        {
+            "id": 220586,
+            "claimLimit": {
+                "state": "limit_not_reached",
+                "interval": null,
+                "claim_count_within_interval": 0,
+                "allowed_claims_within_interval": 1,
+                "remaining_claims_within_interval": 1
+            }
+        }
+    ],
+    "pointsRedeemable": 0,
+    "pointsTotal": 0,
+    "pointsLifetime": 500
+}
