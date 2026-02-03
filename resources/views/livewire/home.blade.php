@@ -6,9 +6,9 @@
         <link href="{{ asset('css/home.css') }}" rel="stylesheet">
     @endpush
 
-    <x-home.banner />
-    <x-home.our-products />
-    <x-home.hot-buys />
+    <x-home.banner :products="$bannerProducts" />
+    <x-home.our-products :products="$ourProducts" />
+    <x-home.hot-buys :products="$hotBuysProducts" />
     <x-home.free-shipping />
     <x-home.banner-slider />
     <x-home.about />
@@ -63,9 +63,13 @@
             new Swiper('.banner-slider-swiper', {
                 loop: true,
                 autoplay: { delay: 5000 },
+                pagination: {
+                    el: '.banner-slider-section .swiper-pagination',
+                    clickable: true,
+                },
                 navigation: {
-                    nextEl: '.banner-slider-buttons .swiper-button-next',
-                    prevEl: '.banner-slider-buttons .swiper-button-prev',
+                    nextEl: '.swiper-buttons-banner .swiper-button-next',
+                    prevEl: '.swiper-buttons-banner .swiper-button-prev',
                 },
             });
         });

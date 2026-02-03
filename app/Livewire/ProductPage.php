@@ -6,6 +6,7 @@ use App\Traits\FetchesUrls;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
+use Lunar\Models\Price;
 use Lunar\Models\Product;
 use Lunar\Models\ProductVariant;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -29,6 +30,11 @@ class ProductPage extends Component
                 'element.variants.basePrices.currency',
                 'element.variants.basePrices.priceable',
                 'element.variants.values.option',
+                'element.collections.defaultUrl',
+                'element.tags',
+                'element.associations.target.thumbnail',
+                'element.associations.target.defaultUrl',
+                'element.associations.target.variants.basePrices.currency',
             ]
         );
 
@@ -106,6 +112,36 @@ class ProductPage extends Component
         }
 
         return $this->images->first();
+    }
+
+    /**
+     * Computed property to get the base price for the current variant.
+     */
+    public function getBasePriceProperty(): ?Price
+    {
+        return $this->variant->basePrices->first();
+    }
+
+    /**
+     * Computed property to get related (cross-sell) products.
+     */
+    public function getRelatedProductsProperty(): Collection
+    {
+        return $this->product->associations
+            ->where('type', 'cross-sell')
+            ->map(fn ($assoc) => $assoc->target)
+            ->filter();
+    }
+
+    /**
+     * Computed property to get alternate products.
+     */
+    public function getAlternateProductsProperty(): Collection
+    {
+        return $this->product->associations
+            ->where('type', 'alternate')
+            ->map(fn ($assoc) => $assoc->target)
+            ->filter();
     }
 
     public function render(): View

@@ -1,29 +1,25 @@
 <div>
-    <div class="flex gap-4">
-        <div>
-            <label for="quantity"
-                   class="sr-only">
-                Quantity
-            </label>
-
-            <input class="w-16 px-1 py-4 text-sm text-center transition border border-gray-100 rounded-lg no-spinner"
-                   type="number"
-                   id="quantity"
-                   min="1"
-                   value="1"
-                   wire:model.live="quantity" />
+    <div class="d-flex align-items-center gap-3 mb-3">
+        <div class="cart-qty">
+            <button type="button" class="btn btn-outline-secondary btn-sm" wire:click="decrementQuantity">−</button>
+            <input class="qty-input" type="number" min="1" value="{{ $quantity }}" wire:model.live="quantity" />
+            <button type="button" class="btn btn-outline-secondary btn-sm" wire:click="incrementQuantity">+</button>
         </div>
+    </div>
 
-        <button type="submit"
-                class="w-full px-6 py-4 text-sm font-medium text-center text-white bg-indigo-600 rounded-lg hover:bg-indigo-700"
-                wire:click.prevent="addToCart">
-            Add to Cart
+    <div class="d-flex gap-2">
+        <button type="button" class="button-with-icon" wire:click="buyNow" wire:loading.attr="disabled">
+            <span wire:loading.remove wire:target="buyNow">Buy Now</span>
+            <span wire:loading wire:target="buyNow">Processing...</span>
+        </button>
+        <button type="button" class="button-with-icon button-with-icon-primary" wire:click="addToCart" wire:loading.attr="disabled">
+            <span wire:loading.remove wire:target="addToCart">Add to Cart</span>
+            <span wire:loading wire:target="addToCart">Adding...</span>
         </button>
     </div>
 
     @if ($errors->has('quantity'))
-        <div class="p-2 mt-4 text-xs font-medium text-center text-red-700 rounded bg-red-50"
-             role="alert">
+        <div class="mt-2 p-2 text-center text-danger small bg-danger bg-opacity-10 rounded" role="alert">
             @foreach ($errors->get('quantity') as $error)
                 {{ $error }}
             @endforeach

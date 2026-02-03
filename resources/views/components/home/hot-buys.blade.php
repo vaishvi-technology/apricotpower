@@ -1,67 +1,4 @@
-@php
-$products = [
-    [
-        'name' => 'Apricot Power B17/Amygdalin 500mg 100 Caps',
-        'image' => 'images/home/hot-buys-product-1.png',
-        'map_price' => '89.99',
-        'sell_price' => '74.99',
-        'you_save' => 'You Save $15.00',
-        'min_quantity' => 2,
-        'item_code' => 'AP-B17-500',
-        'link' => '/item/595-apricot-power-b17-amygdalin-500mg-capsules',
-    ],
-    [
-        'name' => 'California Bitter Raw Apricot Seeds 32oz',
-        'image' => 'images/home/hot-buys-product-2.png',
-        'map_price' => '39.99',
-        'sell_price' => '34.99',
-        'you_save' => 'You Save $5.00',
-        'min_quantity' => 2,
-        'item_code' => 'AP-SEEDS-32',
-        'link' => '/item/376-california-bitter-raw-apricot-seeds-32-oz',
-    ],
-    [
-        'name' => 'Apricot Seed Capsules 180 Count',
-        'image' => 'images/home/hot-buys-product-3.png',
-        'map_price' => '59.99',
-        'sell_price' => '49.99',
-        'you_save' => 'You Save $10.00',
-        'min_quantity' => 2,
-        'item_code' => 'AP-SEED-CAPS',
-        'link' => '/item/705-apricot-seed-capsules',
-    ],
-    [
-        'name' => 'Big 3 B17 Pack 500mg',
-        'image' => 'images/home/hot-buys-product-4.png',
-        'map_price' => '199.99',
-        'sell_price' => '169.99',
-        'you_save' => 'You Save $30.00',
-        'min_quantity' => 1,
-        'item_code' => 'AP-BIG3-500',
-        'link' => '/item/730-big-3-b17-pack-500mg',
-    ],
-    [
-        'name' => 'AP Fuel California Special',
-        'image' => 'images/home/california.png',
-        'map_price' => '49.99',
-        'sell_price' => '42.99',
-        'you_save' => 'You Save $7.00',
-        'min_quantity' => 2,
-        'item_code' => 'AP-FUEL-CA',
-        'link' => '/item/991-apfuel-california-special',
-    ],
-    [
-        'name' => 'AP Fuel Mushroom Coffee Mix',
-        'image' => 'images/home/mushroom.png',
-        'map_price' => '34.99',
-        'sell_price' => '29.99',
-        'you_save' => 'You Save $5.00',
-        'min_quantity' => 2,
-        'item_code' => 'AP-MUSH-COF',
-        'link' => '/item/965-ap-fuel---mushroom-coffee-mix',
-    ],
-];
-@endphp
+@props(['products'])
 
 <section class="hot-buys-sec">
     <div class="">
@@ -84,39 +21,50 @@ $products = [
                 <h3 class="hot-buys-slider-title">OUR SHOP</h3>
                 <div class="swiper hot-buys-swiper">
                     <div class="swiper-wrapper">
-                        @foreach($products as $item)
+                        @foreach($products as $product)
+                            @php
+                                $variant = $product->variants->first();
+                                $basePrice = $variant?->basePrices->first();
+                            @endphp
                             <div class="swiper-slide">
                                 <div class="hot-buys-item left-border">
                                     <div class="cursor-pointer">
-                                        <a href="{{ $item['link'] }}">
-                                            <img width="300" height="400" src="{{ asset($item['image']) }}" alt="Product">
+                                        <a href="{{ route('product.view', $product->defaultUrl->slug) }}">
+                                            @if($product->thumbnail)
+                                                <img width="300" height="400" src="{{ $product->thumbnail->getUrl('medium') }}" alt="{{ $product->translateAttribute('name') }}">
+                                            @endif
                                         </a>
                                     </div>
                                     <div class="hot-buys-item-content cursor">
                                         <h4 class="text-theme">
-                                            <a href="{{ $item['link'] }}" style="text-decoration: none; color: inherit;">
-                                                {{ $item['name'] }}
+                                            <a href="{{ route('product.view', $product->defaultUrl->slug) }}" style="text-decoration: none; color: inherit;">
+                                                {{ $product->translateAttribute('name') }}
                                             </a>
                                         </h4>
                                         <div class="hot-buys-item-content-price">
                                             <span class="price">Price:</span>
-                                            @if($item['map_price'] === $item['sell_price'])
-                                                <span class="discount-price secondary-color">${{ $item['sell_price'] }}</span>
-                                            @else
-                                                <span class="actual-price">${{ $item['map_price'] }}</span>
-                                                <span class="discount-price secondary-color">${{ $item['sell_price'] }}</span>
+                                            @if($basePrice)
+                                                @if($basePrice->compare_price && $basePrice->compare_price->value > $basePrice->price->value)
+                                                    <span class="actual-price">{{ $basePrice->compare_price->formatted() }}</span>
+                                                @endif
+                                                <span class="discount-price secondary-color">{{ $basePrice->price->formatted() }}</span>
                                             @endif
                                         </div>
                                         <div class="hot-buys-item-description">
-                                            <p>{{ $item['you_save'] }}</p>
-                                            <p title="You Must Have at least {{ $item['min_quantity'] }} items in your cart to receive this discounted base price">
-                                                minimum purchase required (?)
-                                            </p>
+                                            @if($basePrice?->compare_price && $basePrice->compare_price->value > $basePrice->price->value)
+                                                @php
+                                                    $savingsAmount = $basePrice->compare_price->value - $basePrice->price->value;
+                                                @endphp
+                                                <p>You Save ${{ number_format($savingsAmount / 100, 2) }}</p>
+                                            @endif
+                                            <p class="minimum-purchase-text">minimum purchase required (?)</p>
                                         </div>
-                                        <div class="feefo-product-stars-widget" data-product-sku="{{ $item['item_code'] }}"></div>
+                                        @if($variant?->sku)
+                                            <div class="feefo-product-stars-widget" data-product-sku="{{ $variant->sku }}"></div>
+                                        @endif
                                         <div class="d-flex justify-content-between">
-                                            <a href="{{ $item['link'] }}" class="add-to-cart-btn" style="text-decoration: none; text-align: center;">Buy Now</a>
-                                            <a href="{{ $item['link'] }}" class="add-to-cart-btn" style="text-decoration: none; text-align: center;">Add To Cart</a>
+                                            <a href="{{ route('product.view', $product->defaultUrl->slug) }}" class="add-to-cart-btn" style="text-decoration: none; text-align: center;">Buy Now</a>
+                                            <a href="{{ route('product.view', $product->defaultUrl->slug) }}" class="add-to-cart-btn" style="text-decoration: none; text-align: center;">Add To Cart</a>
                                         </div>
                                     </div>
                                 </div>

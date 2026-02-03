@@ -1,14 +1,24 @@
 @php
 $banners = [
     [
-        'image' => 'images/home/product-banner-img-1.png',
+        'image' => 'images/home/homepage-slider1.png',
         'link' => '/store',
-        'alt' => 'Banner 1',
+        'alt' => 'Mushroom Coffee',
     ],
     [
-        'image' => 'images/home/product-banner-img-2.png',
+        'image' => 'images/home/homepage-slider2.png',
         'link' => '/store',
-        'alt' => 'Banner 2',
+        'alt' => 'Megazyme B-15 and B17',
+    ],
+    [
+        'image' => 'images/home/homepage-slider3.png',
+        'link' => '/store',
+        'alt' => 'Apricot Seeds',
+    ],
+    [
+        'image' => 'images/home/homepage-slider4.png',
+        'link' => '/store',
+        'alt' => 'Happy Healthy B17',
     ],
 ];
 @endphp
@@ -26,11 +36,12 @@ $banners = [
                 </div>
             @endforeach
         </div>
-        <div class="our-products-swiper-buttons banner-slider-buttons">
-            <div class="swiper-button-next">
+        <div class="swiper-pagination"></div>
+        <div class="our-products-swiper-buttons swiper-buttons-banner">
+            <div class="swiper-button-next laptop-button-next">
                 <img src="{{ asset('images/home/next-icon.png') }}" alt="">
             </div>
-            <div class="swiper-button-prev">
+            <div class="swiper-button-prev laptop-button-prev">
                 <img src="{{ asset('images/home/prev-icon.png') }}" alt="">
             </div>
         </div>

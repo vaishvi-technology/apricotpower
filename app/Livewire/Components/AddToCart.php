@@ -26,6 +26,18 @@ class AddToCart extends Component
         ];
     }
 
+    public function incrementQuantity(): void
+    {
+        $this->quantity++;
+    }
+
+    public function decrementQuantity(): void
+    {
+        if ($this->quantity > 1) {
+            $this->quantity--;
+        }
+    }
+
     public function addToCart(): void
     {
         $this->validate();
@@ -38,6 +50,21 @@ class AddToCart extends Component
 
         CartSession::manager()->add($this->purchasable, $this->quantity);
         $this->dispatch('add-to-cart');
+    }
+
+    public function buyNow(): void
+    {
+        $this->validate();
+
+        if ($this->purchasable->stock < $this->quantity) {
+            $this->addError('quantity', 'The quantity exceeds the available stock.');
+
+            return;
+        }
+
+        CartSession::manager()->add($this->purchasable, $this->quantity);
+        $this->dispatch('add-to-cart');
+        $this->redirect(route('checkout.view'));
     }
 
     public function render(): View

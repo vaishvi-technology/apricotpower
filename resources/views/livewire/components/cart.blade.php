@@ -2,22 +2,11 @@
      x-data="{
          linesVisible: @entangle('linesVisible').live
      }">
-    <button class="grid w-16 h-16 transition border-l border-gray-100 lg:border-l-transparent hover:opacity-75"
-            x-on:click="linesVisible = !linesVisible">
+    <button class="btn p-2 transition hover:opacity-75"
+            x-on:click="linesVisible = !linesVisible"
+            style="background: transparent; border: none;">
         <span class="sr-only">Cart</span>
-
-        <span class="place-self-center">
-            <svg xmlns="http://www.w3.org/2000/svg"
-                 class="w-4 h-4"
-                 fill="none"
-                 viewBox="0 0 24 24"
-                 stroke="currentColor">
-                <path stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
-        </span>
+        <img src="{{ asset('images/home/cart-icon.png') }}" alt="Cart" class="icon-img" style="width: 22px; height: 22px;">
     </button>
 
     <div class="absolute inset-x-0 top-auto z-50 w-screen max-w-sm px-6 py-8 mx-auto mt-4 bg-white border border-gray-100 shadow-xl sm:left-auto rounded-xl"
