@@ -414,6 +414,8 @@ section.main-banner::after {
 
 .main-banner-image {
   position: relative;
+  overflow: hidden;
+  background: transparent !important;
 }
 
 @media (min-width: 1024px) {
@@ -458,6 +460,27 @@ section.main-banner::after {
     position: relative;
     left: 40px;
   }
+}
+
+/* Banner Swiper - Transparent slides */
+.banner-swiper .swiper-slide {
+  background: transparent !important;
+}
+
+.banner-swiper .swiper-wrapper {
+  background: transparent !important;
+}
+
+.banner-swiper {
+  background: transparent !important;
+}
+
+.main-banner-image {
+  background: transparent !important;
+}
+
+.banner-parent {
+  background: transparent !important;
 }
 
 .banner-img {

@@ -3,7 +3,6 @@
 namespace App\Base;
 
 use Lunar\Base\MediaDefinitionsInterface;
-use Spatie\Image\Enums\BorderType;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\MediaCollection;
@@ -15,7 +14,7 @@ class CustomMediaDefinitions implements MediaDefinitionsInterface
     {
         // Add a conversion for the admin panel to use - NO white background
         $model->addMediaConversion('small')
-            ->fit(Fit::Fill, 300, 300)
+            ->fit(Fit::Contain, 300, 300)
             ->sharpen(10)
             ->keepOriginalImageFormat();
     }
@@ -65,7 +64,7 @@ class CustomMediaDefinitions implements MediaDefinitionsInterface
                 // Keep original image format and preserve transparency (no white background)
                 $model->addMediaConversion($key)
                     ->fit(
-                        Fit::Fill,
+                        Fit::Contain,
                         $conversion['width'],
                         $conversion['height']
                     )

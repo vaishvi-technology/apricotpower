@@ -7,10 +7,10 @@
         name="viewport"
         content="width=device-width, initial-scale=1"
     >
-    <title>Demo Storefront</title>
+    <title>{{ $title ?? 'Apricot Power - Quality Apricot Seeds and B17 Products' }}</title>
     <meta
         name="description"
-        content="Example of an ecommerce storefront built with Lunar."
+        content="Apricot Power has been providing apricot seeds since 1999. Your reliable source for quality apricot seeds and B17 products."
     >
     <link
         href="{{ asset('css/app.css') }}"
@@ -25,6 +25,101 @@
     >
     @livewireStyles
     @stack('styles')
+    <style>
+        /* Top Header Styles */
+        .topheader {
+            background-color: #d68910;
+            font-size: 14px;
+        }
+        .topheader .contact-info strong {
+            margin-right: 5px;
+        }
+        .topheader .language-selector {
+            cursor: pointer;
+        }
+
+        /* Dropdown Styles */
+        .main-header .dropdown-menu {
+            background-color: #fff;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-radius: 0;
+            padding: 0;
+            min-width: 200px;
+        }
+        .main-header .dropdown-item {
+            padding: 10px 20px;
+            color: #333;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        .main-header .dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #d68910;
+        }
+        .main-header .nav-link.dropdown-toggle::after {
+            margin-left: 5px;
+        }
+
+        /* User Section */
+        .user-section2 .header-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            gap: 5px;
+        }
+        .user-section2 .icon-text {
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .user-section2 .login-icon,
+        .user-section2 img {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Icon Wrapper & Cart Badge */
+        .icon-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #d68910;
+            color: #fff;
+            font-size: 10px;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Mobile Cart Link */
+        .cart-link-mobile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+        .cart-link-mobile .icon-text {
+            font-size: 10px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 575px) {
+            .topheader .contact-info {
+                font-size: 12px;
+                text-align: center;
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 
 <body class="antialiased text-gray-900 home-page">

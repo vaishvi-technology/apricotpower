@@ -2,8 +2,13 @@
 
 namespace App\Providers;
 
+use App\Base\CustomMediaDefinitions;
+use App\Lunar\EditProductPageExtension;
+use App\Lunar\ProductResourceExtension;
 use App\Modifiers\ShippingModifier;
 use Illuminate\Support\ServiceProvider;
+use Lunar\Admin\Filament\Resources\ProductResource;
+use Lunar\Admin\Filament\Resources\ProductResource\Pages\EditProduct;
 use Lunar\Admin\Support\Facades\LunarPanel;
 use Lunar\Base\ShippingModifiers;
 use Lunar\Shipping\ShippingPlugin;
@@ -15,12 +20,33 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        LunarPanel::extensions([
+            ProductResource::class => ProductResourceExtension::class,
+            EditProduct::class => EditProductPageExtension::class,
+        ]);
+
         LunarPanel::panel(
-            fn ($panel) => $panel->plugins([
+            fn ($panel) => $panel
+            ->path('admin')
+            ->plugins([
                 new ShippingPlugin,
             ])
+            ->discoverResources(
+                in: app_path('Filament/Resources'),
+                for: 'App\\Filament\\Resources'
+            )
         )
             ->register();
+
+        // Override media definitions to preserve PNG transparency
+        $this->app['config']->set('lunar.media.definitions', [
+            'asset' => CustomMediaDefinitions::class,
+            'brand' => CustomMediaDefinitions::class,
+            'collection' => CustomMediaDefinitions::class,
+            'product' => CustomMediaDefinitions::class,
+            'product-option' => CustomMediaDefinitions::class,
+            'product-option-value' => CustomMediaDefinitions::class,
+        ]);
     }
 
     /**
