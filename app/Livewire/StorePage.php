@@ -8,8 +8,6 @@ use Livewire\Component;
 use Lunar\Facades\CartSession;
 use Lunar\Models\Cart;
 use Lunar\Models\Collection as LunarCollection;
-use Lunar\Models\Product;
-
 class StorePage extends Component
 {
     public string $sortBy = '';

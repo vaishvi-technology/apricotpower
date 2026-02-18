@@ -5,8 +5,6 @@ namespace App\Livewire;
 use Illuminate\View\View;
 use Livewire\Component;
 use Lunar\Models\Collection;
-use Lunar\Models\Product;
-
 class CategoryPage extends Component
 {
     public string $slug;

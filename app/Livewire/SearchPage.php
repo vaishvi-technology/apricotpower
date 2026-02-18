@@ -6,7 +6,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Lunar\Models\Product;
+use App\Models\Item;
 
 class SearchPage extends Component
 {
@@ -29,7 +29,7 @@ class SearchPage extends Component
      */
     public function getResultsProperty(): LengthAwarePaginator
     {
-        return Product::search($this->term)->paginate(50);
+        return Item::search($this->term)->paginate(50);
     }
 
     public function render(): View

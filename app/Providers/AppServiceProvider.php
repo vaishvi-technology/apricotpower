@@ -60,8 +60,7 @@ class AppServiceProvider extends ServiceProvider
 
         \Lunar\Facades\ModelManifest::replace(
             \Lunar\Models\Contracts\Product::class,
-            \App\Models\Product::class,
-            // \App\Models\CustomProduct::class,
+            \App\Models\Item::class,
         );
     }
 }

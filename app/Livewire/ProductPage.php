@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 use Lunar\Models\Price;
-use Lunar\Models\Product;
+use App\Models\Item;
 use Lunar\Models\ProductVariant;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -24,7 +24,7 @@ class ProductPage extends Component
     {
         $this->url = $this->fetchUrl(
             $slug,
-            (new Product)->getMorphClass(),
+            (new Item)->getMorphClass(),
             [
                 'element.media',
                 'element.variants.basePrices.currency',
@@ -85,7 +85,7 @@ class ProductPage extends Component
     /**
      * Computed property to return product.
      */
-    public function getProductProperty(): Product
+    public function getProductProperty(): Item
     {
         return $this->url->element;
     }
