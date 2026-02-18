@@ -52,7 +52,7 @@ return new class extends Migration
             $table->string('inventory_notes', 500)->nullable();
 
             // Category and organization
-            $table->integer('category_id')->nullable();
+            $table->foreignId('category_id')->nullable()->constrained('item_categories')->nullOnDelete();
             $table->integer('rank')->nullable();
 
             // Flags
