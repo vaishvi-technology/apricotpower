@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Lunar\Base\Casts\AsAttributeData;
 use Lunar\Models\Product as LunarProduct;
 
@@ -175,5 +178,19 @@ class Item extends LunarProduct
     public function relatedItem3()
     {
         return $this->belongsTo(self::class, 'related_item_3_id');
+    }
+
+    /**
+     * Override Lunar's tags() to use item_tag_links pivot table.
+     */
+    public function tags(): MorphToMany
+    {
+        return $this->morphToMany(
+            ItemTag::class,
+            'taggable',
+            'item_tag_links',
+            'taggable_id',
+            'tag_id'
+        )->withTimestamps();
     }
 }

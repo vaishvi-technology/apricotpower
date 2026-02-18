@@ -5,10 +5,13 @@ namespace App\Providers;
 use App\Base\CustomMediaDefinitions;
 use App\Lunar\EditProductPageExtension;
 use App\Lunar\ProductResourceExtension;
+use App\Lunar\TagResourceExtension;
 use App\Modifiers\ShippingModifier;
+use Filament\Navigation\NavigationGroup;
 use Illuminate\Support\ServiceProvider;
 use Lunar\Admin\Filament\Resources\ProductResource;
 use Lunar\Admin\Filament\Resources\ProductResource\Pages\EditProduct;
+use Lunar\Admin\Filament\Resources\TagResource;
 use Lunar\Admin\Support\Facades\LunarPanel;
 use Lunar\Base\ShippingModifiers;
 use Lunar\Shipping\ShippingPlugin;
@@ -23,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
         LunarPanel::extensions([
             ProductResource::class => ProductResourceExtension::class,
             EditProduct::class => EditProductPageExtension::class,
+            TagResource::class => TagResourceExtension::class,
         ]);
 
         LunarPanel::panel(
@@ -30,6 +34,12 @@ class AppServiceProvider extends ServiceProvider
             ->path('admin')
             ->plugins([
                 new ShippingPlugin,
+            ])
+            ->navigationGroups([
+                NavigationGroup::make('Catalog')
+                    ->label('Catalog')
+                    ->icon('heroicon-o-shopping-bag')
+                    ->collapsible(),
             ])
             ->discoverResources(
                 in: app_path('Filament/Resources'),
@@ -61,6 +71,11 @@ class AppServiceProvider extends ServiceProvider
         \Lunar\Facades\ModelManifest::replace(
             \Lunar\Models\Contracts\Product::class,
             \App\Models\Item::class,
+        );
+
+        \Lunar\Facades\ModelManifest::replace(
+            \Lunar\Models\Contracts\Tag::class,
+            \App\Models\ItemTag::class,
         );
     }
 }

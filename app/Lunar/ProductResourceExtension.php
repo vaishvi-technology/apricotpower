@@ -10,6 +10,32 @@ use Lunar\Admin\Support\Extending\ResourceExtension;
 
 class ProductResourceExtension extends ResourceExtension
 {
+    /**
+     * Rename "Product" to "Item" in sidebar and UI.
+     */
+    public static function getLabel(): string
+    {
+        return 'Item';
+    }
+
+    public static function getPluralLabel(): string
+    {
+        return 'Items';
+    }
+
+    /**
+     * Group Items under "Catalog" collapsible section.
+     */
+    public static function getNavigationGroup(): string
+    {
+        return 'Catalog';
+    }
+
+    public static function getNavigationSort(): int
+    {
+        return 1;
+    }
+
     public function extendForm(Form $form): Form
     {
         $existing = $form->getComponents(withHidden: true);
