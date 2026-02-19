@@ -166,7 +166,7 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                     <li>
-                                        <a class="dropdown-item" href="{{ route('order-history') }}" wire:navigate>Order History</a>
+                                        <a class="dropdown-item" href="{{ route('order-history.view') }}" wire:navigate>Order History</a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="{{ route('basic-info') }}" wire:navigate>Basic Info</a>

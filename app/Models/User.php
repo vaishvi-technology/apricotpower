@@ -13,33 +13,33 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, LunarUser, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
+     * Storefront customer account columns.
+     * Mapped from legacy `accounts` table:
+     *   accounts.ShippingNameFirst → first_name
+     *   accounts.ShippingNameLast  → last_name
+     *   accounts.Email             → email
+     *   accounts.Phone             → phone
+     *   accounts.Password          → password (re-hashed with bcrypt)
+     *   accounts.Company           → company_name
      *
-     * @var array<int, string>
+     * Admin/staff columns live in `lunar_staff` (managed via Filament).
      */
     protected $fillable = [
         'name',
+        'first_name',
+        'last_name',
+        'company_name',
         'email',
         'password',
         'phone',
         'email_preferences',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'email_preferences' => 'array',
