@@ -8,24 +8,30 @@ use Livewire\Component;
 
 class BasicInfoPage extends Component
 {
-    public string $name = '';
+    public string $first_name = '';
+    public string $last_name = '';
     public string $email = '';
     public string $phone = '';
+    public string $company_name = '';
 
     public function mount(): void
     {
-        $user = Auth::user();
-        $this->name = $user->name ?? '';
-        $this->email = $user->email ?? '';
-        $this->phone = $user->phone ?? '';
+        $customer = Auth::guard('customer')->user();
+        $this->first_name = $customer->first_name ?? '';
+        $this->last_name = $customer->last_name ?? '';
+        $this->email = $customer->email ?? '';
+        $this->phone = $customer->phone ?? '';
+        $this->company_name = $customer->company_name ?? '';
     }
 
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . Auth::id(),
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:customers,email,' . Auth::guard('customer')->id(),
             'phone' => 'nullable|string|max:20',
+            'company_name' => 'nullable|string|max:255',
         ];
     }
 
@@ -33,11 +39,13 @@ class BasicInfoPage extends Component
     {
         $this->validate();
 
-        $user = Auth::user();
-        $user->update([
-            'name' => $this->name,
+        $customer = Auth::guard('customer')->user();
+        $customer->update([
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
             'email' => $this->email,
-            'phone' => $this->phone,
+            'phone' => $this->phone ?: null,
+            'company_name' => $this->company_name ?: null,
         ]);
 
         session()->flash('success', 'Your information has been updated.');

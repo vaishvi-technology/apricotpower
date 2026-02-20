@@ -3,12 +3,16 @@
 namespace App\Providers;
 
 use App\Base\CustomMediaDefinitions;
+use App\Lunar\CustomerResourceExtension;
 use App\Lunar\EditProductPageExtension;
 use App\Lunar\ProductResourceExtension;
+use App\Lunar\StaffResourceExtension;
 use App\Modifiers\ShippingModifier;
 use Illuminate\Support\ServiceProvider;
+use Lunar\Admin\Filament\Resources\CustomerResource;
 use Lunar\Admin\Filament\Resources\ProductResource;
 use Lunar\Admin\Filament\Resources\ProductResource\Pages\EditProduct;
+use Lunar\Admin\Filament\Resources\StaffResource;
 use Lunar\Admin\Support\Facades\LunarPanel;
 use Lunar\Base\ShippingModifiers;
 use Lunar\Shipping\ShippingPlugin;
@@ -23,6 +27,8 @@ class AppServiceProvider extends ServiceProvider
         LunarPanel::extensions([
             ProductResource::class => ProductResourceExtension::class,
             EditProduct::class => EditProductPageExtension::class,
+            CustomerResource::class => CustomerResourceExtension::class,
+            StaffResource::class => StaffResourceExtension::class,
         ]);
 
         LunarPanel::panel(
@@ -61,7 +67,21 @@ class AppServiceProvider extends ServiceProvider
         \Lunar\Facades\ModelManifest::replace(
             \Lunar\Models\Contracts\Product::class,
             \App\Models\Product::class,
-            // \App\Models\CustomProduct::class,
+        );
+
+        \Lunar\Facades\ModelManifest::replace(
+            \Lunar\Models\Contracts\Customer::class,
+            \App\Models\Customer::class,
+        );
+
+        \Lunar\Facades\ModelManifest::replace(
+            \Lunar\Models\Contracts\CustomerGroup::class,
+            \App\Models\CustomerGroup::class,
+        );
+
+        \Lunar\Facades\ModelManifest::replace(
+            \Lunar\Models\Contracts\Address::class,
+            \App\Models\Address::class,
         );
     }
 }

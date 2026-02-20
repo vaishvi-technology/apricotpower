@@ -22,7 +22,7 @@ class ForgotPasswordPage extends Component
     {
         $this->validate();
 
-        $status = Password::sendResetLink(['email' => $this->email]);
+        $status = Password::broker('customers')->sendResetLink(['email' => $this->email]);
 
         if ($status === Password::RESET_LINK_SENT) {
             $this->emailSent = true;

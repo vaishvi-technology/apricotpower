@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Auth;
 
-use App\Models\User;
+use App\Models\Customer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
@@ -10,17 +10,33 @@ use Livewire\Component;
 
 class RegisterPage extends Component
 {
-    public string $name = '';
+    public string $first_name = '';
+    public string $last_name = '';
     public string $email = '';
+    public string $phone = '';
+    public string $company_name = '';
     public string $password = '';
     public string $password_confirmation = '';
+    public bool $subscribe_to_list = false;
+    public bool $agreed_terms = false;
 
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:' . (new Customer)->getTable() . ',email',
+            'phone' => 'nullable|string|max:20',
+            'company_name' => 'nullable|string|max:255',
             'password' => 'required|min:8|confirmed',
+            'agreed_terms' => 'accepted',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'agreed_terms.accepted' => 'You must agree to the Terms & Conditions.',
         ];
     }
 
@@ -28,13 +44,19 @@ class RegisterPage extends Component
     {
         $this->validate();
 
-        $user = User::create([
-            'name' => $this->name,
+        $customer = Customer::create([
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
             'email' => $this->email,
+            'phone' => $this->phone ?: null,
+            'company_name' => $this->company_name ?: null,
             'password' => Hash::make($this->password),
+            'subscribe_to_list' => $this->subscribe_to_list,
+            'agreed_terms_at' => now(),
+            'is_active' => true,
         ]);
 
-        Auth::login($user);
+        Auth::guard('customer')->login($customer);
 
         session()->regenerate();
 

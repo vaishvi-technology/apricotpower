@@ -19,30 +19,26 @@ class OrderHistoryPage extends Component
 
         if ($this->id) {
             $this->selectedOrder = Order::where('id', $this->id)
-                ->whereHas('customer', function ($query) {
-                    $query->where('user_id', Auth::id());
-                })
+                ->where('customer_id', Auth::guard('customer')->id())
                 ->with(['lines.purchasable', 'shippingAddress', 'billingAddress'])
                 ->first();
         }
     }
 
     /**
-     * Get the user's orders.
+     * Get the customer's orders.
      */
     public function getOrdersProperty(): Collection
     {
-        return Order::whereHas('customer', function ($query) {
-            $query->where('user_id', Auth::id());
-        })
-        ->with(['lines.purchasable'])
-        ->orderBy('created_at', 'desc')
-        ->get();
+        return Order::where('customer_id', Auth::guard('customer')->id())
+            ->with(['lines.purchasable'])
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 
     public function viewOrder(string $id): void
     {
-        $this->redirect(route('order-history.view', ['id' => $id]));
+        $this->redirect(route('order-history.detail', ['id' => $id]));
     }
 
     public function render(): View
