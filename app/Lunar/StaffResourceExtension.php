@@ -7,6 +7,8 @@ use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Lunar\Admin\Support\Extending\ResourceExtension;
+use Lunar\Admin\Support\Facades\LunarPanel;
+use Spatie\Permission\Models\Role;
 
 class StaffResourceExtension extends ResourceExtension
 {
@@ -14,26 +16,63 @@ class StaffResourceExtension extends ResourceExtension
     {
         $existing = $form->getComponents(withHidden: true);
 
+        // Separate named fields from the role/permissions container (Grid)
+        $basicFields = [];
+        $otherComponents = [];
+
+        foreach ($existing as $component) {
+            if ($component instanceof Forms\Components\TextInput || $component instanceof Forms\Components\Toggle) {
+                $basicFields[] = $component;
+            } else {
+                $otherComponents[] = $component;
+            }
+        }
+
         return $form->schema([
-            ...$existing,
+            Forms\Components\Tabs::make('Staff Details')
+                ->columnSpanFull()
+                ->tabs([
 
-            Forms\Components\Section::make('Role & Status')
-                ->schema([
-                    Forms\Components\Grid::make(2)->schema([
-                        Forms\Components\Select::make('role')
-                            ->label('Role')
-                            ->options([
-                                'admin' => 'Admin',
-                                'manager' => 'Manager',
-                                'staff' => 'Staff',
-                            ])
-                            ->default('staff')
-                            ->required(),
+                    Forms\Components\Tabs\Tab::make('General')
+                        ->icon('heroicon-o-user')
+                        ->schema([
+                            Forms\Components\Section::make('Personal Information')
+                                ->icon('heroicon-o-identification')
+                                ->schema($basicFields)
+                                ->columns(2),
+                        ]),
 
-                        Forms\Components\Toggle::make('is_active')
-                            ->label('Active')
-                            ->default(true),
-                    ]),
+                    Forms\Components\Tabs\Tab::make('Role & Access')
+                        ->icon('heroicon-o-shield-check')
+                        ->schema([
+                            Forms\Components\Section::make('Roles')
+                                ->icon('heroicon-o-user-group')
+                                ->description('Assign roles to control what this staff member can access.')
+                                ->schema([
+                                    Forms\Components\Select::make('roles')
+                                        ->label('Assigned Roles')
+                                        ->multiple()
+                                        ->options(fn () => Role::where('guard_name', LunarPanel::getPanel()->getAuthGuard())
+                                            ->pluck('name', 'name')
+                                            ->toArray())
+                                        ->afterStateHydrated(fn (Forms\Components\Select $component, $record) => $component->state($record?->getRoleNames()->toArray() ?? []))
+                                        ->saveRelationshipsUsing(fn ($state, $record) => $record->syncRoles($state))
+                                        ->dehydrated(false),
+                                ]),
+
+                            Forms\Components\Section::make('Account Status')
+                                ->icon('heroicon-o-lock-closed')
+                                ->schema([
+                                    Forms\Components\Toggle::make('is_active')
+                                        ->label('Active')
+                                        ->helperText('Inactive staff members cannot log in to the admin panel.')
+                                        ->default(true)
+                                        ->inline(false),
+                                ]),
+
+                            // Lunar's built-in role/permissions container (hidden for super admins)
+                            ...$otherComponents,
+                        ]),
                 ]),
         ]);
     }
@@ -43,14 +82,9 @@ class StaffResourceExtension extends ResourceExtension
         return $table->columns([
             ...$table->getColumns(),
 
-            Tables\Columns\TextColumn::make('role')
-                ->label('Role')
+            Tables\Columns\TextColumn::make('roles.name')
+                ->label('Roles')
                 ->badge()
-                ->color(fn (string $state): string => match ($state) {
-                    'admin' => 'danger',
-                    'manager' => 'warning',
-                    default => 'gray',
-                })
                 ->toggleable(),
 
             Tables\Columns\IconColumn::make('is_active')

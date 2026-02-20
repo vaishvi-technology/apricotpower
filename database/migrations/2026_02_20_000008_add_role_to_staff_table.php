@@ -9,15 +9,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('staff', function (Blueprint $table) {
-            $table->string('role')->default('staff')->after('admin');
-            $table->boolean('is_active')->default(true)->after('role');
+            $table->boolean('is_active')->default(true)->after('admin');
         });
     }
 
     public function down(): void
     {
         Schema::table('staff', function (Blueprint $table) {
-            $table->dropColumn(['role', 'is_active']);
+            $table->dropColumn(['is_active']);
         });
     }
 };
