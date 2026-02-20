@@ -2,52 +2,219 @@
 
 namespace App\Livewire;
 
+use App\Models\Product;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
+use Livewire\WithPagination;
 use Lunar\Facades\CartSession;
 use Lunar\Models\Cart;
+use Lunar\Models\Channel;
+use Lunar\Models\Currency;
 use Lunar\Models\Collection as LunarCollection;
-use Lunar\Models\Product;
+use Lunar\Models\ProductVariant;
+use App\Models\Tag;
 
 class StorePage extends Component
 {
-    public string $sortBy = '';
+    use WithPagination;
+
+    public string $sortBy = 'default';
+    public string $status = 'published';
+    public array $selectedCategories = [];
+    public array $selectedTags = [];
+    public string $searchQuery = '';
+    public int $perPage = 12;
+
+    protected $queryString = [
+        'sortBy' => ['except' => 'default'],
+        'status' => ['except' => 'published'],
+        'selectedCategories' => ['except' => [], 'as' => 'categories'],
+        'selectedTags' => ['except' => [], 'as' => 'tags'],
+        'searchQuery' => ['except' => '', 'as' => 'q'],
+    ];
 
     /**
-     * Get products grouped by collection (category).
+     * Get all collections/categories for filtering.
      */
-    public function getCollectionsWithProductsProperty(): Collection
+    public function getCategoriesProperty(): Collection
     {
-        return LunarCollection::with([
-            'products' => function ($query) {
-                $query->with([
-                    'defaultUrl',
-                    'thumbnail',
-                    'variants.basePrices.currency',
-                ]);
-
-                // Apply sorting
-                if ($this->sortBy === 'highest_price') {
-                    $query->orderByDesc(
-                        \Lunar\Models\Price::select('price')
-                            ->whereColumn('priceable_id', 'lunar_product_variants.id')
-                            ->where('priceable_type', \Lunar\Models\ProductVariant::class)
-                            ->limit(1)
-                    );
-                } elseif ($this->sortBy === 'lowest_price') {
-                    $query->orderBy(
-                        \Lunar\Models\Price::select('price')
-                            ->whereColumn('priceable_id', 'lunar_product_variants.id')
-                            ->where('priceable_type', \Lunar\Models\ProductVariant::class)
-                            ->limit(1)
-                    );
-                }
-            },
-            'defaultUrl',
-        ])
+        return LunarCollection::with('defaultUrl')
+            ->withCount('products')
             ->whereHas('products')
+            ->orderBy('attribute_data->name->value')
             ->get();
+    }
+
+    /**
+     * Get all tags for filtering.
+     */
+    public function getTagsProperty(): Collection
+    {
+        return Tag::withCount('products')
+            ->having('products_count', '>', 0)
+            ->orderBy('value')
+            ->get();
+    }
+
+    /**
+     * Get filtered and sorted products.
+     */
+    public function getProductsProperty(): LengthAwarePaginator
+    {
+        $query = Product::with([
+            'defaultUrl',
+            'thumbnail',
+            'variants.basePrices.currency',
+            'collections',
+            'tags',
+        ]);
+
+        // Filter by status
+        if ($this->status === 'published') {
+            $query->where('status', 'published');
+        } elseif ($this->status === 'draft') {
+            $query->where('status', 'draft');
+        }
+
+        // Filter by search query
+        if (!empty($this->searchQuery)) {
+            $query->where(function ($q) {
+                $q->where('attribute_data->name->value', 'like', '%' . $this->searchQuery . '%')
+                    ->orWhere('attribute_data->description->value', 'like', '%' . $this->searchQuery . '%');
+            });
+        }
+
+        // Filter by selected categories
+        if (!empty($this->selectedCategories)) {
+            $query->whereHas('collections', function ($q) {
+                $q->whereIn('lunar_collections.id', $this->selectedCategories);
+            });
+        }
+
+        // Filter by selected tags
+        if (!empty($this->selectedTags)) {
+            $query->whereHas('tags', function ($q) {
+                $q->whereIn('tags.id', $this->selectedTags);
+            });
+        }
+
+        // Apply sorting
+        switch ($this->sortBy) {
+            case 'price_high':
+                $query->orderByDesc(
+                    \Lunar\Models\Price::select('price')
+                        ->whereColumn('priceable_id', 'lunar_product_variants.id')
+                        ->where('priceable_type', ProductVariant::class)
+                        ->limit(1)
+                );
+                break;
+
+            case 'price_low':
+                $query->orderBy(
+                    \Lunar\Models\Price::select('price')
+                        ->whereColumn('priceable_id', 'lunar_product_variants.id')
+                        ->where('priceable_type', ProductVariant::class)
+                        ->limit(1)
+                );
+                break;
+
+            case 'name_asc':
+                $query->orderBy('attribute_data->name->value');
+                break;
+
+            case 'name_desc':
+                $query->orderByDesc('attribute_data->name->value');
+                break;
+
+            case 'newest':
+                $query->orderByDesc('created_at');
+                break;
+
+            case 'best_selling':
+                $query->orderByDesc('created_at');
+                break;
+
+            default:
+                $query->orderBy('created_at', 'desc');
+        }
+
+        return $query->paginate($this->perPage);
+    }
+
+    /**
+     * Get active filter count.
+     */
+    public function getActiveFilterCountProperty(): int
+    {
+        $count = 0;
+        if (!empty($this->selectedCategories)) $count += count($this->selectedCategories);
+        if (!empty($this->selectedTags)) $count += count($this->selectedTags);
+        if (!empty($this->searchQuery)) $count++;
+        return $count;
+    }
+
+    /**
+     * Toggle category filter.
+     */
+    public function toggleCategory(int $categoryId): void
+    {
+        if (in_array($categoryId, $this->selectedCategories)) {
+            $this->selectedCategories = array_values(array_diff($this->selectedCategories, [$categoryId]));
+        } else {
+            $this->selectedCategories[] = $categoryId;
+        }
+        $this->resetPage();
+    }
+
+    /**
+     * Toggle tag filter.
+     */
+    public function toggleTag(int $tagId): void
+    {
+        if (in_array($tagId, $this->selectedTags)) {
+            $this->selectedTags = array_values(array_diff($this->selectedTags, [$tagId]));
+        } else {
+            $this->selectedTags[] = $tagId;
+        }
+        $this->resetPage();
+    }
+
+    /**
+     * Set status filter.
+     */
+    public function setStatus(string $status): void
+    {
+        $this->status = $status;
+        $this->resetPage();
+    }
+
+    /**
+     * Clear all filters.
+     */
+    public function clearFilters(): void
+    {
+        $this->selectedCategories = [];
+        $this->selectedTags = [];
+        $this->searchQuery = '';
+        $this->sortBy = 'default';
+        $this->resetPage();
+    }
+
+    /**
+     * Clear specific filter type.
+     */
+    public function clearCategoryFilters(): void
+    {
+        $this->selectedCategories = [];
+        $this->resetPage();
+    }
+
+    public function clearTagFilters(): void
+    {
+        $this->selectedTags = [];
+        $this->resetPage();
     }
 
     /**
@@ -59,18 +226,16 @@ class StorePage extends Component
 
         if (!$cart) {
             $cart = Cart::create([
-                'currency_id' => \Lunar\Models\Currency::getDefault()->id,
-                'channel_id' => \Lunar\Models\Channel::getDefault()->id,
+                'currency_id' => Currency::getDefault()->id,
+                'channel_id' => Channel::getDefault()->id,
             ]);
             CartSession::use($cart);
         }
 
-        $cart->add(
-            \Lunar\Models\ProductVariant::find($variantId),
-            $quantity
-        );
+        $cart->add(ProductVariant::find($variantId), $quantity);
 
         $this->dispatch('cart-updated');
+        $this->dispatch('notify', message: 'Product added to cart!', type: 'success');
     }
 
     /**
