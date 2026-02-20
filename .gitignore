@@ -26,3 +26,16 @@ yarn.lock
 public/build
 meilisearch/
 .phpunit.cache/test-results
+config/lunar/cart_session.php
+config/lunar/cart.php
+config/lunar/discounts.php
+config/lunar/media.php
+config/lunar/orders.php
+config/lunar/panel.php
+config/lunar/pricing.php
+config/lunar/payments.php
+config/lunar/products.php
+config/lunar/search.php
+config/lunar/shipping.php
+config/lunar/taxes.php
+config/lunar/urls.php
