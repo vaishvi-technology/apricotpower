@@ -33,6 +33,7 @@ use App\Livewire\Account\OrderHistoryPage;
 use App\Livewire\Account\BasicInfoPage;
 use App\Livewire\Account\AccountDetailsPage;
 use App\Livewire\Account\EmailPreferencesPage;
+use App\Http\Controllers\ImpersonationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -109,3 +110,12 @@ Route::middleware(['auth:customer'])->group(function () {
     Route::get('/account-details', AccountDetailsPage::class)->name('account-details');
     Route::get('/email-preferences', EmailPreferencesPage::class)->name('email-preferences');
 });
+
+// Impersonation Routes (Admin only – staff guard)
+Route::middleware(['auth:staff'])->group(function () {
+    Route::get('/impersonate/customer/{customer}', [ImpersonationController::class, 'start'])
+        ->name('impersonate.start');
+});
+
+Route::post('/impersonate/stop', [ImpersonationController::class, 'stop'])
+    ->name('impersonate.stop');

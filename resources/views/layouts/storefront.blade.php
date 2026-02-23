@@ -123,6 +123,8 @@
 </head>
 
 <body class="antialiased text-gray-900 home-page">
+    <x-impersonation-banner />
+
     @livewire('components.navigation')
 
     <main>

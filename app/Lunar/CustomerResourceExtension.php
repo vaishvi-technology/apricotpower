@@ -4,6 +4,8 @@ namespace App\Lunar;
 
 use App\Filament\RelationManagers\CustomerAddressRelationManager;
 use App\Models\CustomerGroup;
+use App\Services\ImpersonationService;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Tables;
@@ -162,30 +164,47 @@ class CustomerResourceExtension extends ResourceExtension
 
     public function extendTable(Table $table): Table
     {
-        return $table->columns([
-            ...$table->getColumns(),
+        // Create impersonate action
+        $impersonateAction = Tables\Actions\Action::make('impersonate')
+            ->label('Impersonate')
+            ->icon('heroicon-o-user-circle')
+            ->color('warning')
+            ->requiresConfirmation()
+            ->modalHeading('Impersonate Customer')
+            ->modalDescription(fn ($record) => "You will be logged into the storefront as {$record->full_name} ({$record->email}). You can stop impersonating at any time using the banner at the top of the page.")
+            ->modalSubmitActionLabel('Start Impersonating')
+            ->url(fn ($record) => route('impersonate.start', $record))
+            ->openUrlInNewTab();
 
-            Tables\Columns\TextColumn::make('email')
-                ->label('Email')
-                ->searchable()
-                ->toggleable(isToggledHiddenByDefault: true),
+        return $table
+            ->columns([
+                ...$table->getColumns(),
 
-            Tables\Columns\TextColumn::make('phone')
-                ->label('Phone')
-                ->searchable()
-                ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
-            Tables\Columns\IconColumn::make('is_active')
-                ->label('Active')
-                ->boolean()
-                ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('phone')
+                    ->label('Phone')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
-            Tables\Columns\IconColumn::make('account_locked')
-                ->label('Locked')
-                ->boolean()
-                ->trueColor('danger')
-                ->falseColor('success')
-                ->toggleable(isToggledHiddenByDefault: true),
-        ]);
+                Tables\Columns\IconColumn::make('is_active')
+                    ->label('Active')
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\IconColumn::make('account_locked')
+                    ->label('Locked')
+                    ->boolean()
+                    ->trueColor('danger')
+                    ->falseColor('success')
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->actions([
+                ...$table->getActions(),
+                $impersonateAction,
+            ]);
     }
 }

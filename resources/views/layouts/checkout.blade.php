@@ -25,6 +25,8 @@
 </head>
 
 <body class="antialiased text-gray-900">
+    <x-impersonation-banner />
+
     <header class="relative border-b border-gray-100">
         <div class="flex items-center h-16 px-4 mx-auto max-w-screen-2xl sm:px-6 lg:px-8">
             <a
