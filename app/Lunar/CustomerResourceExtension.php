@@ -10,6 +10,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Lunar\Admin\Filament\Resources\CustomerResource\RelationManagers\AddressRelationManager;
 use Lunar\Admin\Support\Extending\ResourceExtension;
 
@@ -19,8 +20,51 @@ class CustomerResourceExtension extends ResourceExtension
     {
         $existing = $form->getComponents(withHidden: true);
 
+        // Remove Lunar's default CheckboxList for customerGroups from existing components
+        $filtered = collect($existing)->map(function ($component) {
+            // Check if this component contains the customerGroups CheckboxList (it's in a Group/Section)
+            if (method_exists($component, 'getChildComponents')) {
+                $children = $component->getChildComponents();
+                foreach ($children as $child) {
+                    if ($child instanceof Forms\Components\CheckboxList && $child->getName() === 'customerGroups') {
+                        // Replace the CheckboxList with our Select inside the same container
+                        return Forms\Components\Group::make([
+                            Forms\Components\Select::make('customerGroups')
+                                ->label('Account Group')
+                                ->helperText('Determines product pricing and payment terms.')
+                                ->relationship(
+                                    name: 'customerGroups',
+                                    titleAttribute: 'name',
+                                    modifyQueryUsing: fn (Builder $query) => $query->distinct(['id', 'name', 'handle', 'default'])
+                                )
+                                ->multiple()
+                                ->maxItems(1)
+                                ->preload()
+                                ->searchable(),
+                        ]);
+                    }
+                }
+            }
+            // Also check if the component itself is the CheckboxList
+            if ($component instanceof Forms\Components\CheckboxList && $component->getName() === 'customerGroups') {
+                return Forms\Components\Select::make('customerGroups')
+                    ->label('Account Group')
+                    ->helperText('Determines product pricing and payment terms.')
+                    ->relationship(
+                        name: 'customerGroups',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: fn (Builder $query) => $query->distinct(['id', 'name', 'handle', 'default'])
+                    )
+                    ->multiple()
+                    ->maxItems(1)
+                    ->preload()
+                    ->searchable();
+            }
+            return $component;
+        })->all();
+
         return $form->schema([
-            ...$existing,
+            ...$filtered,
 
             Forms\Components\Tabs::make('Account Details')
                 ->columnSpanFull()
@@ -71,14 +115,6 @@ class CustomerResourceExtension extends ResourceExtension
                     Forms\Components\Tabs\Tab::make('Account Details')
                         ->icon('heroicon-o-cog-6-tooth')
                         ->schema([
-                            Forms\Components\Select::make('customer_group_id')
-                                ->label('Account Group')
-                                ->helperText('Determines product pricing and payment terms.')
-                                ->relationship('customerGroups', 'name')
-                                ->multiple()
-                                ->preload()
-                                ->searchable(),
-
                             Forms\Components\Grid::make(2)->schema([
                                 Forms\Components\Select::make('referred_by')
                                     ->label('How Did You Hear About Us?')
