@@ -175,6 +175,12 @@
                                 </button>
                             </form>
 
+                            <div style="background: #4a4a2e; color: #fff; padding: 12px 16px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 1rem;">
+                                By logging in above, you understand and accept Apricot Power's
+                                <a href="{{ route('privacy') }}" class="auth-link" target="_blank" style="color: #f0c040;">Privacy Policy</a>,
+                                which details personal information collected, why and how it is used, and the rights you have over your data.
+                            </div>
+
                             <div class="auth-divider">
                                 <span>New here?</span>
                             </div>
