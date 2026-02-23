@@ -33,18 +33,23 @@ class User extends Authenticatable
         'is_active' => 'boolean',
     ];
 
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
+    }
+
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return in_array($this->role, ['super_admin', 'admin']);
     }
 
     public function isManager(): bool
     {
-        return in_array($this->role, ['admin', 'manager']);
+        return in_array($this->role, ['super_admin', 'admin', 'manager']);
     }
 
     public function isStaff(): bool
     {
-        return in_array($this->role, ['admin', 'manager', 'staff']);
+        return in_array($this->role, ['super_admin', 'admin', 'manager', 'staff']);
     }
 }

@@ -35,6 +35,11 @@ return [
             'provider' => 'users',
         ],
 
+        'staff' => [
+            'driver' => 'session',
+            'provider' => 'staff',
+        ],
+
         'customer' => [
             'driver' => 'session',
             'provider' => 'customers',
@@ -55,6 +60,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+
+        'staff' => [
+            'driver' => 'eloquent',
+            'model' => Lunar\Admin\Models\Staff::class,
         ],
 
         'customers' => [
