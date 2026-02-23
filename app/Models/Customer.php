@@ -2,142 +2,119 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Lunar\Models\Cart;
+use Lunar\Models\Customer as LunarCustomer;
+use Lunar\Models\Order;
 
-class Customer extends Authenticatable
+/**
+ * Extends Lunar's Customer model with legacy Apricot Power fields
+ * and direct authentication support via Sanctum.
+ *
+ * Lunar base fields: id, title, first_name, last_name, company_name, vat_no, meta, timestamps
+ * Added fields: email, password, phone, is_tax_exempt, net_terms_approved, credit_limit,
+ *               current_balance, is_active, is_vip, is_retailer, notes, etc.
+ *
+ * Lunar's default architecture: User (auth) -> customer_user pivot -> Customer (data)
+ * Our extension adds: Customer can also authenticate directly via Sanctum API tokens.
+ *
+ * Registered via ModelManifest::replace() in AppServiceProvider.
+ */
+class Customer extends LunarCustomer implements AuthenticatableContract
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use Authenticatable, HasApiTokens, Notifiable, SoftDeletes;
 
-    protected $fillable = [
-        'customer_group_id',
-        'email',
-        'password',
-        'first_name',
-        'last_name',
-        'company_name',
-        'phone',
-        'tax_id',
-        'is_tax_exempt',
-        'tax_exempt_certificate',
-        'net_terms_approved',
-        'credit_limit',
-        'current_balance',
-        'notes',
-        'is_active',
-        'last_login_at',
-    ];
+    protected $guarded = [];
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'is_tax_exempt' => 'boolean',
-            'net_terms_approved' => 'boolean',
-            'credit_limit' => 'decimal:2',
-            'current_balance' => 'decimal:2',
-            'is_active' => 'boolean',
-            'last_login_at' => 'datetime',
-        ];
-    }
+    protected $casts = [
+        'attribute_data' => \Lunar\Base\Casts\AsAttributeData::class,
+        'meta' => \Illuminate\Database\Eloquent\Casts\AsArrayObject::class,
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'is_tax_exempt' => 'boolean',
+        'net_terms_approved' => 'boolean',
+        'credit_limit' => 'decimal:2',
+        'current_balance' => 'decimal:2',
+        'is_active' => 'boolean',
+        'account_locked' => 'boolean',
+        'subscribe_to_list' => 'boolean',
+        'is_vip' => 'boolean',
+        'vip_since' => 'date',
+        'vip_expire' => 'date',
+        'is_retailer' => 'boolean',
+        'is_online_retailer' => 'boolean',
+        'last_login_at' => 'datetime',
+        'last_order_at' => 'datetime',
+        'agreed_terms_at' => 'datetime',
+    ];
 
+    /**
+     * Full name accessor.
+     */
     public function getFullNameAttribute(): string
     {
-        return "{$this->first_name} {$this->last_name}";
+        return trim("{$this->first_name} {$this->last_name}");
     }
 
-    public function customerGroup(): BelongsTo
+    /**
+     * Carts belonging to this customer.
+     * Required by Lunar's CartSessionManager when Customer is the authenticated model.
+     */
+    public function carts(): HasMany
     {
-        return $this->belongsTo(CustomerGroup::class);
+        return $this->hasMany(Cart::modelClass());
     }
 
-    public function addresses(): HasMany
+    /**
+     * Orders belonging to this customer.
+     */
+    public function orders(): HasMany
     {
-        return $this->hasMany(CustomerAddress::class);
+        return $this->hasMany(Order::modelClass());
     }
 
+    /**
+     * Default shipping address.
+     */
     public function defaultShippingAddress(): HasOne
     {
-        return $this->hasOne(CustomerAddress::class)
-            ->where('type', 'shipping')
-            ->where('is_default', true);
+        return $this->hasOne(\Lunar\Models\Address::modelClass())
+            ->where('shipping_default', true);
     }
 
+    /**
+     * Default billing address.
+     */
     public function defaultBillingAddress(): HasOne
     {
-        return $this->hasOne(CustomerAddress::class)
-            ->where('type', 'billing')
-            ->where('is_default', true);
+        return $this->hasOne(\Lunar\Models\Address::modelClass())
+            ->where('billing_default', true);
     }
 
+    /**
+     * Wholesale stores for this customer.
+     */
     public function stores(): HasMany
     {
         return $this->hasMany(CustomerStore::class);
     }
 
+    /**
+     * Dealer record for this customer.
+     */
     public function dealer(): HasOne
     {
         return $this->hasOne(Dealer::class);
-    }
-
-    public function orders(): HasMany
-    {
-        return $this->hasMany(Order::class);
-    }
-
-    public function carts(): HasMany
-    {
-        return $this->hasMany(Cart::class);
-    }
-
-    public function activeCart(): HasOne
-    {
-        return $this->hasOne(Cart::class)->latest();
-    }
-
-    public function subscriptions(): HasMany
-    {
-        return $this->hasMany(Subscription::class);
-    }
-
-    public function paymentMethods(): HasMany
-    {
-        return $this->hasMany(PaymentMethod::class);
-    }
-
-    public function defaultPaymentMethod(): HasOne
-    {
-        return $this->hasOne(PaymentMethod::class)->where('is_default', true);
-    }
-
-    public function reviews(): HasMany
-    {
-        return $this->hasMany(Review::class);
-    }
-
-    public function loyaltyPoints(): HasOne
-    {
-        return $this->hasOne(LoyaltyPoints::class);
-    }
-
-    public function transactions(): HasMany
-    {
-        return $this->hasMany(Transaction::class);
-    }
-
-    public function couponUsages(): HasMany
-    {
-        return $this->hasMany(CouponUsage::class);
     }
 }

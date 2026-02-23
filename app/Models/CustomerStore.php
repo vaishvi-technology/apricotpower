@@ -27,27 +27,12 @@ class CustomerStore extends Model
         'notes',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'is_active' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
 
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
-    }
-
-    public function getFormattedAddressAttribute(): string
-    {
-        $lines = [
-            $this->address_line_1,
-            $this->address_line_2,
-            "{$this->city}, {$this->state} {$this->postal_code}",
-            $this->country,
-        ];
-
-        return implode("\n", array_filter($lines));
     }
 }

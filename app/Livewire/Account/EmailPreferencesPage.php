@@ -8,33 +8,35 @@ use Livewire\Component;
 
 class EmailPreferencesPage extends Component
 {
-    public bool $marketing_emails = false;
+    public bool $subscribe_to_list = false;
     public bool $order_updates = true;
     public bool $newsletter = false;
     public bool $promotional_offers = false;
 
     public function mount(): void
     {
-        $user = Auth::user();
-        $preferences = $user->email_preferences ?? [];
+        $customer = Auth::guard('customer')->user();
+        $this->subscribe_to_list = (bool) ($customer->subscribe_to_list ?? false);
 
-        $this->marketing_emails = $preferences['marketing_emails'] ?? false;
-        $this->order_updates = $preferences['order_updates'] ?? true;
-        $this->newsletter = $preferences['newsletter'] ?? false;
-        $this->promotional_offers = $preferences['promotional_offers'] ?? false;
+        $prefs = $customer->meta?->toArray() ?? [];
+        $this->order_updates = $prefs['email_order_updates'] ?? true;
+        $this->newsletter = $prefs['email_newsletter'] ?? false;
+        $this->promotional_offers = $prefs['email_promotional'] ?? false;
     }
 
     public function save(): void
     {
-        $user = Auth::user();
-        $user->update([
-            'email_preferences' => [
-                'marketing_emails' => $this->marketing_emails,
-                'order_updates' => $this->order_updates,
-                'newsletter' => $this->newsletter,
-                'promotional_offers' => $this->promotional_offers,
-            ],
-        ]);
+        $customer = Auth::guard('customer')->user();
+
+        $customer->subscribe_to_list = $this->subscribe_to_list;
+
+        $meta = $customer->meta?->toArray() ?? [];
+        $meta['email_order_updates'] = $this->order_updates;
+        $meta['email_newsletter'] = $this->newsletter;
+        $meta['email_promotional'] = $this->promotional_offers;
+        $customer->meta = $meta;
+
+        $customer->save();
 
         session()->flash('success', 'Your email preferences have been updated.');
     }

@@ -128,7 +128,7 @@
 
                 <!-- User Section -->
                 <div class="ms-3 navbar-icons navbar-nav d-flex align-items-center">
-                    @guest
+                    @guest('customer')
                         <!-- Not Logged In -->
                         <div class="user-section2 user-left d-flex align-items-center gap-3">
                             <a href="{{ route('login') }}" class="header-link" wire:navigate>
@@ -162,11 +162,11 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
                                         <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
                                     </svg>
-                                    <span class="user-name ms-1">{{ auth()->user()->name ?? 'Account' }}</span>
+                                    <span class="user-name ms-1">{{ auth('customer')->user()->first_name ?? 'Account' }}</span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                     <li>
-                                        <a class="dropdown-item" href="{{ route('order-history') }}" wire:navigate>Order History</a>
+                                        <a class="dropdown-item" href="{{ route('order-history.view') }}" wire:navigate>Order History</a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="{{ route('basic-info') }}" wire:navigate>Basic Info</a>

@@ -3,12 +3,20 @@
 namespace App\Providers;
 
 use App\Base\CustomMediaDefinitions;
+use App\Lunar\CreateStaffPageExtension;
+use App\Lunar\CustomerResourceExtension;
 use App\Lunar\EditProductPageExtension;
+use App\Lunar\EditStaffPageExtension;
 use App\Lunar\ProductResourceExtension;
+use App\Lunar\StaffResourceExtension;
 use App\Modifiers\ShippingModifier;
 use Illuminate\Support\ServiceProvider;
+use Lunar\Admin\Filament\Resources\CustomerResource;
 use Lunar\Admin\Filament\Resources\ProductResource;
 use Lunar\Admin\Filament\Resources\ProductResource\Pages\EditProduct;
+use Lunar\Admin\Filament\Resources\StaffResource;
+use Lunar\Admin\Filament\Resources\StaffResource\Pages\CreateStaff;
+use Lunar\Admin\Filament\Resources\StaffResource\Pages\EditStaff;
 use Lunar\Admin\Support\Facades\LunarPanel;
 use Lunar\Base\ShippingModifiers;
 use Lunar\Facades\Telemetry;
@@ -24,11 +32,16 @@ class AppServiceProvider extends ServiceProvider
         LunarPanel::extensions([
             ProductResource::class => ProductResourceExtension::class,
             EditProduct::class => EditProductPageExtension::class,
+            CustomerResource::class => CustomerResourceExtension::class,
+            StaffResource::class => StaffResourceExtension::class,
+            EditStaff::class => EditStaffPageExtension::class,
+            CreateStaff::class => CreateStaffPageExtension::class,
         ]);
 
         LunarPanel::panel(
             fn ($panel) => $panel
             ->path('admin')
+            ->login(\App\Filament\Pages\Auth\StaffLogin::class)
             ->plugins([
                 new ShippingPlugin,
             ])
@@ -75,6 +88,18 @@ class AppServiceProvider extends ServiceProvider
         \Lunar\Facades\ModelManifest::replace(
             \Lunar\Models\Contracts\Tag::class,
             \App\Models\Tag::class,
+            \Lunar\Models\Contracts\Customer::class,
+            \App\Models\Customer::class,
+        );
+
+        \Lunar\Facades\ModelManifest::replace(
+            \Lunar\Models\Contracts\CustomerGroup::class,
+            \App\Models\CustomerGroup::class,
+        );
+
+        \Lunar\Facades\ModelManifest::replace(
+            \Lunar\Models\Contracts\Address::class,
+            \App\Models\Address::class,
         );
     }
 }

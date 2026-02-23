@@ -87,22 +87,22 @@ Route::get('/privacy', PrivacyPage::class)->name('privacy');
 Route::get('/return-policy', ReturnPolicyPage::class)->name('return-policy');
 Route::get('/shipping-policy', ShippingPolicyPage::class)->name('shipping-policy');
 
-// Authentication (Guest only)
-Route::middleware(['guest'])->group(function () {
+// Authentication (Guest only – customer guard)
+Route::middleware(['guest:customer'])->group(function () {
     Route::get('/login', LoginPage::class)->name('login');
     Route::get('/register', RegisterPage::class)->name('register');
     Route::get('/forgot-password', ForgotPasswordPage::class)->name('forgot-password');
 });
 
 Route::post('/logout', function () {
-    auth()->logout();
+    auth('customer')->logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
     return redirect('/');
 })->name('logout');
 
-// Account (Protected)
-Route::middleware(['auth'])->group(function () {
+// Account (Protected – customer guard)
+Route::middleware(['auth:customer'])->group(function () {
     Route::get('/order-history', OrderHistoryPage::class)->name('order-history.view');
     Route::get('/order-history/{id}', OrderHistoryPage::class)->name('order-history.detail');
     Route::get('/basic-info', BasicInfoPage::class)->name('basic-info');

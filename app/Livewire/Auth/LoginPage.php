@@ -24,7 +24,17 @@ class LoginPage extends Component
     {
         $this->validate();
 
-        if (Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+        if (Auth::guard('customer')->attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+            $customer = Auth::guard('customer')->user();
+
+            if (!$customer->is_active) {
+                Auth::guard('customer')->logout();
+                session()->invalidate();
+                session()->regenerateToken();
+                $this->addError('email', 'Your account is not active. Please contact an administrator.');
+                return;
+            }
+
             session()->regenerate();
             $this->redirect(route('order-history.view'));
             return;
