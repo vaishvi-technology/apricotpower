@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Lunar\Models\Product as LunarProduct;
 
 class Product extends LunarProduct
@@ -14,6 +13,7 @@ class Product extends LunarProduct
         'product_type_id',
         'status',
         'brand_id',
+        'category_id',
         // SEO meta fields
         'meta_title',
         'meta_keywords',
@@ -23,4 +23,9 @@ class Product extends LunarProduct
         'meta_og_image',
         'meta_og_url',
     ];
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

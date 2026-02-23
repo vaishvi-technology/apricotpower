@@ -31,7 +31,7 @@ return new class extends Migration
     {
         Schema::create('dealers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id')->nullable()->constrained('customers')->nullOnDelete();
+            $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
             $table->string('business_name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
@@ -44,19 +44,20 @@ return new class extends Migration
             $table->string('state');
             $table->string('postal_code');
             $table->string('country')->default('US');
-            $table->decimal('latitude', 10, 7)->nullable();     // DealerLat -> latitude
-            $table->decimal('longitude', 10, 7)->nullable();    // DealerLon -> longitude
-            $table->json('hours_of_operation')->nullable();      // NEW: business hours
-            $table->string('logo')->nullable();                  // NEW: logo image path
-            $table->boolean('is_featured')->default(false);      // NEW: featured dealer flag
-            $table->boolean('show_on_locator')->default(true);   // NEW: show on store locator
-            $table->boolean('is_active')->default(true);         // !Hidden -> is_active
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
+            $table->json('hours_of_operation')->nullable();
+            $table->string('logo')->nullable();
+            $table->boolean('is_featured')->default(false);
+            $table->boolean('show_on_locator')->default(true);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
 
             $table->index('customer_id');
-            $table->index('slug');
             $table->index('is_active');
+            $table->index('show_on_locator');
             $table->index(['latitude', 'longitude']);
+            $table->index('state');
         });
     }
 

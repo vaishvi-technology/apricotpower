@@ -21,6 +21,7 @@ use Lunar\Admin\Filament\Resources\StaffResource\Pages\CreateStaff;
 use Lunar\Admin\Filament\Resources\StaffResource\Pages\EditStaff;
 use Lunar\Admin\Support\Facades\LunarPanel;
 use Lunar\Base\ShippingModifiers;
+use Lunar\Facades\Telemetry;
 use Lunar\Shipping\ShippingPlugin;
 
 class AppServiceProvider extends ServiceProvider
@@ -69,6 +70,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(ShippingModifiers $shippingModifiers): void
     {
+        // Disable Lunar telemetry to prevent DNS errors for stats.lunarphp.io
+        Telemetry::optOut();
+
         $shippingModifiers->add(
             ShippingModifier::class
         );
@@ -76,6 +80,16 @@ class AppServiceProvider extends ServiceProvider
         \Lunar\Facades\ModelManifest::replace(
             \Lunar\Models\Contracts\Product::class,
             \App\Models\Product::class,
+        );
+
+        \Lunar\Facades\ModelManifest::replace(
+            \Lunar\Models\Contracts\ProductVariant::class,
+            \App\Models\ProductVariant::class,
+        );
+
+        \Lunar\Facades\ModelManifest::replace(
+            \Lunar\Models\Contracts\Tag::class,
+            \App\Models\Tag::class,
         );
 
         \Lunar\Facades\ModelManifest::replace(

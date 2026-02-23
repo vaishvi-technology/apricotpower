@@ -20,18 +20,10 @@ return new class extends Migration
     {
         Schema::table('customers', function (Blueprint $table) {
             // Contact
-            $table->string('phone', 50)->nullable()->after('tax_identifier');
             $table->string('alt_phone', 50)->nullable()->after('phone');
 
-            // B2B / Wholesale fields (from legacy accounts)
-            $table->boolean('is_tax_exempt')->default(false)->after('alt_phone');
-            $table->string('tax_exempt_certificate')->nullable()->after('is_tax_exempt');
-            $table->boolean('net_terms_approved')->default(false)->after('tax_exempt_certificate');
-            $table->decimal('credit_limit', 10, 2)->nullable()->after('net_terms_approved');
-            $table->decimal('current_balance', 10, 2)->default(0)->after('credit_limit');
 
             // Account status
-            $table->boolean('is_active')->default(true)->after('current_balance');
             $table->boolean('account_locked')->default(false)->after('is_active');
             $table->boolean('subscribe_to_list')->default(false)->after('account_locked');
 
@@ -52,17 +44,12 @@ return new class extends Migration
             $table->unsignedInteger('sales_rep_id')->default(0)->after('store_count');
 
             // Notes
-            $table->text('notes')->nullable()->after('sales_rep_id');
             $table->text('admin_notes')->nullable()->after('notes');
             $table->text('extra_emails')->nullable()->after('admin_notes');
 
             // Tracking
-            $table->timestamp('last_login_at')->nullable()->after('extra_emails');
             $table->timestamp('last_order_at')->nullable()->after('last_login_at');
             $table->timestamp('agreed_terms_at')->nullable()->after('last_order_at');
-
-            // Soft deletes
-            $table->softDeletes();
 
             // Indexes
             $table->index('is_active');
@@ -78,22 +65,23 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('customers', function (Blueprint $table) {
+            // Drop indexes added by this migration
             $table->dropIndex(['is_active']);
             $table->dropIndex(['is_retailer']);
             $table->dropIndex(['is_vip']);
             $table->dropIndex(['last_name', 'first_name']);
-            $table->dropSoftDeletes();
+
+            // Only drop columns added by THIS migration
+            // (not those from 2026_02_18_100020_add_custom_fields_to_lunar_customers_table.php)
             $table->dropColumn([
-                'phone', 'alt_phone',
-                'is_tax_exempt', 'tax_exempt_certificate',
-                'net_terms_approved', 'credit_limit', 'current_balance',
-                'is_active', 'account_locked', 'subscribe_to_list',
+                'alt_phone',
+                'account_locked', 'subscribe_to_list',
                 'is_vip', 'vip_since', 'vip_expire',
                 'referred_by',
                 'is_retailer', 'is_online_retailer', 'store_count',
                 'sales_rep_id',
-                'notes', 'admin_notes', 'extra_emails',
-                'last_login_at', 'last_order_at', 'agreed_terms_at',
+                'admin_notes', 'extra_emails',
+                'last_order_at', 'agreed_terms_at',
             ]);
         });
     }
