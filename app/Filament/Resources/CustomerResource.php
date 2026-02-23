@@ -53,7 +53,7 @@ class CustomerResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('customer_group_id')
                             ->label('Customer Group')
-                            ->relationship('customerGroup', 'name')
+                            ->options(fn () => \App\Models\CustomerGroup::pluck('name', 'id'))
                             ->searchable()
                             ->preload(),
                         Forms\Components\TextInput::make('password')
@@ -141,7 +141,7 @@ class CustomerResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('customer_group_id')
-                    ->relationship('customerGroup', 'name')
+                    ->options(fn () => \App\Models\CustomerGroup::pluck('name', 'id'))
                     ->label('Customer Group'),
                 Tables\Filters\TernaryFilter::make('is_active')
                     ->label('Active'),

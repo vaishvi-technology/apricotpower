@@ -31,7 +31,7 @@ class CategoryResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('parent_id')
                             ->label('Parent Category')
-                            ->relationship('parent', 'name')
+                            ->options(fn () => \App\Models\Category::pluck('name', 'id'))
                             ->searchable()
                             ->preload()
                             ->placeholder('None (Top Level)'),
@@ -126,7 +126,7 @@ class CategoryResource extends Resource
                     ->label('In Menu'),
                 Tables\Filters\SelectFilter::make('parent_id')
                     ->label('Parent Category')
-                    ->relationship('parent', 'name')
+                    ->options(fn () => \App\Models\Category::pluck('name', 'id'))
                     ->placeholder('All'),
             ])
             ->actions([

@@ -93,13 +93,13 @@ class CouponResource extends Resource
                         Forms\Components\Toggle::make('exclude_sale_items')
                             ->label('Exclude Sale Items'),
                         Forms\Components\Select::make('products')
-                            ->relationship('products', 'id')
+                            ->options(fn () => \Lunar\Models\Product::pluck('id', 'id'))
                             ->multiple()
                             ->searchable()
                             ->preload()
                             ->visible(fn (Forms\Get $get) => !$get('applies_to_all_products')),
                         Forms\Components\Select::make('categories')
-                            ->relationship('categories', 'name')
+                            ->options(fn () => \App\Models\Category::pluck('name', 'id'))
                             ->multiple()
                             ->searchable()
                             ->preload()

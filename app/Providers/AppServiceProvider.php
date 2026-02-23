@@ -88,6 +88,9 @@ class AppServiceProvider extends ServiceProvider
         \Lunar\Facades\ModelManifest::replace(
             \Lunar\Models\Contracts\Tag::class,
             \App\Models\Tag::class,
+        );
+
+        \Lunar\Facades\ModelManifest::replace(
             \Lunar\Models\Contracts\Customer::class,
             \App\Models\Customer::class,
         );

@@ -28,15 +28,9 @@ class ProductResourceExtension extends ResourceExtension
                 // Add category select at the beginning of the section
                 $categorySelect = Forms\Components\Select::make('category_id')
                     ->label('Category')
-                    ->relationship('category', 'name')
+                    ->options(fn () => \App\Models\Category::pluck('name', 'id'))
                     ->searchable()
-                    ->preload()
-                    ->createOptionForm([
-                        Forms\Components\TextInput::make('name')
-                            ->required(),
-                        Forms\Components\TextInput::make('slug')
-                            ->required(),
-                    ]);
+                    ->preload();
 
                 return $component->schema([$categorySelect, ...$filteredSchema]);
             }
@@ -117,8 +111,7 @@ class ProductResourceExtension extends ResourceExtension
                 ...$filters,
                 Tables\Filters\SelectFilter::make('category_id')
                     ->label('Category')
-                    ->relationship('category', 'name')
-                    ->preload(),
+                    ->options(fn () => \App\Models\Category::pluck('name', 'id')),
             ]);
     }
 }

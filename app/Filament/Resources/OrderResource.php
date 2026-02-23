@@ -38,7 +38,7 @@ class OrderResource extends Resource
                                     ->disabled()
                                     ->dehydrated(),
                                 Forms\Components\Select::make('customer_id')
-                                    ->relationship('customer', 'email')
+                                    ->options(fn () => \App\Models\Customer::pluck('email', 'id'))
                                     ->searchable()
                                     ->preload()
                                     ->required(),
