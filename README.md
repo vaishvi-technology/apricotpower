@@ -1,34 +1,111 @@
-<p align="center"><a href="https://lunarphp.com/" target="_blank"><img src="https://raw.githubusercontent.com/lunarphp/art/main/lunar-logo.svg" width="200" alt="Lunar"></a></p>
+# Apricot Power - E-commerce Platform
 
-# Starter Kit
+A Laravel-based e-commerce application built with [Lunar PHP](https://lunarphp.io/) and Livewire, powered by Docker using Laravel Sail.
 
-This repository is provided as a reference to learn how to use Lunar Laravel E-Commerce package. This example is a classic e-commerce store.
+## Tech Stack
 
-> **Warning**
-> This application is purely an example of how you can implement Lunar headless e-commerce for Laravel. It is not production ready or complete.
+- **Framework:** Laravel 10/11
+- **E-commerce:** Lunar PHP
+- **Frontend:** Livewire
+- **Payment:** Stripe
+- **Search:** Meilisearch
+- **Cache:** Redis
+- **Storage:** AWS S3
+- **Containerization:** Docker (Laravel Sail)
 
-# Installation
+## Prerequisites
 
-For full installation instructions please visit [https://docs.lunarphp.com/](https://docs.lunarphp.com/)
+Before you begin, ensure you have the following installed:
 
-## Installation with Docker
+- [Git](https://git-scm.com/)
+- [Docker](https://www.docker.com/get-started) & Docker Compose
+- PHP 8.2+ (for initial composer install, or use Docker)
 
-> Make sure you have Docker installed on your local machine.
+## Installation
 
-### Environment Demo store
-
-You can execute it via the `docker compose up` command in your favorite terminal. 
-Please note that the speed of building images and initializing containers depends on your local machine and internet connection - it may take some time. 
+### 1. Clone the Repository
 
 ```bash
-cp .env.docker.example .env
-docker-compose up
+git clone https://github.com/vaishvi-technology/apricotpower.git
+cd apricotpower
 ```
 
-The demo store will be available to `http://localhost` in your browser.
+### 2. Configure Environment
 
-####  Log into Lunar panel
+Copy the example environment file and configure your settings:
 
-Once the project is prepared, the Lunar panel will start and available to `http://localhost/lunar`. 
+```bash
+cp .env.example .env
+```
 
-Default admin user is username `admin@lunarphp.io` and password `password`
+### 3. Install Dependencies
+
+Run the following command to install PHP dependencies using Docker (no local PHP required):
+
+```bash
+docker run --rm \
+    -u "$(id -u):$(id -g)" \
+    -v "$(pwd):/var/www/html" \
+    -w /var/www/html \
+    laravelsail/php82-composer:latest \
+    composer install --ignore-platform-reqs
+```
+
+### 4. Configure Laravel Sail
+
+Install and configure Laravel Sail for your environment:
+
+```bash
+php artisan sail:install
+```
+
+When prompted, select the services you need (MySQL, Redis, Meilisearch, etc.).
+
+### 5. Start the Application
+
+Launch all Docker containers in detached mode:
+
+```bash
+./vendor/bin/sail up -d
+```
+
+### 6. Generate Application Key
+
+Generate a unique application key for encryption:
+
+```bash
+./vendor/bin/sail artisan key:generate
+```
+
+### 7. Run Database Migrations
+
+Create the database tables:
+
+```bash
+./vendor/bin/sail artisan migrate
+```
+
+## Usage
+
+Once installed, the application will be available at:
+
+- **Application:** http://localhost
+- **Meilisearch:** http://localhost:7700
+
+## Troubleshooting
+
+### Port Conflicts
+
+If port 80 is already in use, modify `APP_PORT` in your `.env` file:
+
+```env
+APP_PORT=8080
+```
+
+### Permission Issues
+
+If you encounter permission errors, ensure Docker has proper permissions:
+
+```bash
+sudo chown -R $USER:$USER .
+```
