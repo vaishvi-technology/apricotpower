@@ -46,6 +46,13 @@
             box-shadow: 0 0 0 3px rgba(214, 137, 16, 0.15);
             background: #fff;
         }
+        .auth-input-group select.form-control {
+            appearance: auto;
+            cursor: pointer;
+        }
+        .auth-input-group textarea.form-control {
+            resize: vertical;
+        }
         .auth-btn {
             background: linear-gradient(135deg, #d68910, #e8a020);
             border: none;
@@ -236,6 +243,58 @@
                                            required>
                                 </div>
 
+                                <div class="auth-input-group">
+                                    <label for="referred_by">How Did You Hear About Us?</label>
+                                    <select class="form-control @error('referred_by') border-danger @enderror"
+                                            id="referred_by"
+                                            wire:model.live="referred_by">
+                                        <option value="">Select...</option>
+                                        <option value="Family or Friend">Family or Friend</option>
+                                        <option value="Doctor or Clinic">Doctor or Clinic</option>
+                                        <option value="Search Engine">Search Engine</option>
+                                        <option value="Internet Article">Internet Article</option>
+                                        <option value="Advertisement">Advertisement</option>
+                                        <option value="Facebook">Facebook</option>
+                                        <option value="Natural News">Natural News</option>
+                                        <option value="Book">Book</option>
+                                        <option value="Email or Newsletter">Email or Newsletter</option>
+                                        <option value="Church">Church</option>
+                                        <option value="Unfiltered News">Unfiltered News</option>
+                                        <option value="Event, Expo or Tradeshow">Event, Expo or Tradeshow</option>
+                                        <option value="Other...">Other...</option>
+                                    </select>
+                                    @error('referred_by')
+                                        <div class="error-text">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                @if($referred_by === 'Other...')
+                                <div class="auth-input-group">
+                                    <label for="referred_by_other">Please specify</label>
+                                    <input type="text"
+                                           class="form-control @error('referred_by_other') border-danger @enderror"
+                                           id="referred_by_other"
+                                           wire:model="referred_by_other"
+                                           placeholder="Specify other"
+                                           maxlength="50">
+                                    @error('referred_by_other')
+                                        <div class="error-text">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                @endif
+
+                                <div class="auth-input-group">
+                                    <label for="b17_knowledge">What do you know about B17/Apricot Seeds?</label>
+                                    <textarea class="form-control @error('b17_knowledge') border-danger @enderror"
+                                              id="b17_knowledge"
+                                              wire:model="b17_knowledge"
+                                              rows="3"
+                                              placeholder=""></textarea>
+                                    @error('b17_knowledge')
+                                        <div class="error-text">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
                                 <div class="form-check auth-check mb-2">
                                     <input type="checkbox" class="form-check-input" id="subscribe_to_list" wire:model="subscribe_to_list">
                                     <label class="form-check-label" for="subscribe_to_list" style="font-size: 0.88rem; color: #666;">
@@ -249,7 +308,7 @@
                                            id="agreed_terms"
                                            wire:model="agreed_terms">
                                     <label class="form-check-label" for="agreed_terms" style="font-size: 0.88rem; color: #666;">
-                                        I agree to the <a href="{{ route('privacy') }}" class="auth-link" target="_blank">Terms & Conditions</a>
+                                        I have read and understand <a href="{{ route('privacy') }}" class="auth-link" target="_blank">Apricot Power's privacy policy</a> which details personal information collected, why and how it is used, and the rights I have over my data. <strong>(Must be checked to continue.)</strong>
                                     </label>
                                     @error('agreed_terms')
                                         <div class="error-text">{{ $message }}</div>

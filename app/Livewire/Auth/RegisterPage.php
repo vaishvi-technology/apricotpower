@@ -17,6 +17,9 @@ class RegisterPage extends Component
     public string $company_name = '';
     public string $password = '';
     public string $password_confirmation = '';
+    public string $referred_by = '';
+    public string $referred_by_other = '';
+    public string $b17_knowledge = '';
     public bool $subscribe_to_list = false;
     public bool $agreed_terms = false;
 
@@ -29,6 +32,9 @@ class RegisterPage extends Component
             'phone' => 'nullable|string|max:20',
             'company_name' => 'nullable|string|max:255',
             'password' => 'required|min:8|confirmed',
+            'referred_by' => 'nullable|string|max:255',
+            'referred_by_other' => 'nullable|string|max:50|required_if:referred_by,Other...',
+            'b17_knowledge' => 'nullable|string|max:1000',
             'agreed_terms' => 'accepted',
         ];
     }
@@ -51,6 +57,8 @@ class RegisterPage extends Component
             'phone' => $this->phone ?: null,
             'company_name' => $this->company_name ?: null,
             'password' => Hash::make($this->password),
+            'referred_by' => $this->referred_by === 'Other...' ? ($this->referred_by_other ?: 'Other') : ($this->referred_by ?: null),
+            'b17_knowledge' => $this->b17_knowledge ?: null,
             'subscribe_to_list' => $this->subscribe_to_list,
             'agreed_terms_at' => now(),
             'is_active' => true,
