@@ -11,6 +11,7 @@ use Lunar\Admin\Filament\Resources\ProductResource;
 use Lunar\Admin\Filament\Resources\ProductResource\Pages\EditProduct;
 use Lunar\Admin\Support\Facades\LunarPanel;
 use Lunar\Base\ShippingModifiers;
+use Lunar\Facades\Telemetry;
 use Lunar\Shipping\ShippingPlugin;
 
 class AppServiceProvider extends ServiceProvider
@@ -54,6 +55,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(ShippingModifiers $shippingModifiers): void
     {
+        // Disable Lunar telemetry to prevent DNS errors for stats.lunarphp.io
+        Telemetry::optOut();
+
         $shippingModifiers->add(
             ShippingModifier::class
         );

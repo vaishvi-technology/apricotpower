@@ -2,7 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Models\Category;
 use App\Models\Product;
+use App\Models\Tag;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
@@ -12,9 +14,7 @@ use Lunar\Facades\CartSession;
 use Lunar\Models\Cart;
 use Lunar\Models\Channel;
 use Lunar\Models\Currency;
-use Lunar\Models\Collection as LunarCollection;
 use Lunar\Models\ProductVariant;
-use App\Models\Tag;
 
 class StorePage extends Component
 {
@@ -22,7 +22,7 @@ class StorePage extends Component
 
     public string $sortBy = 'default';
     public string $status = 'published';
-    public array $selectedCategories = [];
+    public ?int $selectedCategory = null;
     public array $selectedTags = [];
     public string $searchQuery = '';
     public int $perPage = 12;
@@ -30,20 +30,18 @@ class StorePage extends Component
     protected $queryString = [
         'sortBy' => ['except' => 'default'],
         'status' => ['except' => 'published'],
-        'selectedCategories' => ['except' => [], 'as' => 'categories'],
+        'selectedCategory' => ['except' => null, 'as' => 'category'],
         'selectedTags' => ['except' => [], 'as' => 'tags'],
         'searchQuery' => ['except' => '', 'as' => 'q'],
     ];
 
     /**
-     * Get all collections/categories for filtering.
+     * Get all categories for filtering.
      */
     public function getCategoriesProperty(): Collection
     {
-        return LunarCollection::with('defaultUrl')
-            ->withCount('products')
-            ->whereHas('products')
-            ->orderBy('attribute_data->name->value')
+        return Category::withCount('products')
+            ->orderBy('name')
             ->get();
     }
 
@@ -67,7 +65,7 @@ class StorePage extends Component
             'defaultUrl',
             'thumbnail',
             'variants.basePrices.currency',
-            'collections',
+            'category',
             'tags',
         ]);
 
@@ -86,11 +84,9 @@ class StorePage extends Component
             });
         }
 
-        // Filter by selected categories
-        if (!empty($this->selectedCategories)) {
-            $query->whereHas('collections', function ($q) {
-                $q->whereIn('lunar_collections.id', $this->selectedCategories);
-            });
+        // Filter by selected category
+        if ($this->selectedCategory) {
+            $query->where('category_id', $this->selectedCategory);
         }
 
         // Filter by selected tags
@@ -149,22 +145,18 @@ class StorePage extends Component
     public function getActiveFilterCountProperty(): int
     {
         $count = 0;
-        if (!empty($this->selectedCategories)) $count += count($this->selectedCategories);
+        if ($this->selectedCategory) $count++;
         if (!empty($this->selectedTags)) $count += count($this->selectedTags);
         if (!empty($this->searchQuery)) $count++;
         return $count;
     }
 
     /**
-     * Toggle category filter.
+     * Select or deselect a category filter.
      */
-    public function toggleCategory(int $categoryId): void
+    public function selectCategory(?int $categoryId): void
     {
-        if (in_array($categoryId, $this->selectedCategories)) {
-            $this->selectedCategories = array_values(array_diff($this->selectedCategories, [$categoryId]));
-        } else {
-            $this->selectedCategories[] = $categoryId;
-        }
+        $this->selectedCategory = ($this->selectedCategory === $categoryId) ? null : $categoryId;
         $this->resetPage();
     }
 
@@ -195,7 +187,7 @@ class StorePage extends Component
      */
     public function clearFilters(): void
     {
-        $this->selectedCategories = [];
+        $this->selectedCategory = null;
         $this->selectedTags = [];
         $this->searchQuery = '';
         $this->sortBy = 'default';
@@ -203,11 +195,11 @@ class StorePage extends Component
     }
 
     /**
-     * Clear specific filter type.
+     * Clear category filter.
      */
-    public function clearCategoryFilters(): void
+    public function clearCategoryFilter(): void
     {
-        $this->selectedCategories = [];
+        $this->selectedCategory = null;
         $this->resetPage();
     }
 

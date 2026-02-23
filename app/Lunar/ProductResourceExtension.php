@@ -14,8 +14,37 @@ class ProductResourceExtension extends ResourceExtension
     {
         $existing = $form->getComponents(withHidden: true);
 
+        // Filter out the brand_id field from existing components
+        $filtered = collect($existing)->map(function ($component) {
+            if ($component instanceof Forms\Components\Section) {
+                $schema = $component->getChildComponents();
+                $filteredSchema = collect($schema)->filter(function ($child) {
+                    if ($child instanceof Forms\Components\Select && $child->getName() === 'brand_id') {
+                        return false;
+                    }
+                    return true;
+                })->values()->all();
+
+                // Add category select at the beginning of the section
+                $categorySelect = Forms\Components\Select::make('category_id')
+                    ->label('Category')
+                    ->relationship('category', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('name')
+                            ->required(),
+                        Forms\Components\TextInput::make('slug')
+                            ->required(),
+                    ]);
+
+                return $component->schema([$categorySelect, ...$filteredSchema]);
+            }
+            return $component;
+        })->all();
+
         return $form->schema([
-            ...$existing,
+            ...$filtered,
 
             Forms\Components\Section::make('SEO Meta Fields')
                 ->description('Search engine optimization settings for this product.')
@@ -61,12 +90,35 @@ class ProductResourceExtension extends ResourceExtension
 
     public function extendTable(Table $table): Table
     {
-        return $table->columns([
-            ...$table->getColumns(),
-            Tables\Columns\TextColumn::make('meta_title')
-                ->label('Meta Title')
-                ->searchable()
-                ->toggleable(isToggledHiddenByDefault: true),
-        ]);
+        // Filter out brand column
+        $columns = collect($table->getColumns())->filter(function ($column) {
+            return $column->getName() !== 'brand.name';
+        })->values()->all();
+
+        // Filter out brand filter
+        $filters = collect($table->getFilters())->filter(function ($filter) {
+            return $filter->getName() !== 'brand';
+        })->values()->all();
+
+        return $table
+            ->columns([
+                ...$columns,
+                Tables\Columns\TextColumn::make('category.name')
+                    ->label('Category')
+                    ->badge()
+                    ->toggleable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('meta_title')
+                    ->label('Meta Title')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                ...$filters,
+                Tables\Filters\SelectFilter::make('category_id')
+                    ->label('Category')
+                    ->relationship('category', 'name')
+                    ->preload(),
+            ]);
     }
 }

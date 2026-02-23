@@ -8,6 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::dropIfExists('product_category');
+    }
+
+    public function down(): void
+    {
         Schema::create('product_category', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
@@ -18,10 +23,5 @@ return new class extends Migration
             $table->index('product_id');
             $table->index('category_id');
         });
-    }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('product_category');
     }
 };

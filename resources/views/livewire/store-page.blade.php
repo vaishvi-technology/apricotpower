@@ -6,6 +6,28 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link href="{{ asset('css/home.css') }}" rel="stylesheet">
         <style>
+            /* Store Header Banner */
+            .store-header-banner {
+                background: linear-gradient(135deg, #2d5a27 0%, #3d7a34 100%);
+                padding: 50px 0;
+                margin-bottom: 0;
+                position: relative;
+                z-index: 1;
+            }
+
+            .store-header-banner h1 {
+                color: #fff;
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin: 0 0 10px 0;
+            }
+
+            .store-header-banner p {
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 1.1rem;
+                margin: 0;
+            }
+
             /* Amazon-style Store Layout */
             .store-container {
                 display: flex;
@@ -576,19 +598,19 @@
     @endpush
 
     {{-- Header Section --}}
-    <section class="inner-banner" style="background: linear-gradient(135deg, #2d5a27 0%, #3d7a34 100%); padding: 40px 0;">
+    <section class="store-header-banner">
         <div class="container text-center">
-            <h1 class="text-white mb-2" style="font-size: 2.5rem; font-weight: 700;">
-                @if(!empty($selectedCategories) && count($selectedCategories) === 1)
+            <h1>
+                @if($selectedCategory)
                     @php
-                        $cat = $this->categories->firstWhere('id', $selectedCategories[0]);
+                        $cat = $this->categories->firstWhere('id', $selectedCategory);
                     @endphp
-                    {{ $cat ? $cat->translateAttribute('name') : 'Products' }}
+                    {{ $cat ? $cat->name : 'Products' }}
                 @else
                     All Products
                 @endif
             </h1>
-            <p class="text-white-50 mb-0">Discover our premium selection of health products</p>
+            <p>Discover our premium selection of health products</p>
         </div>
     </section>
 
@@ -619,15 +641,15 @@
                         <span class="clear-all-btn" wire:click="clearFilters">Clear All</span>
                     </div>
                     <div class="filter-tags">
-                        @foreach($selectedCategories as $catId)
-                            @php $cat = $this->categories->firstWhere('id', $catId); @endphp
+                        @if($selectedCategory)
+                            @php $cat = $this->categories->firstWhere('id', $selectedCategory); @endphp
                             @if($cat)
                                 <span class="filter-tag">
-                                    {{ $cat->translateAttribute('name') }}
-                                    <span class="remove-tag" wire:click="toggleCategory({{ $catId }})">&times;</span>
+                                    {{ $cat->name }}
+                                    <span class="remove-tag" wire:click="selectCategory(null)">&times;</span>
                                 </span>
                             @endif
-                        @endforeach
+                        @endif
                         @foreach($selectedTags as $tagId)
                             @php $tag = $this->tags->firstWhere('id', $tagId); @endphp
                             @if($tag)
@@ -645,17 +667,17 @@
             @if($this->categories->count())
                 <div class="filter-card">
                     <div class="filter-card-header">
-                        <span>Categories</span>
-                        @if(count($selectedCategories) > 0)
-                            <span class="clear-btn" wire:click="clearCategoryFilters">Clear</span>
+                        <span>Category</span>
+                        @if($selectedCategory)
+                            <span class="clear-btn" wire:click="clearCategoryFilter">Clear</span>
                         @endif
                     </div>
                     <div class="filter-card-body">
                         @foreach($this->categories as $category)
-                            <div class="filter-item {{ in_array($category->id, $selectedCategories) ? 'active' : '' }}"
-                                 wire:click="toggleCategory({{ $category->id }})">
+                            <div class="filter-item {{ $selectedCategory === $category->id ? 'active' : '' }}"
+                                 wire:click="selectCategory({{ $category->id }})">
                                 <div class="filter-checkbox"></div>
-                                <span class="filter-label">{{ $category->translateAttribute('name') }}</span>
+                                <span class="filter-label">{{ $category->name }}</span>
                                 <span class="filter-count">({{ $category->products_count }})</span>
                             </div>
                         @endforeach
