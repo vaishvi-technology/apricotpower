@@ -20,6 +20,11 @@ class ProductPage extends Component
      */
     public array $selectedOptionValues = [];
 
+    /**
+     * The currently selected image ID for the gallery.
+     */
+    public ?int $selectedImageId = null;
+
     public function mount($slug): void
     {
         $this->url = $this->fetchUrl(
@@ -45,6 +50,31 @@ class ProductPage extends Component
         $this->selectedOptionValues = $this->productOptions->mapWithKeys(function ($data) {
             return [$data['option']->id => $data['values']->first()->id];
         })->toArray();
+
+        // Initialize selectedImageId to the primary/first image
+        $this->selectedImageId = $this->image?->id;
+    }
+
+    /**
+     * Select an image by its media ID.
+     */
+    public function selectImage(int $mediaId): void
+    {
+        $this->selectedImageId = $mediaId;
+    }
+
+    /**
+     * Computed property to return the currently selected image.
+     */
+    public function getSelectedImageProperty(): ?Media
+    {
+        if ($this->selectedImageId) {
+            $selected = $this->images->first(fn ($media) => $media->id === $this->selectedImageId);
+            if ($selected) {
+                return $selected;
+            }
+        }
+        return $this->image; // Fall back to default image logic
     }
 
     /**

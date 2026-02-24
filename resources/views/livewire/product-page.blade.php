@@ -18,7 +18,7 @@
 
             .product-layout {
                 display: grid;
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 2fr 3fr;
                 gap: 40px;
                 align-items: start;
             }
@@ -39,8 +39,150 @@
 
             .main-product-image img {
                 max-width: 100%;
-                max-height: 450px;
+                max-height: 350px;
                 object-fit: contain;
+            }
+
+            /* Product Gallery - Amazon Style */
+            .product-gallery {
+                display: flex;
+                gap: 15px;
+            }
+
+            .gallery-thumbnails {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                max-height: 350px;
+                overflow-y: auto;
+                scrollbar-width: thin;
+                scrollbar-color: #ccc #f5f5f5;
+            }
+
+            .gallery-thumbnails::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .gallery-thumbnails::-webkit-scrollbar-track {
+                background: #f5f5f5;
+                border-radius: 3px;
+            }
+
+            .gallery-thumbnails::-webkit-scrollbar-thumb {
+                background: #ccc;
+                border-radius: 3px;
+            }
+
+            .thumbnail-item {
+                width: 65px;
+                height: 65px;
+                min-height: 65px;
+                padding: 4px;
+                border: 2px solid #e0e0e0;
+                border-radius: 4px;
+                background: #fff;
+                cursor: pointer;
+                transition: border-color 0.2s ease, box-shadow 0.2s ease;
+                flex-shrink: 0;
+            }
+
+            .thumbnail-item:hover {
+                border-color: #7cbf3d;
+            }
+
+            .thumbnail-item.active {
+                border-color: #7cbf3d;
+                box-shadow: 0 0 0 2px rgba(124, 191, 61, 0.3);
+            }
+
+            .thumbnail-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+
+            .main-image-wrapper {
+                position: relative;
+                display: inline-block;
+                cursor: zoom-in;
+            }
+
+            .main-gallery-image {
+                max-width: 100%;
+                max-height: 350px;
+                object-fit: contain;
+                transition: transform 0.3s ease;
+            }
+
+            .zoom-hint {
+                margin-top: 10px;
+                font-size: 12px;
+                color: #888;
+            }
+
+            .zoom-hint i {
+                margin-right: 5px;
+            }
+
+            .no-image-placeholder {
+                width: 100%;
+                height: 300px;
+                background: #f5f5f5;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+            }
+
+            .no-image-placeholder i {
+                font-size: 60px;
+                color: #ccc;
+            }
+
+            /* Lightbox Modal */
+            .lightbox-modal {
+                position: fixed;
+                inset: 0;
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .lightbox-backdrop {
+                position: absolute;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.9);
+            }
+
+            .lightbox-content {
+                position: relative;
+                z-index: 1;
+                max-width: 90vw;
+                max-height: 90vh;
+            }
+
+            .lightbox-content img {
+                max-width: 100%;
+                max-height: 90vh;
+                object-fit: contain;
+            }
+
+            .lightbox-close {
+                position: absolute;
+                top: -40px;
+                right: 0;
+                background: none;
+                border: none;
+                color: #fff;
+                font-size: 24px;
+                cursor: pointer;
+                padding: 10px;
+                transition: transform 0.2s;
+            }
+
+            .lightbox-close:hover {
+                transform: scale(1.1);
             }
 
             /* Tag Badges */
@@ -560,6 +702,30 @@
                     position: static;
                 }
 
+                .product-gallery {
+                    flex-direction: column-reverse;
+                }
+
+                .gallery-thumbnails {
+                    flex-direction: row;
+                    max-height: none;
+                    max-width: 100%;
+                    overflow-x: auto;
+                    overflow-y: hidden;
+                    padding-bottom: 10px;
+                }
+
+                .gallery-thumbnails::-webkit-scrollbar {
+                    height: 6px;
+                    width: auto;
+                }
+
+                .thumbnail-item {
+                    width: 70px;
+                    height: 70px;
+                    min-width: 70px;
+                }
+
                 .related-products-grid {
                     grid-template-columns: repeat(2, 1fr);
                 }
@@ -590,6 +756,16 @@
                 .product-tag-badges {
                     justify-content: center;
                 }
+
+                .thumbnail-item {
+                    width: 55px;
+                    height: 55px;
+                    min-width: 55px;
+                }
+
+                .main-gallery-image {
+                    max-height: 280px;
+                }
             }
         </style>
     @endpush
@@ -605,17 +781,49 @@
     <section class="product-detail-section">
         <div class="product-container">
             <div class="product-layout">
-                {{-- Left: Product Image --}}
+                {{-- Left: Product Image Gallery --}}
                 <div class="product-image-section">
-                    <div class="main-product-image">
-                        @if ($this->image)
-                            <img src="{{ $this->image->getUrl('large') }}"
-                                 alt="{{ $this->product->translateAttribute('name') }}" />
-                        @else
-                            <div style="width: 100%; height: 400px; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
-                                <i class="bi bi-image" style="font-size: 80px; color: #ccc;"></i>
+                    <div class="product-gallery" x-data="productGallery()">
+                        {{-- Thumbnail Strip (Vertical on desktop) --}}
+                        @if ($this->images->count() > 1)
+                            <div class="gallery-thumbnails">
+                                @foreach ($this->images as $media)
+                                    <button
+                                        type="button"
+                                        class="thumbnail-item {{ $this->selectedImageId === $media->id ? 'active' : '' }}"
+                                        wire:click="selectImage({{ $media->id }})"
+                                        @mouseenter="previewImage('{{ $media->getUrl('large') }}')"
+                                        @mouseleave="resetPreview()"
+                                    >
+                                        <img
+                                            src="{{ $media->getUrl('small') }}"
+                                            alt="{{ $this->product->translateAttribute('name') }} - Image {{ $loop->iteration }}"
+                                            loading="lazy"
+                                        />
+                                    </button>
+                                @endforeach
                             </div>
                         @endif
+
+                        {{-- Main Image Display --}}
+                        <div class="main-product-image">
+                            @if ($this->selectedImage)
+                                <div class="main-image-wrapper" @click="openLightbox('{{ $this->selectedImage->getUrl('large') }}')">
+                                    <img
+                                        :src="previewSrc || '{{ $this->selectedImage->getUrl('large') }}'"
+                                        alt="{{ $this->product->translateAttribute('name') }}"
+                                        class="main-gallery-image"
+                                    />
+                                </div>
+                                <div class="zoom-hint">
+                                    <i class="bi bi-zoom-in"></i> Click image to enlarge
+                                </div>
+                            @else
+                                <div class="no-image-placeholder">
+                                    <i class="bi bi-image"></i>
+                                </div>
+                            @endif
+                        </div>
                     </div>
 
                     {{-- Tag Badges --}}
@@ -873,6 +1081,25 @@
         </div>
     </section>
 
+    {{-- Lightbox Modal --}}
+    <div
+        x-data="{ show: false, currentSrc: '' }"
+        x-show="show"
+        x-on:open-lightbox.window="show = true; currentSrc = $event.detail.src"
+        x-on:keydown.escape.window="show = false"
+        x-cloak
+        class="lightbox-modal"
+        style="display: none;"
+    >
+        <div class="lightbox-backdrop" @click="show = false"></div>
+        <div class="lightbox-content">
+            <button class="lightbox-close" @click="show = false">
+                <i class="bi bi-x-lg"></i>
+            </button>
+            <img :src="currentSrc" alt="Product Image" />
+        </div>
+    </div>
+
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script type="text/javascript" src="https://api.feefo.com/api/javascript/apricot-power" async></script>
@@ -884,6 +1111,28 @@
                     return new bootstrap.Tooltip(tooltipTriggerEl);
                 });
             });
+
+            // Alpine.js component for product gallery
+            function productGallery() {
+                return {
+                    previewSrc: null,
+
+                    // Show image preview on thumbnail hover
+                    previewImage(src) {
+                        this.previewSrc = src;
+                    },
+
+                    // Reset preview when leaving thumbnail
+                    resetPreview() {
+                        this.previewSrc = null;
+                    },
+
+                    // Open lightbox with the given image source
+                    openLightbox(src) {
+                        this.$dispatch('open-lightbox', { src: src });
+                    }
+                };
+            }
         </script>
     @endpush
 </div>
