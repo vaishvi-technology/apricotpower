@@ -21,4 +21,9 @@ return [
         'description' => 'Vegan refers to a diet that does not contain meat, fish, poultry, eggs, dairy products, and honey. This product contains none of these foods.',
         'image' => 'images/badges/vegan.png',
     ],
+    'gluten-free' => [
+        'name' => 'Gluten Free',
+        'description' => 'Gluten is the name for the proteins found in wheat, rye, and barley. This product contains no gluten.',
+        'image' => 'images/badges/gluten-free.png',
+    ],
 ];
