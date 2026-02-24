@@ -3,6 +3,7 @@
 namespace App\Livewire\Auth;
 
 use App\Models\Customer;
+use App\Notifications\CustomerWelcomeNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
@@ -65,6 +66,8 @@ class RegisterPage extends Component
         ]);
 
         Auth::guard('customer')->login($customer);
+
+        $customer->notify(new CustomerWelcomeNotification());
 
         session()->regenerate();
 
