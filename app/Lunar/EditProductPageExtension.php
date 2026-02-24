@@ -2,8 +2,8 @@
 
 namespace App\Lunar;
 
+use App\Models\ProductBadge;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 use Lunar\Admin\Support\Extending\EditPageExtension;
 
 class EditProductPageExtension extends EditPageExtension
@@ -21,21 +21,37 @@ class EditProductPageExtension extends EditPageExtension
         return "Status: {$status} | SKU: {$sku}";
     }
 
+    /**
+     * Mutate form data before filling the form.
+     */
+    public function mutateFormDataBeforeFill(Model $record, array $data): array
+    {
+        // Load existing badge keys for the product
+        $data['badge_keys'] = $record->productBadges->pluck('badge_key')->toArray();
+
+        return $data;
+    }
+
     public function beforeSave(array $data): array
     {
-        Log::info('EditProductPageExtension: beforeSave', [
-            'keys' => array_keys($data),
-        ]);
-
         return $data;
     }
 
     public function afterUpdate(Model $record, array $data): Model
     {
-        Log::info('EditProductPageExtension: afterUpdate', [
-            'product_id' => $record->id,
-            'product_name' => $record->translateAttribute('name'),
-        ]);
+        // Save badge keys
+        if (isset($data['badge_keys'])) {
+            // Delete existing badges
+            $record->productBadges()->delete();
+
+            // Create new badge records
+            foreach ($data['badge_keys'] as $badgeKey) {
+                ProductBadge::create([
+                    'product_id' => $record->id,
+                    'badge_key' => $badgeKey,
+                ]);
+            }
+        }
 
         return $record;
     }

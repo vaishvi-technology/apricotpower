@@ -37,6 +37,7 @@ class ProductPage extends Component
                 'element.variants.values.option',
                 'element.collections.defaultUrl',
                 'element.tags',
+                'element.productBadges',
                 'element.associations.target.thumbnail',
                 'element.associations.target.defaultUrl',
                 'element.associations.target.variants.basePrices.currency',

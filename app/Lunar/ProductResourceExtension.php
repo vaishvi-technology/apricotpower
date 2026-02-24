@@ -79,6 +79,17 @@ class ProductResourceExtension extends ResourceExtension
                         ->url()
                         ->maxLength(255),
                 ]),
+
+            Forms\Components\Section::make('Product Badges')
+                ->description('Assign certification badges to display on the product page.')
+                ->collapsible()
+                ->schema([
+                    Forms\Components\CheckboxList::make('badge_keys')
+                        ->label('Select Badges')
+                        ->options(collect(config('badges'))->mapWithKeys(fn ($badge, $key) => [$key => $badge['name']]))
+                        ->columns(2)
+                        ->helperText('Select certification badges to display for this product.'),
+                ]),
         ]);
     }
 

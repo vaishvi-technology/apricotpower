@@ -185,12 +185,13 @@
                 transform: scale(1.1);
             }
 
-            /* Tag Badges */
+            /* Product Badges */
             .product-tag-badges {
                 display: flex;
                 gap: 10px;
                 justify-content: flex-start;
                 flex-wrap: wrap;
+                margin-top: 15px;
             }
 
             .tag-badge {
@@ -207,22 +208,13 @@
                 color: #fff;
                 text-align: center;
                 line-height: 1.1;
+                overflow: hidden;
             }
 
-            .tag-badge-organic {
-                background: #8bc34a;
-            }
-
-            .tag-badge-nongmo {
-                background: #9e9d24;
-            }
-
-            .tag-badge-raw {
-                background: #a1887f;
-            }
-
-            .tag-badge-vegan {
-                background: #7cb342;
+            .tag-badge .badge-image {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
             }
 
             .tag-badge-icon {
@@ -826,32 +818,22 @@
                         </div>
                     </div>
 
-                    {{-- Tag Badges --}}
-                    @if ($this->product->tags->count())
+                    {{-- Product Badges --}}
+                    @php
+                        $productBadgeKeys = $this->product->productBadges->pluck('badge_key')->toArray();
+                        $allBadges = config('badges');
+                    @endphp
+                    @if (count($productBadgeKeys) > 0)
                         <div class="product-tag-badges">
-                            @foreach ($this->product->tags->take(4) as $tag)
-                                @php
-                                    $tagLower = strtolower($tag->value);
-                                    $badgeClass = 'tag-badge-organic';
-                                    $icon = 'O';
-                                    if (str_contains($tagLower, 'non-gmo') || str_contains($tagLower, 'nongmo')) {
-                                        $badgeClass = 'tag-badge-nongmo';
-                                        $icon = 'NG';
-                                    } elseif (str_contains($tagLower, 'raw')) {
-                                        $badgeClass = 'tag-badge-raw';
-                                        $icon = 'R';
-                                    } elseif (str_contains($tagLower, 'vegan')) {
-                                        $badgeClass = 'tag-badge-vegan';
-                                        $icon = 'V';
-                                    } elseif (str_contains($tagLower, 'organic')) {
-                                        $badgeClass = 'tag-badge-organic';
-                                        $icon = 'O';
-                                    }
-                                @endphp
-                                <div class="tag-badge {{ $badgeClass }}">
-                                    <span class="tag-badge-icon">{{ $icon }}</span>
-                                    <span>{{ Str::limit($tag->value, 10) }}</span>
-                                </div>
+                            @foreach ($productBadgeKeys as $badgeKey)
+                                @if (isset($allBadges[$badgeKey]))
+                                    <div class="tag-badge">
+                                        <img src="{{ asset($allBadges[$badgeKey]['image']) }}"
+                                             alt="{{ $allBadges[$badgeKey]['name'] }}"
+                                             class="badge-image"
+                                             title="{{ $allBadges[$badgeKey]['description'] }}">
+                                    </div>
+                                @endif
                             @endforeach
                         </div>
                     @endif
