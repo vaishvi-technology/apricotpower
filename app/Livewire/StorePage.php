@@ -22,7 +22,7 @@ class StorePage extends Component
 
     public string $sortBy = 'default';
     public string $status = 'published';
-    public ?int $selectedCategory = null;
+    public array $selectedCategories = [];
     public array $selectedTags = [];
     public string $searchQuery = '';
     public int $perPage = 12;
@@ -30,7 +30,7 @@ class StorePage extends Component
     protected $queryString = [
         'sortBy' => ['except' => 'default'],
         'status' => ['except' => 'published'],
-        'selectedCategory' => ['except' => null, 'as' => 'category'],
+        'selectedCategories' => ['except' => [], 'as' => 'categories'],
         'selectedTags' => ['except' => [], 'as' => 'tags'],
         'searchQuery' => ['except' => '', 'as' => 'q'],
     ];
@@ -84,9 +84,9 @@ class StorePage extends Component
             });
         }
 
-        // Filter by selected category
-        if ($this->selectedCategory) {
-            $query->where('category_id', $this->selectedCategory);
+        // Filter by selected categories
+        if (!empty($this->selectedCategories)) {
+            $query->whereIn('category_id', $this->selectedCategories);
         }
 
         // Filter by selected tags
@@ -145,18 +145,22 @@ class StorePage extends Component
     public function getActiveFilterCountProperty(): int
     {
         $count = 0;
-        if ($this->selectedCategory) $count++;
+        if (!empty($this->selectedCategories)) $count += count($this->selectedCategories);
         if (!empty($this->selectedTags)) $count += count($this->selectedTags);
         if (!empty($this->searchQuery)) $count++;
         return $count;
     }
 
     /**
-     * Select or deselect a category filter.
+     * Toggle category filter.
      */
-    public function selectCategory(?int $categoryId): void
+    public function toggleCategory(int $categoryId): void
     {
-        $this->selectedCategory = ($this->selectedCategory === $categoryId) ? null : $categoryId;
+        if (in_array($categoryId, $this->selectedCategories)) {
+            $this->selectedCategories = array_values(array_diff($this->selectedCategories, [$categoryId]));
+        } else {
+            $this->selectedCategories[] = $categoryId;
+        }
         $this->resetPage();
     }
 
@@ -187,7 +191,7 @@ class StorePage extends Component
      */
     public function clearFilters(): void
     {
-        $this->selectedCategory = null;
+        $this->selectedCategories = [];
         $this->selectedTags = [];
         $this->searchQuery = '';
         $this->sortBy = 'default';
@@ -195,11 +199,11 @@ class StorePage extends Component
     }
 
     /**
-     * Clear category filter.
+     * Clear category filters.
      */
-    public function clearCategoryFilter(): void
+    public function clearCategoryFilters(): void
     {
-        $this->selectedCategory = null;
+        $this->selectedCategories = [];
         $this->resetPage();
     }
 

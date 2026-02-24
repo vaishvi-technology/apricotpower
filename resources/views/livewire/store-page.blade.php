@@ -618,11 +618,15 @@
     <section class="store-header-banner">
         <div class="container text-center">
             <h1>
-                @if($selectedCategory)
-                    @php
-                        $cat = $this->categories->firstWhere('id', $selectedCategory);
-                    @endphp
-                    {{ $cat ? $cat->name : 'Products' }}
+                @if(count($selectedCategories) > 0)
+                    @if(count($selectedCategories) === 1)
+                        @php
+                            $cat = $this->categories->firstWhere('id', $selectedCategories[0]);
+                        @endphp
+                        {{ $cat ? $cat->name : 'Products' }}
+                    @else
+                        {{ count($selectedCategories) }} Categories Selected
+                    @endif
                 @else
                     All Products
                 @endif
@@ -658,15 +662,15 @@
                         <span class="clear-all-btn" wire:click="clearFilters">Clear All</span>
                     </div>
                     <div class="filter-tags">
-                        @if($selectedCategory)
-                            @php $cat = $this->categories->firstWhere('id', $selectedCategory); @endphp
+                        @foreach($selectedCategories as $categoryId)
+                            @php $cat = $this->categories->firstWhere('id', $categoryId); @endphp
                             @if($cat)
                                 <span class="filter-tag">
                                     {{ $cat->name }}
-                                    <span class="remove-tag" wire:click="selectCategory(null)">&times;</span>
+                                    <span class="remove-tag" wire:click="toggleCategory({{ $categoryId }})">&times;</span>
                                 </span>
                             @endif
-                        @endif
+                        @endforeach
                         @foreach($selectedTags as $tagId)
                             @php $tag = $this->tags->firstWhere('id', $tagId); @endphp
                             @if($tag)
@@ -685,14 +689,14 @@
                 <div class="filter-card">
                     <div class="filter-card-header">
                         <span>Category</span>
-                        @if($selectedCategory)
-                            <span class="clear-btn" wire:click="clearCategoryFilter">Clear</span>
+                        @if(count($selectedCategories) > 0)
+                            <span class="clear-btn" wire:click="clearCategoryFilters">Clear</span>
                         @endif
                     </div>
                     <div class="filter-card-body">
                         @foreach($this->categories as $category)
-                            <div class="filter-item {{ $selectedCategory === $category->id ? 'active' : '' }}"
-                                 wire:click="selectCategory({{ $category->id }})">
+                            <div class="filter-item {{ in_array($category->id, $selectedCategories) ? 'active' : '' }}"
+                                 wire:click="toggleCategory({{ $category->id }})">
                                 <div class="filter-checkbox"></div>
                                 <span class="filter-label">{{ $category->name }}</span>
                                 <span class="filter-count">({{ $category->products_count }})</span>
