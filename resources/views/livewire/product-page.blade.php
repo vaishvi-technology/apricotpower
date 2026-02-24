@@ -27,6 +27,9 @@
             .product-image-section {
                 position: sticky;
                 top: 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
             }
 
             .main-product-image {
@@ -47,6 +50,7 @@
             .product-gallery {
                 display: flex;
                 gap: 15px;
+                width: 100%;
             }
 
             .gallery-thumbnails {
@@ -189,9 +193,12 @@
             .product-tag-badges {
                 display: flex;
                 gap: 10px;
-                justify-content: flex-start;
+                justify-content: center;
                 flex-wrap: wrap;
                 margin-top: 15px;
+                width: 100%;
+                padding-right: 80px; /* Offset for thumbnail column (65px + 15px gap) */
+                box-sizing: border-box;
             }
 
             .tag-badge {
@@ -716,6 +723,10 @@
                     width: 70px;
                     height: 70px;
                     min-width: 70px;
+                }
+
+                .product-tag-badges {
+                    padding-left: 0;
                 }
 
                 .related-products-grid {
