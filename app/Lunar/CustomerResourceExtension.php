@@ -40,7 +40,8 @@ class CustomerResourceExtension extends ResourceExtension
                                 ->multiple()
                                 ->maxItems(1)
                                 ->preload()
-                                ->searchable(),
+                                ->searchable()
+                                ->dehydrated(false),
                         ]);
                     }
                 }
@@ -58,7 +59,8 @@ class CustomerResourceExtension extends ResourceExtension
                     ->multiple()
                     ->maxItems(1)
                     ->preload()
-                    ->searchable();
+                    ->searchable()
+                    ->dehydrated(false);
             }
             return $component;
         })->all();
