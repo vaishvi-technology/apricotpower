@@ -1003,6 +1003,22 @@
                                 Intro
                             </button>
                         </li>
+                        @if ($this->product->nutritionFact?->is_enabled)
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="nutrition-tab" data-bs-toggle="tab"
+                                        data-bs-target="#nutrition-panel" type="button" role="tab">
+                                    {{ $this->product->nutritionFact->label_type === 'supplement' ? 'Supplement Facts' : 'Nutrition Facts' }}
+                                </button>
+                            </li>
+                        @endif
+                        @if ($this->product->learn_more)
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="learn-more-tab" data-bs-toggle="tab"
+                                        data-bs-target="#learn-more-panel" type="button" role="tab">
+                                    Learn More
+                                </button>
+                            </li>
+                        @endif
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="reviews-tab" data-bs-toggle="tab"
                                     data-bs-target="#reviews-panel" type="button" role="tab">
@@ -1013,9 +1029,25 @@
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="intro-panel" role="tabpanel">
                             <div class="responsive-html-content">
-                                {!! $this->product->translateAttribute('description') !!}
+                                @if ($this->product->intro_content)
+                                    {!! $this->product->intro_content !!}
+                                @else
+                                    {!! $this->product->translateAttribute('description') !!}
+                                @endif
                             </div>
                         </div>
+                        @if ($this->product->nutritionFact?->is_enabled)
+                            <div class="tab-pane fade" id="nutrition-panel" role="tabpanel">
+                                <x-nutrition-label :nutritionFact="$this->product->nutritionFact" />
+                            </div>
+                        @endif
+                        @if ($this->product->learn_more)
+                            <div class="tab-pane fade" id="learn-more-panel" role="tabpanel">
+                                <div class="responsive-html-content">
+                                    {!! $this->product->learn_more !!}
+                                </div>
+                            </div>
+                        @endif
                         <div class="tab-pane fade" id="reviews-panel" role="tabpanel">
                             @if ($this->variant->sku)
                                 <div class="feefo-review-widget-product" data-product-sku="{{ $this->variant->sku }}"></div>

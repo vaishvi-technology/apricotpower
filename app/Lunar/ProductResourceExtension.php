@@ -2,6 +2,7 @@
 
 namespace App\Lunar;
 
+use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductNutritionFacts;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Tables;
@@ -10,6 +11,26 @@ use Lunar\Admin\Support\Extending\ResourceExtension;
 
 class ProductResourceExtension extends ResourceExtension
 {
+    /**
+     * Extend the pages array with custom nutrition facts page.
+     */
+    public function extendPages(array $pages): array
+    {
+        return array_merge($pages, [
+            'nutrition-facts' => ManageProductNutritionFacts::route('/{record}/nutrition-facts'),
+        ]);
+    }
+
+    /**
+     * Extend the subnavigation with nutrition facts link.
+     */
+    public function extendSubNavigation(array $pages): array
+    {
+        return array_merge($pages, [
+            ManageProductNutritionFacts::class,
+        ]);
+    }
+
     public function extendForm(Form $form): Form
     {
         $existing = $form->getComponents(withHidden: true);
@@ -89,6 +110,20 @@ class ProductResourceExtension extends ResourceExtension
                         ->options(collect(config('badges'))->mapWithKeys(fn ($badge, $key) => [$key => $badge['name']]))
                         ->columns(2)
                         ->helperText('Select certification badges to display for this product.'),
+                ]),
+
+            Forms\Components\Section::make('Content Tabs')
+                ->description('Content displayed in product page tabs.')
+                ->collapsible()
+                ->schema([
+                    Forms\Components\RichEditor::make('intro_content')
+                        ->label('Intro Content')
+                        ->helperText('Content displayed in the Intro tab on the product page.')
+                        ->columnSpanFull(),
+                    Forms\Components\RichEditor::make('learn_more')
+                        ->label('Learn More')
+                        ->helperText('Content displayed in the Learn More tab on the product page.')
+                        ->columnSpanFull(),
                 ]),
         ]);
     }
