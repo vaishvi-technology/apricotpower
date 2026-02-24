@@ -44,6 +44,8 @@ class AppServiceProvider extends ServiceProvider
             fn ($panel) => $panel
             ->path('admin')
             ->login(\App\Filament\Pages\Auth\StaffLogin::class)
+            ->passwordReset()
+            ->authPasswordBroker('staff')
             ->plugins([
                 new ShippingPlugin,
             ])

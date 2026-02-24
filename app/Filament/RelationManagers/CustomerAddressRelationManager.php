@@ -4,6 +4,7 @@ namespace App\Filament\RelationManagers;
 
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -175,11 +176,58 @@ class CustomerAddressRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->label('Add Address')
-                    ->form($this->getAddressFormSchema()),
+                    ->form($this->getAddressFormSchema())
+                    ->hidden(fn (): bool => $this->getOwnerRecord()->addresses()->count() >= 10)
+                    ->before(function (Tables\Actions\CreateAction $action) {
+                        if ($this->getOwnerRecord()->addresses()->count() >= 10) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Address limit reached')
+                                ->body('You can save up to 10 addresses. Please delete an existing one to add more.')
+                                ->send();
+
+                            $action->halt();
+                        }
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->form($this->getAddressFormSchema()),
+
+                Tables\Actions\Action::make('setShippingDefault')
+                    ->label('Set as Primary Shipping')
+                    ->icon('heroicon-o-truck')
+                    ->color('success')
+                    ->hidden(fn (Model $record): bool => (bool) $record->shipping_default)
+                    ->requiresConfirmation()
+                    ->action(function (Model $record) {
+                        // Unset all other shipping defaults for this customer
+                        $this->getOwnerRecord()->addresses()->update(['shipping_default' => false]);
+                        $record->update(['shipping_default' => true]);
+
+                        Notification::make()
+                            ->success()
+                            ->title('Primary shipping address updated')
+                            ->send();
+                    }),
+
+                Tables\Actions\Action::make('setBillingDefault')
+                    ->label('Set as Primary Billing')
+                    ->icon('heroicon-o-credit-card')
+                    ->color('info')
+                    ->hidden(fn (Model $record): bool => (bool) $record->billing_default)
+                    ->requiresConfirmation()
+                    ->action(function (Model $record) {
+                        // Unset all other billing defaults for this customer
+                        $this->getOwnerRecord()->addresses()->update(['billing_default' => false]);
+                        $record->update(['billing_default' => true]);
+
+                        Notification::make()
+                            ->success()
+                            ->title('Primary billing address updated')
+                            ->send();
+                    }),
+
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

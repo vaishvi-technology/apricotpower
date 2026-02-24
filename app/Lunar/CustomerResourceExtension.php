@@ -9,8 +9,10 @@ use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Tables;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Lunar\Admin\Filament\Resources\CustomerResource\RelationManagers\AddressRelationManager;
 use Lunar\Admin\Support\Extending\ResourceExtension;
 
@@ -18,69 +20,48 @@ class CustomerResourceExtension extends ResourceExtension
 {
     public function extendForm(Form $form): Form
     {
-        $existing = $form->getComponents(withHidden: true);
-
-        // Remove Lunar's default CheckboxList for customerGroups from existing components
-        $filtered = collect($existing)->map(function ($component) {
-            // Check if this component contains the customerGroups CheckboxList (it's in a Group/Section)
-            if (method_exists($component, 'getChildComponents')) {
-                $children = $component->getChildComponents();
-                foreach ($children as $child) {
-                    if ($child instanceof Forms\Components\CheckboxList && $child->getName() === 'customerGroups') {
-                        // Replace the CheckboxList with our Select inside the same container
-                        return Forms\Components\Group::make([
-                            Forms\Components\Select::make('customerGroups')
-                                ->label('Account Group')
-                                ->helperText('Determines product pricing and payment terms.')
-                                ->relationship(
-                                    name: 'customerGroups',
-                                    titleAttribute: 'name',
-                                    modifyQueryUsing: fn (Builder $query) => $query->distinct(['id', 'name', 'handle', 'default'])
-                                )
-                                ->multiple()
-                                ->maxItems(1)
-                                ->preload()
-                                ->searchable()
-                                ->dehydrated(false),
-                        ]);
-                    }
-                }
-            }
-            // Also check if the component itself is the CheckboxList
-            if ($component instanceof Forms\Components\CheckboxList && $component->getName() === 'customerGroups') {
-                return Forms\Components\Select::make('customerGroups')
-                    ->label('Account Group')
-                    ->helperText('Determines product pricing and payment terms.')
-                    ->relationship(
-                        name: 'customerGroups',
-                        titleAttribute: 'name',
-                        modifyQueryUsing: fn (Builder $query) => $query->distinct(['id', 'name', 'handle', 'default'])
-                    )
-                    ->multiple()
-                    ->maxItems(1)
-                    ->preload()
-                    ->searchable()
-                    ->dehydrated(false);
-            }
-            return $component;
-        })->all();
-
+        // Completely replace Lunar's default layout with a clean tab-based design.
+        // We discard Lunar's default components (top section + sidebar) and rebuild everything in tabs.
         return $form->schema([
-            ...$filtered,
-
-            Forms\Components\Tabs::make('Account Details')
+            Forms\Components\Tabs::make('Customer')
                 ->columnSpanFull()
                 ->tabs([
 
-                    Forms\Components\Tabs\Tab::make('Account Info')
-                        ->icon('heroicon-o-user-circle')
+                    // ── Tab 1: Basic Info (matches frontend "Basic Account Information") ──
+                    Forms\Components\Tabs\Tab::make('Basic Info')
+                        ->icon('heroicon-o-user')
                         ->schema([
-                            Forms\Components\Grid::make(3)->schema([
+                            Forms\Components\Grid::make(5)->schema([
+                                Forms\Components\TextInput::make('title')
+                                    ->label('Title')
+                                    ->maxLength(255)
+                                    ->columnSpan(1),
+
+                                Forms\Components\TextInput::make('first_name')
+                                    ->label('First Name')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->columnSpan(2),
+
+                                Forms\Components\TextInput::make('last_name')
+                                    ->label('Last Name')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->columnSpan(2),
+                            ]),
+
+                            Forms\Components\Grid::make(2)->schema([
                                 Forms\Components\TextInput::make('email')
                                     ->label('Email')
                                     ->email()
                                     ->maxLength(255),
 
+                                Forms\Components\TextInput::make('company_name')
+                                    ->label('Company Name')
+                                    ->maxLength(255),
+                            ]),
+
+                            Forms\Components\Grid::make(2)->schema([
                                 Forms\Components\TextInput::make('phone')
                                     ->label('Phone')
                                     ->tel()
@@ -92,15 +73,85 @@ class CustomerResourceExtension extends ResourceExtension
                                     ->maxLength(255),
                             ]),
 
-                            Forms\Components\Grid::make(3)->schema([
+                            Forms\Components\Section::make('Password')
+                                ->description('Leave blank to keep the current password unchanged.')
+                                ->collapsible()
+                                ->collapsed(fn (?Model $record): bool => $record !== null)
+                                ->schema([
+                                    Forms\Components\Grid::make(2)->schema([
+                                        Forms\Components\TextInput::make('password')
+                                            ->label('New Password')
+                                            ->password()
+                                            ->revealable()
+                                            ->minLength(8)
+                                            ->dehydrated(fn ($state) => filled($state))
+                                            ->live(debounce: 500),
+
+                                        Forms\Components\TextInput::make('password_confirmation')
+                                            ->label('Confirm New Password')
+                                            ->password()
+                                            ->revealable()
+                                            ->same('password')
+                                            ->requiredWith('password')
+                                            ->dehydrated(false),
+                                    ]),
+                                ]),
+                        ]),
+
+                    // ── Tab 2: Account Settings ──
+                    Forms\Components\Tabs\Tab::make('Account Settings')
+                        ->icon('heroicon-o-cog-6-tooth')
+                        ->schema([
+                            Forms\Components\Grid::make(4)->schema([
+                                Forms\Components\Select::make('customerGroups')
+                                    ->label('Account Group')
+                                    ->helperText('Determines product pricing and payment terms.')
+                                    ->relationship(
+                                        name: 'customerGroups',
+                                        titleAttribute: 'name',
+                                        modifyQueryUsing: fn (Builder $query) => $query->distinct(['id', 'name', 'handle', 'default'])
+                                    )
+                                    ->multiple()
+                                    ->maxItems(1)
+                                    ->preload()
+                                    ->searchable()
+                                    ->live()
+                                    ->dehydrated(false)
+                                    ->columnSpan(2),
+
                                 Forms\Components\Toggle::make('is_active')
                                     ->label('Active')
+                                    ->onColor('success')
+                                    ->offColor('danger')
                                     ->inline(false),
 
                                 Forms\Components\Toggle::make('account_locked')
                                     ->label('Account Locked / Closed')
-                                    ->helperText('Prevents the customer from signing in and hides from searches.')
+                                    ->helperText('Prevents signing in and hides from searches.')
+                                    ->onColor('danger')
+                                    ->offColor('success')
                                     ->inline(false),
+                            ]),
+
+                            Forms\Components\Grid::make(2)->schema([
+                                Forms\Components\TextInput::make('account_ref')
+                                    ->label('Account Reference')
+                                    ->maxLength(255),
+
+                                Forms\Components\TextInput::make('tax_identifier')
+                                    ->label('Tax Identifier')
+                                    ->maxLength(255),
+                            ]),
+
+                            Forms\Components\Grid::make(4)->schema([
+                                Forms\Components\Toggle::make('is_tax_exempt')
+                                    ->label('Tax Exempt')
+                                    ->onColor('success')
+                                    ->inline(false),
+
+                                Forms\Components\TextInput::make('tax_exempt_certificate')
+                                    ->label('Tax Exempt Certificate')
+                                    ->maxLength(255),
                             ]),
 
                             Forms\Components\Grid::make(2)->schema([
@@ -114,8 +165,9 @@ class CustomerResourceExtension extends ResourceExtension
                             ]),
                         ]),
 
+                    // ── Tab 3: Account Details ──
                     Forms\Components\Tabs\Tab::make('Account Details')
-                        ->icon('heroicon-o-cog-6-tooth')
+                        ->icon('heroicon-o-clipboard-document-list')
                         ->schema([
                             Forms\Components\Grid::make(2)->schema([
                                 Forms\Components\Select::make('referred_by')
@@ -143,43 +195,138 @@ class CustomerResourceExtension extends ResourceExtension
                             ]),
                         ]),
 
+                    // ── Tab 4: Wholesale / Billing (visible only for wholesale group) ──
                     Forms\Components\Tabs\Tab::make('Wholesale / Billing')
                         ->icon('heroicon-o-building-storefront')
+                        ->visible(function (Forms\Get $get, ?Model $record): bool {
+                            $selectedGroupIds = $get('customerGroups') ?? [];
+                            if (!empty($selectedGroupIds)) {
+                                return CustomerGroup::whereIn('id', $selectedGroupIds)
+                                    ->where('is_wholesale', true)
+                                    ->exists();
+                            }
+
+                            if ($record) {
+                                return $record->customerGroups()
+                                    ->where('is_wholesale', true)
+                                    ->exists();
+                            }
+
+                            return false;
+                        })
                         ->schema([
                             Forms\Components\Grid::make(2)->schema([
-                                Forms\Components\Toggle::make('is_tax_exempt')
-                                    ->label('Tax Exempt')
-                                    ->inline(false),
-
-                                Forms\Components\TextInput::make('tax_exempt_certificate')
-                                    ->label('Tax Exempt Certificate')
-                                    ->maxLength(255),
-                            ]),
-
-                            Forms\Components\Grid::make(3)->schema([
                                 Forms\Components\Toggle::make('net_terms_approved')
-                                    ->label('Net Terms Approved')
+                                    ->label('Approved for Net 30 Terms')
+                                    ->onColor('success')
                                     ->inline(false),
 
                                 Forms\Components\TextInput::make('credit_limit')
-                                    ->label('Credit Limit')
-                                    ->numeric()
-                                    ->prefix('$'),
-
-                                Forms\Components\TextInput::make('current_balance')
-                                    ->label('Current Balance')
+                                    ->label('Net 30 Credit Limit')
                                     ->numeric()
                                     ->prefix('$'),
                             ]),
+
+                            Forms\Components\Group::make()
+                                ->relationship('retailerProfile')
+                                ->schema([
+                                    Forms\Components\TextInput::make('accounts_payable_email')
+                                        ->label('Accounts Payable Email')
+                                        ->email()
+                                        ->maxLength(255),
+
+                                    Forms\Components\Toggle::make('include_in_retailer_map')
+                                        ->label('Include in Retailer Map')
+                                        ->onColor('success')
+                                        ->live()
+                                        ->inline(false),
+
+                                    Forms\Components\Section::make('Retailer Map Details')
+                                        ->visible(fn (Forms\Get $get): bool => (bool) $get('include_in_retailer_map'))
+                                        ->schema([
+                                            Forms\Components\Grid::make(2)->schema([
+                                                Forms\Components\TextInput::make('name')
+                                                    ->label('Name')
+                                                    ->maxLength(255),
+
+                                                Forms\Components\TextInput::make('street')
+                                                    ->label('Street')
+                                                    ->maxLength(255),
+                                            ]),
+
+                                            Forms\Components\Grid::make(3)->schema([
+                                                Forms\Components\TextInput::make('city')
+                                                    ->label('City')
+                                                    ->maxLength(255),
+
+                                                Forms\Components\Select::make('country')
+                                                    ->label('Country')
+                                                    ->options(fn () => \Lunar\Models\Country::orderBy('name')->pluck('name', 'name'))
+                                                    ->default('United States')
+                                                    ->searchable()
+                                                    ->preload()
+                                                    ->live()
+                                                    ->afterStateUpdated(fn (Forms\Set $set) => $set('state', null)),
+
+                                                Forms\Components\Select::make('state')
+                                                    ->label('State')
+                                                    ->options(function (Forms\Get $get) {
+                                                        $country = $get('country');
+                                                        if (! $country) {
+                                                            return [];
+                                                        }
+                                                        $countryModel = \Lunar\Models\Country::where('name', $country)->first();
+                                                        if (! $countryModel) {
+                                                            return [];
+                                                        }
+                                                        return \Lunar\Models\State::where('country_id', $countryModel->id)
+                                                            ->orderBy('name')
+                                                            ->pluck('name', 'name')
+                                                            ->toArray();
+                                                    })
+                                                    ->searchable(),
+                                            ]),
+
+                                            Forms\Components\Grid::make(2)->schema([
+                                                Forms\Components\TextInput::make('phone')
+                                                    ->label('Phone')
+                                                    ->tel()
+                                                    ->maxLength(50),
+
+                                                Forms\Components\TextInput::make('toll_free_phone')
+                                                    ->label('Toll-Free Phone')
+                                                    ->tel()
+                                                    ->maxLength(50),
+                                            ]),
+
+                                            Forms\Components\Grid::make(2)->schema([
+                                                Forms\Components\TextInput::make('website')
+                                                    ->label('Website')
+                                                    ->url()
+                                                    ->maxLength(255),
+
+                                                Forms\Components\TextInput::make('email')
+                                                    ->label('Email')
+                                                    ->email()
+                                                    ->maxLength(255),
+                                            ]),
+
+                                            Forms\Components\Textarea::make('products_sold')
+                                                ->label('Products Sold')
+                                                ->rows(2),
+                                        ]),
+                                ]),
                         ]),
 
+                    // ── Tab 5: Private Account Notes ──
                     Forms\Components\Tabs\Tab::make('Private Account Notes')
                         ->icon('heroicon-o-document-text')
                         ->schema([
                             Forms\Components\Textarea::make('admin_notes')
                                 ->label('Private Account Notes')
                                 ->helperText('Notes added here cannot be edited once saved. They will stay on the account permanently.')
-                                ->rows(4),
+                                ->rows(4)
+                                ->disabled(fn (?Model $record): bool => filled($record?->admin_notes)),
 
                             Forms\Components\Textarea::make('notes')
                                 ->label('Internal Admin Notes')
@@ -243,6 +390,18 @@ class CustomerResourceExtension extends ResourceExtension
             ->actions([
                 ...$table->getActions(),
                 $impersonateAction,
+            ])
+            ->filters([
+                TernaryFilter::make('account_locked')
+                    ->label('Closed Accounts')
+                    ->placeholder('Hide Closed')
+                    ->trueLabel('Show All')
+                    ->falseLabel('Only Closed')
+                    ->queries(
+                        true: fn (Builder $query) => $query,
+                        false: fn (Builder $query) => $query->where('account_locked', true),
+                        blank: fn (Builder $query) => $query->where('account_locked', false),
+                    ),
             ]);
     }
 }

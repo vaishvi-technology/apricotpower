@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Auth\Authenticatable;
+use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -12,6 +14,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Lunar\Models\Cart;
 use Lunar\Models\Customer as LunarCustomer;
 use Lunar\Models\Order;
+use App\Notifications\CustomerResetPasswordNotification;
 
 /**
  * Extends Lunar's Customer model with legacy Apricot Power fields
@@ -26,9 +29,9 @@ use Lunar\Models\Order;
  *
  * Registered via ModelManifest::replace() in AppServiceProvider.
  */
-class Customer extends LunarCustomer implements AuthenticatableContract
+class Customer extends LunarCustomer implements AuthenticatableContract, CanResetPasswordContract
 {
-    use Authenticatable, HasApiTokens, Notifiable, SoftDeletes;
+    use Authenticatable, CanResetPassword, HasApiTokens, Notifiable, SoftDeletes;
 
     protected $guarded = [];
 
@@ -40,6 +43,8 @@ class Customer extends LunarCustomer implements AuthenticatableContract
     protected $casts = [
         'attribute_data' => \Lunar\Base\Casts\AsAttributeData::class,
         'meta' => \Illuminate\Database\Eloquent\Casts\AsArrayObject::class,
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'is_tax_exempt' => 'boolean',
@@ -116,5 +121,21 @@ class Customer extends LunarCustomer implements AuthenticatableContract
     public function dealer(): HasOne
     {
         return $this->hasOne(Dealer::class);
+    }
+
+    /**
+     * Retailer profile for this customer.
+     */
+    public function retailerProfile(): HasOne
+    {
+        return $this->hasOne(RetailerProfile::class);
+    }
+
+    /**
+     * Send the password reset notification to the customer's storefront reset URL.
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new CustomerResetPasswordNotification($token));
     }
 }
