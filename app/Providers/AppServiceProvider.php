@@ -10,7 +10,9 @@ use App\Lunar\EditStaffPageExtension;
 use App\Lunar\ProductResourceExtension;
 use App\Lunar\StaffResourceExtension;
 use App\Modifiers\ShippingModifier;
+use App\Observers\OrderObserver;
 use Illuminate\Support\ServiceProvider;
+use Lunar\Models\Order;
 use Lunar\Admin\Filament\Resources\CustomerResource;
 use Lunar\Admin\Filament\Resources\ProductResource;
 use Lunar\Admin\Filament\Resources\ProductResource\Pages\EditProduct;
@@ -42,6 +44,8 @@ class AppServiceProvider extends ServiceProvider
             fn ($panel) => $panel
             ->path('admin')
             ->login(\App\Filament\Pages\Auth\StaffLogin::class)
+            ->passwordReset()
+            ->authPasswordBroker('staff')
             ->plugins([
                 new ShippingPlugin,
             ])
@@ -104,5 +108,8 @@ class AppServiceProvider extends ServiceProvider
             \Lunar\Models\Contracts\Address::class,
             \App\Models\Address::class,
         );
+
+        // Track last_order_at on customer when an order is created
+        Order::observe(OrderObserver::class);
     }
 }

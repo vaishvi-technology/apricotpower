@@ -29,6 +29,7 @@ use App\Livewire\AboutPage;
 use App\Livewire\Auth\LoginPage;
 use App\Livewire\Auth\RegisterPage;
 use App\Livewire\Auth\ForgotPasswordPage;
+use App\Livewire\Auth\ResetPasswordPage;
 use App\Livewire\Account\OrderHistoryPage;
 use App\Livewire\Account\BasicInfoPage;
 use App\Livewire\Account\AccountDetailsPage;
@@ -93,6 +94,7 @@ Route::middleware(['guest:customer'])->group(function () {
     Route::get('/login', LoginPage::class)->name('login');
     Route::get('/register', RegisterPage::class)->name('register');
     Route::get('/forgot-password', ForgotPasswordPage::class)->name('forgot-password');
+    Route::get('/reset-password/{token}', ResetPasswordPage::class)->name('password.reset');
 });
 
 Route::post('/logout', function () {

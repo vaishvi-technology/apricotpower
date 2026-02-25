@@ -15,6 +15,10 @@ class AccountDetailsPage extends Component
     public string $password = '';
     public string $password_confirmation = '';
 
+    // Account Information
+    public string $referred_by = '';
+    public string $b17_knowledge = '';
+
     // Address form fields
     public ?int $editing_address_id = null;
     public bool $showAddressForm = false;
@@ -35,6 +39,8 @@ class AccountDetailsPage extends Component
         $customer = Auth::guard('customer')->user();
         $this->address_first_name = $customer->first_name ?? '';
         $this->address_last_name = $customer->last_name ?? '';
+        $this->referred_by = $customer->referred_by ?? '';
+        $this->b17_knowledge = $customer->b17_knowledge ?? '';
 
         // Default to US
         $us = Country::where('iso3', 'USA')->orWhere('iso2', 'US')->first();
@@ -129,6 +135,14 @@ class AccountDetailsPage extends Component
 
         $customer = Auth::guard('customer')->user();
 
+        // Enforce 10 address limit when adding new
+        if (!$this->editing_address_id && $customer->addresses()->count() >= 10) {
+            session()->flash('address_error', 'Address limit reached. You can save up to 10 addresses. Please delete an existing address to add more.');
+            $this->resetAddressForm();
+            $this->showAddressForm = false;
+            return;
+        }
+
         $data = [
             'first_name' => $this->address_first_name,
             'last_name' => $this->address_last_name,
@@ -206,6 +220,17 @@ class AccountDetailsPage extends Component
         $this->address_country_id = $us?->id;
 
         $this->resetValidation();
+    }
+
+    public function saveAccountInfo(): void
+    {
+        $customer = Auth::guard('customer')->user();
+
+        $customer->referred_by = $this->referred_by ?: null;
+        $customer->b17_knowledge = $this->b17_knowledge ?: null;
+        $customer->save();
+
+        session()->flash('account_info_success', 'Account information has been updated.');
     }
 
     public function render(): View
