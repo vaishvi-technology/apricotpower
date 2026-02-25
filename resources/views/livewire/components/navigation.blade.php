@@ -84,34 +84,19 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
                             <li>
-                                <a class="dropdown-item" href="{{ route('contact') }}" wire:navigate>Contact Us</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('reviews') }}" wire:navigate>Reviews</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('testimonial') }}" wire:navigate>Testimonials</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('wholesale') }}" wire:navigate>Carry Our Products</a>
+                                <a class="dropdown-item" href="{{ route('contact') }}" wire:navigate>Contact / About Us</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="https://apricotpower.ositracker.com/myrefer" target="_blank" rel="noopener noreferrer">Affiliate Program</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{{ route('refer-friend') }}" wire:navigate>Refer A Friend</a>
+                                <a class="dropdown-item" href="{{ route('wholesale') }}" wire:navigate>Carry Our Products</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{{ route('faq') }}" wire:navigate>Common Questions</a>
+                                <a class="dropdown-item" href="{{ route('faq') }}" wire:navigate>Common Questions (FAQ)</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{{ route('seeds-recipes') }}" wire:navigate>Apricot Seed Recipes</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('superfood-recipes') }}" wire:navigate>B17 Superfood Recipes</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('lifestyle') }}" wire:navigate>Life Style</a>
+                                <a class="dropdown-item" href="{{ route('reviews') }}" wire:navigate>Reviews</a>
                             </li>
                         </ul>
                     </li>
