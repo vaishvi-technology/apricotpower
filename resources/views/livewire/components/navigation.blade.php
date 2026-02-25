@@ -90,7 +90,7 @@
                                 <a class="dropdown-item" href="https://apricotpower.ositracker.com/myrefer" target="_blank" rel="noopener noreferrer">Affiliate Program</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{{ route('wholesale') }}" wire:navigate>Carry Our Products</a>
+                                <a class="dropdown-item" href="https://form.jotform.com/200975742179161" target="_blank" rel="noopener noreferrer">Carry Our Products</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="{{ route('faq') }}" wire:navigate>Common Questions (FAQ)</a>
