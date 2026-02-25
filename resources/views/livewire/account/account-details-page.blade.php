@@ -238,12 +238,26 @@
                                     </div>
                                     <div class="d-flex gap-2 flex-shrink-0">
                                         @if (!$address->shipping_default)
-                                            <button type="button" class="btn btn-outline-brand btn-sm" wire:click="setDefaultAddress({{ $address->id }})" wire:confirm="Set this as your default shipping address?">
+                                            <button type="button" class="btn btn-outline-brand btn-sm"
+                                                onclick="AppDialog.confirm(this, 'setDefaultAddress', [{{ $address->id }}], {
+                                                    title: 'Set Default Address',
+                                                    text: 'Set this as your default shipping address?',
+                                                    type: 'question',
+                                                    confirmText: 'Yes, set default'
+                                                })">
                                                 Set Default
                                             </button>
                                         @endif
                                         <button type="button" class="btn btn-outline-brand btn-sm" wire:click="editAddress({{ $address->id }})">Edit</button>
-                                        <button type="button" class="btn btn-outline-danger btn-sm" wire:click="deleteAddress({{ $address->id }})" wire:confirm="Are you sure you want to delete this address?">Delete</button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                            onclick="AppDialog.confirm(this, 'deleteAddress', [{{ $address->id }}], {
+                                                title: 'Delete Address',
+                                                text: 'Are you sure you want to delete this address?',
+                                                type: 'danger',
+                                                confirmText: 'Yes, delete it'
+                                            })">
+                                            Delete
+                                        </button>
                                     </div>
                                 </div>
                             </div>
