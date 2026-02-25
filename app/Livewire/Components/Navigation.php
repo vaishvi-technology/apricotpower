@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Components;
 
+use App\Models\Category;
 use Illuminate\View\View;
 use Livewire\Component;
 use Lunar\Facades\CartSession;
@@ -29,6 +30,17 @@ class Navigation extends Component
     public function getCollectionsProperty()
     {
         return Collection::with(['defaultUrl'])->get()->toTree();
+    }
+
+    /**
+     * Return all categories for navigation.
+     */
+    public function getCategoriesProperty()
+    {
+        return Category::where('is_active', true)
+            ->where('show_in_menu', true)
+            ->orderBy('sort_order')
+            ->get();
     }
 
     /**

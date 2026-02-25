@@ -273,6 +273,66 @@ p {
   /* top: 0; */
 }
 
+.main-header > .container {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+}
+
+.main-header .navbar-collapse {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+}
+
+.main-header .header-form {
+  align-self: center !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.main-header .navbar-icons {
+  align-self: center !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.main-header .main-navbar-links {
+  align-self: center !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.main-header .nav-item {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.main-header .navbar-brand {
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Ensure navbar inner elements are vertically centered */
+nav.main-header.navbar {
+  align-items: center !important;
+}
+
+nav.main-header.navbar > .container {
+  align-items: center !important;
+}
+
+.main-header .navbar-collapse > * {
+  align-self: center !important;
+}
+
+.main-header .user-section,
+.main-header .user-section2 {
+  align-self: center !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
 .main-header .navbar-brand img {
   width: 150px;
   object-fit: contain;
@@ -561,6 +621,8 @@ section.main-banner::before {
 
 .main-navbar-links {
   gap: 16px;
+  display: flex !important;
+  align-items: center !important;
 }
 
 /* Banner End */
