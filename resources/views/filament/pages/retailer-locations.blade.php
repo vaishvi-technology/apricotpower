@@ -32,9 +32,18 @@
 
         {{-- Retailer Count --}}
         <p id="retailer-count" class="text-sm text-gray-500 dark:text-gray-400"></p>
-    </div>
 
-    @if ($googleMapsApiKey)
+        @if (! $googleMapsApiKey)
+            <div class="p-6 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                <p class="text-lg font-medium">Google Maps API key is not configured.</p>
+                <p class="mt-1">Add <code>GOOGLE_MAPS_API_KEY</code> to your <code>.env</code> file to enable the map.</p>
+            </div>
+        @endif
+    </div>
+</x-filament-panels::page>
+
+@if ($googleMapsApiKey)
+    @push('scripts')
         <script>
             let map;
             let markers = [];
@@ -133,10 +142,5 @@
         <script async defer
             src="https://maps.googleapis.com/maps/api/js?key={{ $googleMapsApiKey }}&callback=initMap">
         </script>
-    @else
-        <div class="p-6 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-            <p class="text-lg font-medium">Google Maps API key is not configured.</p>
-            <p class="mt-1">Add <code>GOOGLE_MAPS_API_KEY</code> to your <code>.env</code> file to enable the map.</p>
-        </div>
-    @endif
-</x-filament-panels::page>
+    @endpush
+@endif
