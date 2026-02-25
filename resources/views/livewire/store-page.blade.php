@@ -9,7 +9,7 @@
             /* Store Header Banner */
             .store-header-banner {
                 background: linear-gradient(135deg, #2d5a27 0%, #3d7a34 100%);
-                padding: 50px 0;
+                padding: 140px 0 50px;
                 margin-bottom: 0;
                 position: relative;
                 z-index: 1;

@@ -41,7 +41,9 @@ class StorePage extends Component
     public function getCategoriesProperty(): Collection
     {
         return Category::withCount('products')
-            ->orderBy('name')
+            ->where('is_active', true)
+            ->where('show_in_menu', true)
+            ->orderBy('sort_order')
             ->get();
     }
 

@@ -37,7 +37,10 @@ class Navigation extends Component
      */
     public function getCategoriesProperty()
     {
-        return Category::orderBy('name')->get();
+        return Category::where('is_active', true)
+            ->where('show_in_menu', true)
+            ->orderBy('sort_order')
+            ->get();
     }
 
     /**
