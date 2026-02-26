@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(SuperAdminSeeder::class);
         $this->call(LunarSetupSeeder::class);
+        $this->call(AttributeSeeder::class);
         $this->call(TagSeeder::class);
         $this->call(CategorySeeder::class);
         $this->call(ProductCategorySeeder::class);

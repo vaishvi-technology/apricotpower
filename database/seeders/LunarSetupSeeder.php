@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Lunar\Models\AttributeGroup;
 use Lunar\Models\Currency;
 use Lunar\Models\Language;
 use Lunar\Models\ProductType;
@@ -46,6 +47,16 @@ class LunarSetupSeeder extends Seeder
         // Create default ProductType
         ProductType::firstOrCreate(
             ['name' => 'Default']
+        );
+
+        // Create default AttributeGroup for products
+        AttributeGroup::firstOrCreate(
+            ['handle' => 'product-details'],
+            [
+                'attributable_type' => 'product',
+                'name' => ['en' => 'Product Details'],
+                'position' => 1,
+            ]
         );
     }
 }

@@ -3,18 +3,21 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Product;
 use App\Models\Tag;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Lunar\FieldTypes\Text;
 use Lunar\FieldTypes\TranslatedText;
 use Lunar\Models\Attribute;
 use Lunar\Models\Brand;
 use Lunar\Models\Currency;
-use Lunar\Models\Product;
+use Lunar\Models\Language;
 use Lunar\Models\ProductType;
 use Lunar\Models\ProductVariant;
 use Lunar\Models\Price;
 use Lunar\Models\TaxClass;
+use Lunar\Models\Url;
 
 class ProductCategorySeeder extends AbstractSeeder
 {
@@ -60,16 +63,13 @@ class ProductCategorySeeder extends AbstractSeeder
             return $existingVariant->product;
         }
 
-        // Build attribute data
+        // Build attribute data - always set name and description as TranslatedText
         $attributeData = [];
         foreach ($product->attributes as $attributeHandle => $value) {
-            $attribute = $attributes->first(fn ($att) => $att->handle == $attributeHandle);
-
-            if ($attribute && $attribute->type == TranslatedText::class) {
-                $attributeData[$attributeHandle] = new TranslatedText([
-                    'en' => new Text($value),
-                ]);
-            }
+            // Always create TranslatedText for name and description
+            $attributeData[$attributeHandle] = new TranslatedText([
+                'en' => new Text($value),
+            ]);
         }
 
         // Find or create brand
@@ -90,6 +90,27 @@ class ProductCategorySeeder extends AbstractSeeder
             'status' => 'published',
             'brand_id' => $brand->id,
             'category_id' => $category?->id,
+        ]);
+
+        // Create URL for the product
+        $language = Language::whereDefault(true)->first();
+        $productName = $product->attributes->name ?? 'product-' . $productModel->id;
+        $slug = Str::slug($productName);
+
+        // Make slug unique
+        $originalSlug = $slug;
+        $counter = 1;
+        while (Url::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
+        Url::create([
+            'slug' => $slug,
+            'default' => true,
+            'language_id' => $language->id,
+            'element_type' => $productModel->getMorphClass(),
+            'element_id' => $productModel->id,
         ]);
 
         // Create default variant
