@@ -65,7 +65,7 @@ class StorePage extends Component
     {
         $query = Product::with([
             'defaultUrl',
-            'thumbnail',
+            'media',
             'variants.basePrices.currency',
             'category',
             'tags',
