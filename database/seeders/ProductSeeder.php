@@ -12,7 +12,6 @@ use Lunar\Models\Attribute;
 use Lunar\Models\Brand;
 use Lunar\Models\Collection;
 use Lunar\Models\Currency;
-use Lunar\Models\Language;
 use Lunar\Models\Price;
 use Lunar\Models\Product;
 use Lunar\Models\ProductOption;
@@ -34,19 +33,19 @@ class ProductSeeder extends AbstractSeeder
         $products = $this->getSeedData('products');
 
         $attributes = Attribute::get();
-
         $productType = ProductType::first();
-
-        $taxClass = TaxClass::getDefault();
-
-        $currency = Currency::getDefault();
-
+        $taxClass = TaxClass::whereDefault(true)->first();
+        $currency = Currency::whereDefault(true)->first();
         $collections = Collection::get();
-
-        $language = Language::getDefault();
 
         DB::transaction(function () use ($products, $attributes, $productType, $taxClass, $currency, $collections) {
             $products->each(function ($product) use ($attributes, $productType, $taxClass, $currency, $collections) {
+                // Check if product with this SKU already exists
+                $existingVariant = ProductVariant::where('sku', $product->sku)->first();
+                if ($existingVariant) {
+                    return;
+                }
+
                 $attributeData = [];
 
                 foreach ($product->attributes as $attributeHandle => $value) {

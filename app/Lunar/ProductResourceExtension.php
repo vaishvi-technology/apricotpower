@@ -43,6 +43,9 @@ class ProductResourceExtension extends ResourceExtension
                     if ($child instanceof Forms\Components\Select && $child->getName() === 'brand_id') {
                         return false;
                     }
+                    if ($child instanceof Forms\Components\Select && $child->getName() === 'product_type_id') {
+                        return false;
+                    }
                     return true;
                 })->values()->all();
 

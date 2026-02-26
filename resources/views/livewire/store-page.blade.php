@@ -828,10 +828,13 @@
 
                         {{-- Product Image --}}
                         <div class="product-card-image">
+                            @php
+                                $thumbnail = $product->getFirstMedia('images');
+                            @endphp
                             @if($product->defaultUrl)
                                 <a href="{{ route('product.view', $product->defaultUrl->slug) }}">
-                                    @if($product->thumbnail)
-                                        <img src="{{ $product->thumbnail->getUrl('medium') }}"
+                                    @if($thumbnail)
+                                        <img src="{{ $thumbnail->getUrl('medium') }}"
                                              alt="{{ $product->translateAttribute('name') }}"
                                              loading="lazy">
                                     @else
