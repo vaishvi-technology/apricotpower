@@ -42,19 +42,27 @@ class CustomPathGenerator implements PathGenerator
     }
 
     /**
-     * Map model class to folder name.
+     * Map model class/morph alias to folder name.
      */
-    protected function getModelFolder(string $modelClass): string
+    protected function getModelFolder(string $modelType): string
     {
+        // Handle both morph aliases (e.g., 'product') and full class names
         $mapping = [
+            // Morph aliases (used by Lunar)
+            'product' => 'products',
+            'collection' => 'collections',
+            'brand' => 'brands',
+            'category' => 'categories',
+            // Full class names (fallback)
             'Lunar\Models\Product' => 'products',
             'App\Models\Product' => 'products',
             'Lunar\Models\Collection' => 'collections',
             'App\Models\Collection' => 'collections',
             'Lunar\Models\Brand' => 'brands',
             'App\Models\Brand' => 'brands',
+            'App\Models\Category' => 'categories',
         ];
 
-        return $mapping[$modelClass] ?? 'media';
+        return $mapping[$modelType] ?? 'media';
     }
 }
