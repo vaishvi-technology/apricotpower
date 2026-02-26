@@ -22,7 +22,7 @@ use App\Notifications\CustomerResetPasswordNotification;
  *
  * Lunar base fields: id, title, first_name, last_name, company_name, vat_no, meta, timestamps
  * Added fields: email, password, phone, is_tax_exempt, net_terms_approved, credit_limit,
- *               current_balance, is_active, is_vip, is_retailer, notes, etc.
+ *               account_locked, is_online_wholesaler, notes, etc.
  *
  * Lunar's default architecture: User (auth) -> customer_user pivot -> Customer (data)
  * Our extension adds: Customer can also authenticate directly via Sanctum API tokens.
@@ -50,15 +50,9 @@ class Customer extends LunarCustomer implements AuthenticatableContract, CanRese
         'is_tax_exempt' => 'boolean',
         'net_terms_approved' => 'boolean',
         'credit_limit' => 'decimal:2',
-        'current_balance' => 'decimal:2',
-        'is_active' => 'boolean',
         'account_locked' => 'boolean',
         'subscribe_to_list' => 'boolean',
-        'is_vip' => 'boolean',
-        'vip_since' => 'date',
-        'vip_expire' => 'date',
-        'is_retailer' => 'boolean',
-        'is_online_retailer' => 'boolean',
+        'is_online_wholesaler' => 'boolean',
         'last_login_at' => 'datetime',
         'last_order_at' => 'datetime',
         'agreed_terms_at' => 'datetime',
@@ -129,6 +123,19 @@ class Customer extends LunarCustomer implements AuthenticatableContract, CanRese
     public function retailerProfile(): HasOne
     {
         return $this->hasOne(RetailerProfile::class);
+    }
+
+    /**
+     * Sales rep (staff member) assigned to this customer.
+     */
+    public function getSalesRepIdAttribute($value)
+    {
+        return $value ?: null;
+    }
+
+    public function salesRep(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(\Lunar\Admin\Models\Staff::class, 'sales_rep_id');
     }
 
     /**

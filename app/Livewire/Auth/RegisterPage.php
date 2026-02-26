@@ -62,7 +62,6 @@ class RegisterPage extends Component
             'b17_knowledge' => $this->b17_knowledge ?: null,
             'subscribe_to_list' => $this->subscribe_to_list,
             'agreed_terms_at' => now(),
-            'is_active' => true,
         ]);
 
         Auth::guard('customer')->login($customer);

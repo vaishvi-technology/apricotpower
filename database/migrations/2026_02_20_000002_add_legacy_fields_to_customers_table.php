@@ -19,42 +19,34 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('customers', function (Blueprint $table) {
-            // Contact
-            $table->string('alt_phone', 50)->nullable()->after('phone');
-
-
             // Account status
-            $table->boolean('account_locked')->default(false)->after('is_active');
+            $table->boolean('account_locked')->default(false)->after('notes');
             $table->boolean('subscribe_to_list')->default(false)->after('account_locked');
 
-            // VIP / loyalty
-            $table->boolean('is_vip')->default(false)->after('subscribe_to_list');
-            $table->date('vip_since')->nullable()->after('is_vip');
-            $table->date('vip_expire')->nullable()->after('vip_since');
-
             // Referral
-            $table->string('referred_by', 75)->nullable()->after('vip_expire');
+            $table->string('referred_by', 75)->nullable()->after('subscribe_to_list');
 
             // For retailer / wholesale
-            $table->boolean('is_retailer')->default(false)->after('referred_by');
-            $table->boolean('is_online_retailer')->default(false)->after('is_retailer');
-            $table->integer('store_count')->default(1)->after('is_online_retailer');
+            $table->boolean('is_online_wholesaler')->default(false)->after('referred_by');
+            $table->date('store_date')->nullable()->after('is_online_wholesaler');
+            $table->integer('store_count')->default(1)->after('store_date');
 
             // Sales rep tracking
-            $table->unsignedInteger('sales_rep_id')->default(0)->after('store_count');
+            $table->foreignId('sales_rep_id')->nullable()->constrained('staff')->nullOnDelete()->after('store_count');
+
+            // Billing
+            $table->string('accounts_payable_email')->nullable()->after('sales_rep_id');
 
             // Notes
             $table->text('admin_notes')->nullable()->after('notes');
-            $table->text('extra_emails')->nullable()->after('admin_notes');
 
             // Tracking
             $table->timestamp('last_order_at')->nullable()->after('last_login_at');
             $table->timestamp('agreed_terms_at')->nullable()->after('last_order_at');
 
             // Indexes
-            $table->index('is_active');
-            $table->index('is_retailer');
-            $table->index('is_vip');
+            $table->index('account_locked');
+            $table->index('is_online_wholesaler');
             $table->index(['last_name', 'first_name']);
         });
     }
@@ -66,21 +58,19 @@ return new class extends Migration
     {
         Schema::table('customers', function (Blueprint $table) {
             // Drop indexes added by this migration
-            $table->dropIndex(['is_active']);
-            $table->dropIndex(['is_retailer']);
-            $table->dropIndex(['is_vip']);
+            $table->dropIndex(['account_locked']);
+            $table->dropIndex(['is_online_wholesaler']);
             $table->dropIndex(['last_name', 'first_name']);
 
             // Only drop columns added by THIS migration
             // (not those from 2026_02_18_100020_add_custom_fields_to_lunar_customers_table.php)
             $table->dropColumn([
-                'alt_phone',
                 'account_locked', 'subscribe_to_list',
-                'is_vip', 'vip_since', 'vip_expire',
                 'referred_by',
-                'is_retailer', 'is_online_retailer', 'store_count',
+                'is_online_wholesaler', 'store_date', 'store_count',
                 'sales_rep_id',
-                'admin_notes', 'extra_emails',
+                'accounts_payable_email',
+                'admin_notes',
                 'last_order_at', 'agreed_terms_at',
             ]);
         });
