@@ -2,23 +2,23 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
+use Lunar\Admin\Models\Staff;
 
 class SuperAdminSeeder extends Seeder
 {
     /**
-     * Seed a super-admin user.
+     * Seed a super-admin staff for Lunar admin panel.
      */
     public function run(): void
     {
-        User::updateOrCreate(
+        Staff::updateOrCreate(
             ['email' => 'admin@apricotpower.com'],
             [
-                'name' => 'Super Admin',
-                'email_verified_at' => now(),
-                'password' => Hash::make('password'),
+                'first_name' => 'Super',
+                'last_name' => 'Admin',
+                'admin' => true,
+                'password' => 'password',
             ]
         );
     }
