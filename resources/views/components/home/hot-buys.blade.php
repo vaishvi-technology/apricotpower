@@ -25,13 +25,14 @@
                             @php
                                 $variant = $product->variants->first();
                                 $basePrice = $variant?->basePrices->first();
+                                $thumbnail = $product->getFirstMedia('images');
                             @endphp
                             <div class="swiper-slide">
                                 <div class="hot-buys-item left-border">
                                     <div class="cursor-pointer">
                                         <a href="{{ route('product.view', $product->defaultUrl->slug) }}">
-                                            @if($product->thumbnail)
-                                                <img width="300" height="400" src="{{ $product->thumbnail->getUrl('medium') }}" alt="{{ $product->translateAttribute('name') }}">
+                                            @if($thumbnail)
+                                                <img width="300" height="400" src="{{ $thumbnail->getUrl('medium') }}" alt="{{ $product->translateAttribute('name') }}">
                                             @endif
                                         </a>
                                     </div>
