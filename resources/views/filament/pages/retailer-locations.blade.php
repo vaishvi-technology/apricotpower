@@ -37,7 +37,7 @@
         </div>
 
         {{-- Map Container --}}
-        <div id="retailer-map" style="height: 600px; width: 100%;" class="rounded-xl border border-gray-200 dark:border-gray-700"></div>
+        <div wire:ignore id="retailer-map" style="height: 600px; width: 100%;" class="rounded-xl border border-gray-200 dark:border-gray-700"></div>
 
         {{-- Retailer Count --}}
         <p id="retailer-count" class="text-sm text-gray-500 dark:text-gray-400"></p>
@@ -48,14 +48,133 @@
                 <p class="mt-1">Add <code>GOOGLE_MAPS_API_KEY</code> to your <code>.env</code> file to enable the map.</p>
             </div>
         @endif
+
+        {{-- Collapsible Retailer List --}}
+        <div class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
+            <button
+                wire:click="toggleList"
+                class="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            >
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <svg class="inline-block w-4 h-4 mr-1 transition-transform {{ $this->listExpanded ? 'rotate-90' : '' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                    Retailer List ({{ $retailerList['total'] }})
+                </span>
+            </button>
+
+            @if ($this->listExpanded)
+                <div class="border-t border-gray-200 dark:border-gray-700">
+                    <div class="px-4 py-3">
+                        <div class="flex gap-2 max-w-sm">
+                            <input
+                                type="text"
+                                wire:model="listSearch"
+                                wire:keydown.enter="searchList"
+                                placeholder="Search by name..."
+                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm text-sm placeholder-gray-400 dark:placeholder-gray-500"
+                            >
+                            <button
+                                wire:click="searchList"
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 transition-colors"
+                                title="Search"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                            </button>
+                            <button
+                                wire:click="resetListSearch"
+                                class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                                title="Reset"
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase text-xs">
+                                <tr>
+                                    <th class="px-4 py-3">Name</th>
+                                    <th class="px-4 py-3">State</th>
+                                    <th class="px-4 py-3">Country</th>
+                                    <th class="px-4 py-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                @forelse ($retailerList['items'] as $retailer)
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                        <td class="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">{{ $retailer->name ?? 'Unnamed' }}</td>
+                                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $retailer->state }}</td>
+                                        <td class="px-4 py-3 text-gray-600 dark:text-gray-400">{{ $retailer->country }}</td>
+                                        <td class="px-4 py-3 text-right">
+                                            <button
+                                                wire:click="mountAction('editRetailerLocation', { id: {{ $retailer->id }} })"
+                                                class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 rounded-lg hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-colors"
+                                            >
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                                Edit
+                                            </button>
+                                            <button
+                                                wire:click="mountAction('deleteRetailerLocation', { id: {{ $retailer->id }} })"
+                                                class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-danger-600 dark:text-danger-400 bg-danger-50 dark:bg-danger-900/20 rounded-lg hover:bg-danger-100 dark:hover:bg-danger-900/40 transition-colors"
+                                            >
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                </svg>
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">No retailer locations found.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @if ($retailerList['hasMore'])
+                        <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700 text-center">
+                            <button
+                                wire:click="loadMore"
+                                wire:loading.attr="disabled"
+                                class="px-4 py-2 text-sm font-medium text-primary-600 bg-primary-50 dark:bg-primary-900/20 dark:text-primary-400 rounded-lg hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-colors disabled:opacity-50"
+                            >
+                                <span wire:loading.remove wire:target="loadMore">
+                                    Load More ({{ $retailerList['total'] - $retailerList['items']->count() }} remaining)
+                                </span>
+                                <span wire:loading wire:target="loadMore">
+                                    Loading...
+                                </span>
+                            </button>
+                        </div>
+                    @else
+                        @if ($retailerList['total'] > 0)
+                            <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700 text-center">
+                                <span class="text-sm text-gray-500 dark:text-gray-400">Showing all {{ $retailerList['total'] }} retailers</span>
+                            </div>
+                        @endif
+                    @endif
+                </div>
+            @endif
+        </div>
     </div>
 </x-filament-panels::page>
 
 @if ($googleMapsApiKey)
     @push('scripts')
+        <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
         <script>
             let map;
             let markers = [];
+            let markerCluster = null;
             let infoWindow;
             const retailers = @json($retailers);
 
@@ -76,9 +195,13 @@
             }
 
             function addMarkers(data) {
-                // Clear existing markers
+                // Clear existing markers and cluster
                 markers.forEach(m => m.setMap(null));
                 markers = [];
+                if (markerCluster) {
+                    markerCluster.clearMarkers();
+                    markerCluster = null;
+                }
 
                 const bounds = new google.maps.LatLngBounds();
 
@@ -86,7 +209,6 @@
                     const position = { lat: retailer.latitude, lng: retailer.longitude };
                     const marker = new google.maps.Marker({
                         position: position,
-                        map: map,
                         title: retailer.name,
                     });
 
@@ -113,9 +235,14 @@
                     bounds.extend(position);
                 });
 
-                if (data.length > 0) {
+                // Create marker cluster
+                if (markers.length > 0) {
+                    markerCluster = new markerClusterer.MarkerClusterer({
+                        map,
+                        markers,
+                    });
+
                     map.fitBounds(bounds);
-                    // Don't zoom in too far for a single marker
                     if (data.length === 1) {
                         map.setZoom(12);
                     }
