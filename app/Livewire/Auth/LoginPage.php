@@ -27,13 +27,15 @@ class LoginPage extends Component
         if (Auth::guard('customer')->attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             $customer = Auth::guard('customer')->user();
 
-            if (!$customer->is_active) {
+            if (!$customer->is_active || $customer->account_locked) {
                 Auth::guard('customer')->logout();
                 session()->invalidate();
                 session()->regenerateToken();
-                $this->addError('email', 'Your account is not active. Please contact an administrator.');
+                $this->addError('email', 'Your account has been closed or locked. Please contact customer service at 866-468-7487.');
                 return;
             }
+
+            $customer->update(['last_login_at' => now()]);
 
             session()->regenerate();
             $this->redirect(route('order-history.view'));

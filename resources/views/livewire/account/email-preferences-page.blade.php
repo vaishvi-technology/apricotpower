@@ -3,7 +3,7 @@
     <section class="inner-banner">
         <div class="container">
             <div class="inner-banner-head">
-                <h1><span class="normal-font">EMAIL</span> <span class="bold-font">PREFERENCES</span></h1>
+                <h1><span class="normal-font">Email</span> <span class="bold-font">Signup</span></h1>
             </div>
         </div>
     </section>
@@ -14,19 +14,41 @@
         .account-sidebar .nav-link { color: #555; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 500; transition: all 0.2s; }
         .account-sidebar .nav-link:hover, .account-sidebar .nav-link.active { background: rgba(214,137,16,0.1); color: #d68910; font-weight: 600; }
         .account-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); padding: 2rem; }
-        .btn-brand { background: linear-gradient(135deg, #d68910, #e8a020); border: none; border-radius: 10px; padding: 0.65rem 2rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; transition: transform 0.2s, box-shadow 0.2s; }
-        .btn-brand:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(214,137,16,0.35); color: #fff; }
-        .pref-item { padding: 1rem 1.25rem; border: 2px solid #f0f0f0; border-radius: 10px; margin-bottom: 0.75rem; transition: border-color 0.2s; display: flex; align-items: flex-start; gap: 1rem; }
-        .pref-item:hover { border-color: #e8d8b8; }
-        .pref-item .pref-toggle { flex-shrink: 0; position: relative; width: 48px; height: 26px; margin-top: 2px; }
-        .pref-item .pref-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
-        .pref-item .pref-toggle .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; border-radius: 26px; transition: 0.3s; }
-        .pref-item .pref-toggle .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: #fff; border-radius: 50%; transition: 0.3s; }
-        .pref-item .pref-toggle input:checked + .slider { background-color: #d68910; }
-        .pref-item .pref-toggle input:checked + .slider:before { transform: translateX(22px); }
-        .pref-item .pref-toggle input:focus + .slider { box-shadow: 0 0 0 3px rgba(214,137,16,0.15); }
-        .pref-item .pref-text label { font-weight: 600; color: #333; cursor: pointer; display: block; margin-bottom: 0; }
-        .pref-item .pref-text small { color: #888; display: block; }
+        .email-signup-form .form-control {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 0.65rem 1rem;
+            font-size: 0.95rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .email-signup-form .form-control:focus {
+            border-color: #d68910;
+            box-shadow: 0 0 0 3px rgba(214, 137, 16, 0.15);
+        }
+        .btn-subscribe {
+            background: #28a745;
+            border: none;
+            border-radius: 4px;
+            padding: 0.65rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .btn-subscribe:hover {
+            background: #218838;
+            color: #fff;
+        }
+        .auth-link {
+            color: #d68910;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .auth-link:hover {
+            color: #b5740d;
+            text-decoration: underline;
+        }
     </style>
 
     <section class="account-section">
@@ -53,8 +75,6 @@
                 {{-- Content --}}
                 <div class="col-lg-9">
                     <div class="account-card">
-                        <h4 style="font-family:'lemonMilk',serif; font-weight:700; color:#333; margin-bottom:0.5rem;">Notification Settings</h4>
-                        <p style="color:#888; font-size:0.92rem; margin-bottom:1.5rem;">Choose which emails you'd like to receive from us.</p>
 
                         @if (session()->has('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -63,56 +83,80 @@
                             </div>
                         @endif
 
-                        <form wire:submit.prevent="save">
-                            <div class="pref-item">
-                                <label class="pref-toggle">
-                                    <input type="checkbox" wire:model="subscribe_to_list">
-                                    <span class="slider"></span>
-                                </label>
-                                <div class="pref-text">
-                                    <label for="subscribe_to_list">Mailing List</label>
-                                    <small>Subscribe to our main mailing list for updates and deals</small>
+                        @if($is_subscribed)
+                            {{-- Already Subscribed View --}}
+                            <div class="text-center mb-4">
+                                <div style="display: inline-flex; align-items: center; justify-content: center; width: 60px; height: 60px; background: #e8f5e9; border-radius: 50%; margin-bottom: 1rem;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#28a745" viewBox="0 0 16 16">
+                                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                    </svg>
                                 </div>
+                                <h5 style="font-weight: 700; color: #333; margin-bottom: 0.5rem;">You're Subscribed!</h5>
+                                <p style="color: #555; font-size: 0.95rem; margin-bottom: 0.25rem;">
+                                    You are currently subscribed to the Apricot Power deals list for exclusive discounts and health tips.
+                                </p>
+                                <p style="color: #555; font-size: 0.95rem;">
+                                    Emails sent approximately once per week. (<a href="{{ route('privacy') }}" class="auth-link" target="_blank">read our privacy policy</a>)
+                                </p>
                             </div>
 
-                            <div class="pref-item">
-                                <label class="pref-toggle">
-                                    <input type="checkbox" wire:model="order_updates">
-                                    <span class="slider"></span>
-                                </label>
-                                <div class="pref-text">
-                                    <label for="order_updates">Order Updates</label>
-                                    <small>Receive notifications about your orders and shipping</small>
-                                </div>
+                            <div class="text-center">
+                                <button type="button" wire:click="unsubscribe" class="btn btn-outline-danger" wire:loading.attr="disabled" wire:confirm="Are you sure you want to unsubscribe from our email list?">
+                                    <span wire:loading wire:target="unsubscribe">Unsubscribing...</span>
+                                    <span wire:loading.remove wire:target="unsubscribe">Unsubscribe from Email List</span>
+                                </button>
+                            </div>
+                        @else
+                            {{-- Subscribe View --}}
+                            <div class="text-center mb-4">
+                                <p style="color: #333; font-size: 1rem; margin-bottom: 0.25rem;">
+                                    <strong>Complete the form below to subscribe to the Apricot Power deals list for exclusive discounts and health tips!</strong>
+                                </p>
+                                <p style="color: #555; font-size: 0.95rem;">
+                                    Emails sent approximately once per week, unsubscribe at any time (<a href="{{ route('privacy') }}" class="auth-link" target="_blank">read our privacy policy</a>)
+                                </p>
                             </div>
 
-                            <div class="pref-item">
-                                <label class="pref-toggle">
-                                    <input type="checkbox" wire:model="newsletter">
-                                    <span class="slider"></span>
-                                </label>
-                                <div class="pref-text">
-                                    <label for="newsletter">Newsletter</label>
-                                    <small>Monthly newsletter with health tips and wellness articles</small>
-                                </div>
-                            </div>
+                            <h5 class="text-center mb-3" style="font-weight: 700; color: #333;">Subscribe to our Email List</h5>
 
-                            <div class="pref-item">
-                                <label class="pref-toggle">
-                                    <input type="checkbox" wire:model="promotional_offers">
-                                    <span class="slider"></span>
-                                </label>
-                                <div class="pref-text">
-                                    <label for="promotional_offers">Promotions & Special Offers</label>
-                                    <small>Exclusive deals, discount codes, and seasonal offers</small>
+                            <form wire:submit.prevent="subscribe" class="email-signup-form">
+                                <div class="row align-items-end g-2">
+                                    <div class="col-md-3">
+                                        <input type="text"
+                                               class="form-control @error('first_name') border-danger @enderror"
+                                               wire:model="first_name"
+                                               placeholder="First Name">
+                                        @error('first_name')
+                                            <div class="text-danger" style="font-size: 0.8rem; margin-top: 0.25rem;">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text"
+                                               class="form-control @error('last_name') border-danger @enderror"
+                                               wire:model="last_name"
+                                               placeholder="Last Name">
+                                        @error('last_name')
+                                            <div class="text-danger" style="font-size: 0.8rem; margin-top: 0.25rem;">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="email"
+                                               class="form-control @error('email') border-danger @enderror"
+                                               wire:model="email"
+                                               placeholder="Email">
+                                        @error('email')
+                                            <div class="text-danger" style="font-size: 0.8rem; margin-top: 0.25rem;">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button type="submit" class="btn btn-subscribe w-100" wire:loading.attr="disabled">
+                                            <span wire:loading wire:target="subscribe">Subscribing...</span>
+                                            <span wire:loading.remove wire:target="subscribe">Subscribe</span>
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <button type="submit" class="btn btn-brand mt-3" wire:loading.attr="disabled">
-                                <span wire:loading wire:target="save">Saving...</span>
-                                <span wire:loading.remove wire:target="save">Save Preferences</span>
-                            </button>
-                        </form>
+                            </form>
+                        @endif
                     </div>
                 </div>
             </div>

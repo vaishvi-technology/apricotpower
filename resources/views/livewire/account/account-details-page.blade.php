@@ -17,6 +17,8 @@
         .account-card .form-label { font-size: 0.85rem; font-weight: 600; color: #444; }
         .account-card .form-control { border: 2px solid #e8e8e8; border-radius: 10px; padding: 0.6rem 1rem; transition: border-color 0.3s, box-shadow 0.3s; }
         .account-card .form-control:focus { border-color: #d68910; box-shadow: 0 0 0 3px rgba(214,137,16,0.15); }
+        .account-card select.form-control { appearance: auto; cursor: pointer; }
+        .account-card textarea.form-control { resize: vertical; }
         .btn-brand { background: linear-gradient(135deg, #d68910, #e8a020); border: none; border-radius: 10px; padding: 0.65rem 2rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; transition: transform 0.2s, box-shadow 0.2s; }
         .btn-brand:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(214,137,16,0.35); color: #fff; }
         .btn-outline-brand { border: 2px solid #d68910; border-radius: 10px; padding: 0.5rem 1.5rem; font-weight: 600; color: #d68910; background: transparent; transition: all 0.2s; }
@@ -103,6 +105,13 @@
                         @if (session()->has('address_success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 {{ session('address_success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        @endif
+
+                        @if (session()->has('address_error'))
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ session('address_error') }}
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
                         @endif
@@ -229,12 +238,26 @@
                                     </div>
                                     <div class="d-flex gap-2 flex-shrink-0">
                                         @if (!$address->shipping_default)
-                                            <button type="button" class="btn btn-outline-brand btn-sm" wire:click="setDefaultAddress({{ $address->id }})" wire:confirm="Set this as your default shipping address?">
+                                            <button type="button" class="btn btn-outline-brand btn-sm"
+                                                onclick="AppDialog.confirm(this, 'setDefaultAddress', [{{ $address->id }}], {
+                                                    title: 'Set Default Address',
+                                                    text: 'Set this as your default shipping address?',
+                                                    type: 'question',
+                                                    confirmText: 'Yes, set default'
+                                                })">
                                                 Set Default
                                             </button>
                                         @endif
                                         <button type="button" class="btn btn-outline-brand btn-sm" wire:click="editAddress({{ $address->id }})">Edit</button>
-                                        <button type="button" class="btn btn-outline-danger btn-sm" wire:click="deleteAddress({{ $address->id }})" wire:confirm="Are you sure you want to delete this address?">Delete</button>
+                                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                            onclick="AppDialog.confirm(this, 'deleteAddress', [{{ $address->id }}], {
+                                                title: 'Delete Address',
+                                                text: 'Are you sure you want to delete this address?',
+                                                type: 'danger',
+                                                confirmText: 'Yes, delete it'
+                                            })">
+                                            Delete
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -243,6 +266,50 @@
                                 <p style="color:#999; text-align:center; padding:2rem 0;">No addresses saved yet. Click "Add Address" to add one.</p>
                             @endif
                         @endforelse
+                    </div>
+
+                    {{-- Account Information --}}
+                    <div class="account-card">
+                        <h5 class="card-section-title">Account Information</h5>
+
+                        @if (session()->has('account_info_success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ session('account_info_success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        @endif
+
+                        <form wire:submit.prevent="saveAccountInfo">
+                            <div class="mb-3">
+                                <label for="referred_by" class="form-label">How Did You Hear About Us?</label>
+                                <select class="form-control" id="referred_by" wire:model="referred_by">
+                                    <option value="">Select...</option>
+                                    <option value="Family or Friend">Family or Friend</option>
+                                    <option value="Doctor or Clinic">Doctor or Clinic</option>
+                                    <option value="Search Engine">Search Engine</option>
+                                    <option value="Internet Article">Internet Article</option>
+                                    <option value="Advertisement">Advertisement</option>
+                                    <option value="Facebook">Facebook</option>
+                                    <option value="Natural News">Natural News</option>
+                                    <option value="Book">Book</option>
+                                    <option value="Email or Newsletter">Email or Newsletter</option>
+                                    <option value="Church">Church</option>
+                                    <option value="Unfiltered News">Unfiltered News</option>
+                                    <option value="Event, Expo or Tradeshow">Event, Expo or Tradeshow</option>
+                                    <option value="Other...">Other...</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="b17_knowledge" class="form-label">What do you know about B17/Apricot Seeds?</label>
+                                <textarea class="form-control" id="b17_knowledge" wire:model="b17_knowledge" rows="4"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-brand" wire:loading.attr="disabled">
+                                <span wire:loading wire:target="saveAccountInfo">Saving...</span>
+                                <span wire:loading.remove wire:target="saveAccountInfo">Save Changes</span>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

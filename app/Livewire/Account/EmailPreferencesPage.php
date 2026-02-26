@@ -8,37 +8,55 @@ use Livewire\Component;
 
 class EmailPreferencesPage extends Component
 {
-    public bool $subscribe_to_list = false;
-    public bool $order_updates = true;
-    public bool $newsletter = false;
-    public bool $promotional_offers = false;
+    public string $first_name = '';
+    public string $last_name = '';
+    public string $email = '';
+    public bool $is_subscribed = false;
 
     public function mount(): void
     {
         $customer = Auth::guard('customer')->user();
-        $this->subscribe_to_list = (bool) ($customer->subscribe_to_list ?? false);
-
-        $prefs = $customer->meta?->toArray() ?? [];
-        $this->order_updates = $prefs['email_order_updates'] ?? true;
-        $this->newsletter = $prefs['email_newsletter'] ?? false;
-        $this->promotional_offers = $prefs['email_promotional'] ?? false;
+        $this->first_name = $customer->first_name ?? '';
+        $this->last_name = $customer->last_name ?? '';
+        $this->email = $customer->email ?? '';
+        $this->is_subscribed = (bool) ($customer->subscribe_to_list ?? false);
     }
 
-    public function save(): void
+    public function rules(): array
     {
+        return [
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+        ];
+    }
+
+    public function subscribe(): void
+    {
+        $this->validate();
+
         $customer = Auth::guard('customer')->user();
 
-        $customer->subscribe_to_list = $this->subscribe_to_list;
-
-        $meta = $customer->meta?->toArray() ?? [];
-        $meta['email_order_updates'] = $this->order_updates;
-        $meta['email_newsletter'] = $this->newsletter;
-        $meta['email_promotional'] = $this->promotional_offers;
-        $customer->meta = $meta;
-
+        $customer->first_name = $this->first_name;
+        $customer->last_name = $this->last_name;
+        $customer->email = $this->email;
+        $customer->subscribe_to_list = true;
         $customer->save();
 
-        session()->flash('success', 'Your email preferences have been updated.');
+        $this->is_subscribed = true;
+
+        session()->flash('success', 'You have been subscribed to the Apricot Power email list!');
+    }
+
+    public function unsubscribe(): void
+    {
+        $customer = Auth::guard('customer')->user();
+        $customer->subscribe_to_list = false;
+        $customer->save();
+
+        $this->is_subscribed = false;
+
+        session()->flash('success', 'You have been unsubscribed from the Apricot Power email list.');
     }
 
     public function render(): View
