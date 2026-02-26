@@ -45,7 +45,6 @@ class AuthController extends Controller
             'phone' => $validated['phone'] ?? null,
             'company_name' => $validated['company_name'] ?? null,
             'tax_id' => $validated['tax_id'] ?? null,
-            'is_active' => true,
         ]);
 
         $token = $customer->createToken('customer-token')->plainTextToken;
@@ -86,9 +85,9 @@ class AuthController extends Controller
             ], 401);
         }
 
-        if (! $customer->is_active) {
+        if ($customer->account_locked) {
             return response()->json([
-                'message' => 'Account is deactivated. Please contact support.',
+                'message' => 'Account is locked. Please contact support.',
             ], 403);
         }
 

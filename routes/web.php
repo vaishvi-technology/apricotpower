@@ -34,6 +34,7 @@ use App\Livewire\Account\OrderHistoryPage;
 use App\Livewire\Account\BasicInfoPage;
 use App\Livewire\Account\AccountDetailsPage;
 use App\Livewire\Account\EmailPreferencesPage;
+use App\Livewire\Account\Admin\PrivateAccountNotesPage;
 use App\Http\Controllers\ImpersonationController;
 use Illuminate\Support\Facades\Route;
 
@@ -111,6 +112,11 @@ Route::middleware(['auth:customer'])->group(function () {
     Route::get('/basic-info', BasicInfoPage::class)->name('basic-info');
     Route::get('/account-details', AccountDetailsPage::class)->name('account-details');
     Route::get('/email-preferences', EmailPreferencesPage::class)->name('email-preferences');
+
+    // Admin Options (only accessible during impersonation — enforced in each component)
+    Route::prefix('admin-options')->group(function () {
+        Route::get('/private-notes', PrivateAccountNotesPage::class)->name('admin.private-notes');
+    });
 });
 
 // Impersonation Routes (Admin only – staff guard)

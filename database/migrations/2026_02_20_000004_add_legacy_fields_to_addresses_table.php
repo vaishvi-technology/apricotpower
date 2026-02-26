@@ -27,11 +27,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('addresses', function (Blueprint $table) {
-            $table->string('label')->nullable()->after('billing_default');   // Home, Office, etc.
-            $table->string('type')->default('shipping')->after('label');     // shipping or billing
-            $table->timestamp('last_used_at')->nullable()->after('type');
+            if (! Schema::hasColumn('addresses', 'label')) {
+                $table->string('label')->nullable()->after('billing_default');
+            }
+            if (! Schema::hasColumn('addresses', 'type')) {
+                $table->string('type')->default('shipping')->after('label');
+            }
+            if (! Schema::hasColumn('addresses', 'last_used_at')) {
+                $table->timestamp('last_used_at')->nullable()->after('type');
+            }
 
-            $table->index(['customer_id', 'type']);
+            if (! Schema::hasIndex('addresses', 'addresses_customer_id_type_index')) {
+                $table->index(['customer_id', 'type']);
+            }
         });
     }
 

@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('retailer_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained('customers')->cascadeOnDelete();
-            $table->string('accounts_payable_email')->nullable();
             $table->boolean('include_in_retailer_map')->default(false);
             $table->string('name')->nullable();
             $table->string('street')->nullable();
