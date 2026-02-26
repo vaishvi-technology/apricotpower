@@ -117,3 +117,7 @@ If you encounter permission errors, ensure Docker has proper permissions:
 ```bash
 sudo chown -R $USER:$USER .
 ```
+
+### Credentials for super admin
+Email: `admin@apricotpower.com`
+Password: `password`
