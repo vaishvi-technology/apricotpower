@@ -101,7 +101,7 @@ services:
         hostname: localstack
         environment:
             - SERVICES=s3,sqs,dynamodb
-            - BUCKET_NAME=${AWS_BUCKET}
+            - BUCKET_NAME=${AWS_BUCKET:-rcm}
             - AWS_DEFAULT_REGION=us-east-1
             - AWS_ACCESS_KEY_ID=test
             - AWS_SECRET_ACCESS_KEY=test
@@ -118,7 +118,7 @@ services:
         ports:
             - "4566-4599:4566-4599"
         volumes:
-            - ./docker/localstack/entrypoint.sh:/etc/localstack/init/ready.d/entrypoint.sh
+            - "./docker/init-s3.sh:/etc/localstack/init/ready.d/init-s3.sh"
             - "./.localstack:/var/lib/localstack"
             - "/var/run/docker.sock:/var/run/docker.sock"
             - ./cors.json:/etc/localstack/cors.json
