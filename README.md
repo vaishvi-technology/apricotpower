@@ -85,6 +85,14 @@ Create the database tables:
 ./vendor/bin/sail artisan migrate
 ```
 
+### 8. Run Seeders
+
+Run Seeders:
+
+```bash
+./vendor/bin/sail artisan db:seed
+```
+
 ## Usage
 
 Once installed, the application will be available at:
