@@ -7,6 +7,7 @@ use App\Lunar\CreateStaffPageExtension;
 use App\Lunar\CustomerResourceExtension;
 use App\Lunar\EditProductPageExtension;
 use App\Lunar\EditStaffPageExtension;
+use App\Lunar\ListProductsPageExtension;
 use App\Lunar\ProductResourceExtension;
 use App\Lunar\StaffResourceExtension;
 use App\Modifiers\ShippingModifier;
@@ -14,6 +15,7 @@ use Illuminate\Support\ServiceProvider;
 use Lunar\Admin\Filament\Resources\CustomerResource;
 use Lunar\Admin\Filament\Resources\ProductResource;
 use Lunar\Admin\Filament\Resources\ProductResource\Pages\EditProduct;
+use Lunar\Admin\Filament\Resources\ProductResource\Pages\ListProducts;
 use Lunar\Admin\Filament\Resources\StaffResource;
 use Lunar\Admin\Filament\Resources\StaffResource\Pages\CreateStaff;
 use Lunar\Admin\Filament\Resources\StaffResource\Pages\EditStaff;
@@ -32,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         LunarPanel::extensions([
             ProductResource::class => ProductResourceExtension::class,
             EditProduct::class => EditProductPageExtension::class,
+            ListProducts::class => ListProductsPageExtension::class,
             CustomerResource::class => CustomerResourceExtension::class,
             StaffResource::class => StaffResourceExtension::class,
             EditStaff::class => EditStaffPageExtension::class,

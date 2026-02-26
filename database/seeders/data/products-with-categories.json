@@ -1,0 +1,134 @@
+[
+    {
+        "attributes": {
+            "name": "Product 1",
+            "description": "Description for Product 1"
+        },
+        "category_slug": "category-1",
+        "sku": "PROD-001",
+        "price": "1999",
+        "image": "Product_1.png",
+        "brand": "Brand"
+    },
+    {
+        "attributes": {
+            "name": "Product 2",
+            "description": "Description for Product 2"
+        },
+        "category_slug": "category-1",
+        "sku": "PROD-002",
+        "price": "2499",
+        "image": "Product_2.png",
+        "brand": "Brand"
+    },
+    {
+        "attributes": {
+            "name": "Product 3",
+            "description": "Description for Product 3"
+        },
+        "category_slug": "category-2",
+        "sku": "PROD-003",
+        "price": "2999",
+        "image": "Product_3.png",
+        "brand": "Brand"
+    },
+    {
+        "attributes": {
+            "name": "Product 4",
+            "description": "Description for Product 4"
+        },
+        "category_slug": "category-2",
+        "sku": "PROD-004",
+        "price": "3499",
+        "image": "Product_4.png",
+        "brand": "Brand"
+    },
+    {
+        "attributes": {
+            "name": "Product 5",
+            "description": "Description for Product 5"
+        },
+        "category_slug": "category-3",
+        "sku": "PROD-005",
+        "price": "3999",
+        "image": "Product_5.png",
+        "brand": "Brand"
+    },
+    {
+        "attributes": {
+            "name": "Product 6",
+            "description": "Description for Product 6"
+        },
+        "category_slug": "category-3",
+        "sku": "PROD-006",
+        "price": "4499",
+        "image": "Product_6.png",
+        "brand": "Brand"
+    },
+    {
+        "attributes": {
+            "name": "Product 7",
+            "description": "Description for Product 7"
+        },
+        "category_slug": "category-4",
+        "sku": "PROD-007",
+        "price": "4999",
+        "image": "Product_7.png",
+        "brand": "Brand"
+    },
+    {
+        "attributes": {
+            "name": "Product 8",
+            "description": "Description for Product 8"
+        },
+        "category_slug": "category-4",
+        "sku": "PROD-008",
+        "price": "5499",
+        "image": "Product_8.png",
+        "brand": "Brand"
+    },
+    {
+        "attributes": {
+            "name": "Product 9",
+            "description": "Description for Product 9"
+        },
+        "category_slug": "category-5",
+        "sku": "PROD-009",
+        "price": "5999",
+        "image": "Product_9.png",
+        "brand": "Brand"
+    },
+    {
+        "attributes": {
+            "name": "Product 10",
+            "description": "Description for Product 10"
+        },
+        "category_slug": "category-5",
+        "sku": "PROD-010",
+        "price": "6499",
+        "image": "Product_10.png",
+        "brand": "Brand"
+    },
+    {
+        "attributes": {
+            "name": "Product 11",
+            "description": "Description for Product 11"
+        },
+        "category_slug": "category-1",
+        "sku": "PROD-011",
+        "price": "6999",
+        "image": "Product_11.png",
+        "brand": "Brand"
+    },
+    {
+        "attributes": {
+            "name": "Product 12",
+            "description": "Description for Product 12"
+        },
+        "category_slug": "category-2",
+        "sku": "PROD-012",
+        "price": "7499",
+        "image": "Product_12.png",
+        "brand": "Brand"
+    }
+]

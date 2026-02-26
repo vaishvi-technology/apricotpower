@@ -12,7 +12,6 @@ class Product extends LunarProduct
     protected $fillable = [
         // Original Lunar fields
         'attribute_data',
-        'product_type_id',
         'status',
         'brand_id',
         'category_id',
