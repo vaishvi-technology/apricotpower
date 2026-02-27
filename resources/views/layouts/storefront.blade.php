@@ -21,7 +21,7 @@
 
     <link
         rel="icon"
-        href="{{ asset('favicon.svg') }}"
+        href="{{ asset('images/home/favicon.png') }}"
     >
     @livewireStyles
     @stack('styles')
