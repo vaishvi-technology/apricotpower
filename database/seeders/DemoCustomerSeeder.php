@@ -6,6 +6,7 @@ use App\Models\Customer;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Lunar\Models\Address;
+use Lunar\Models\Country;
 use Lunar\Models\CustomerGroup;
 
 class DemoCustomerSeeder extends Seeder
@@ -16,6 +17,14 @@ class DemoCustomerSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function () {
+            $usCountry = Country::where('iso2', 'US')->first();
+
+            if (! $usCountry) {
+                $this->command->warn('US country not found. Run CountryStateSeeder first.');
+
+                return;
+            }
+
             $demoCustomers = [
                 [
                     'data' => [
@@ -76,7 +85,7 @@ class DemoCustomerSeeder extends Seeder
                 // Default shipping address
                 Address::create([
                     'customer_id' => $customer->id,
-                    'country_id' => 235,
+                    'country_id' => $usCountry->id,
                     'title' => null,
                     'first_name' => $customer->first_name,
                     'last_name' => $customer->last_name,
