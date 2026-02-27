@@ -1,0 +1,226 @@
+CountryID,CountryAbbrev,Country,Rank,GroupAtTop,Hide,SBZone
+1,AL,Albania,0,,False,102
+2,DZ,Algeria,0,,False,102
+4,AD,Andorra,0,,False,102
+5,AO,Angola,0,,False,102
+6,AI,Anguilla,0,,False,102
+7,AG,Antigua and Barbuda,0,,False,102
+8,AR,Argentina,0,,False,102
+9,AM,Armenia,0,,False,102
+10,AW,Aruba,0,,False,102
+11,AU,Australia,0,,False,102
+12,AT,Austria,0,,False,102
+13,AZ,Azerbaijan,0,,False,102
+14,BS,Bahamas,0,,False,102
+15,BH,Bahrain,0,,False,102
+16,BD,Bangladesh,0,,False,102
+17,BB,Barbados,0,,False,102
+18,BY,Belarus,0,,False,102
+19,BE,Belgium,0,,False,102
+20,BZ,Belize,0,,False,101
+21,BJ,Benin (Dahomey),0,,False,102
+22,BM,Bermuda,0,,False,102
+23,BT,Bhutan,0,,False,102
+24,BO,Bolivia,0,,False,102
+25,BW,Botswana,0,,False,102
+26,BR,Brazil,0,,False,102
+28,BN,Brunei Darussalam,0,,False,102
+29,BG,Bulgaria,0,,False,102
+30,BF,Burkina Faso,0,,False,102
+32,BI,Burundi,0,,False,101
+33,KH,Cambodia,0,,False,102
+34,CM,Cameroon,0,,False,102
+35,CA,Canada,1,,False,102
+36,CV,Cape Verde,0,,False,102
+37,KY,Cayman Islands,0,,False,102
+38,CF,Central African Rep.,0,,False,102
+40,CL,Chile,0,,False,102
+41,CN,China,0,,False,102
+42,CO,Colombia,0,,False,102
+43,CG,Congo (Republic),0,,False,102
+44,CD,Congo (Democratic Republic),0,,False,102
+45,CK,Cook Islands (New Zealand),0,,False,102
+46,CR,Costa Rica,0,,False,102
+47,CI,Côte d’Ivoire (Ivory Coast),0,,False,102
+48,HR,Croatia,0,,False,102
+49,CY,Cyprus,0,,False,102
+50,CZ,Czech Republic,0,,False,102
+51,DK,Denmark,0,,False,102
+52,DJ,Djibouti,0,,False,102
+53,DM,Dominica,0,,False,102
+54,DO,Dominican Republic,0,,False,102
+55,EC,Ecuador,0,,False,102
+56,EG,Egypt,0,,False,102
+57,SV,El Salvador,0,,False,102
+58,GQ,Equatorial Guinea,0,,False,102
+59,ER,Eritrea,0,,False,102
+60,EE,Estonia,0,,False,102
+61,ET,Ethiopia,0,,False,102
+62,FO,Faroe Islands,0,,False,102
+63,FJ,Fiji,0,,False,102
+64,FI,Finland,0,,False,102
+65,FR,France,0,,False,102
+66,GF,French Guiana,0,,False,102
+67,PF,French Polynesia,0,,False,102
+68,GA,Gabon,0,,False,102
+69,GM,Gambia,0,,False,102
+70,GE,Georgia, Republic of,0,,False,102
+71,DE,Germany,0,,False,102
+72,GH,Ghana,0,,False,102
+73,GI,Gibraltar,0,,False,102
+74,GR,Greece,0,,False,102
+75,GL,Greenland,0,,False,102
+76,GD,Grenada,0,,False,102
+77,GP,Guadeloupe,0,,False,102
+78,GU,Guam (U.S. Possession),0,,True,103
+79,GT,Guatemala,0,,False,102
+80,GN,Guinea,0,,False,102
+81,GW,Guinea-Bissau,0,,False,102
+82,GY,Guyana,0,,False,102
+83,HT,Haiti,0,,False,102
+84,HN,Honduras,0,,False,102
+85,HK,Hong Kong,0,,False,102
+86,HU,Hungary,0,,False,102
+87,IS,Iceland,0,,False,102
+88,IN,India,0,,False,102
+89,ID,Indonesia,0,,False,102
+90,IE,Ireland,0,,False,102
+91,IL,Israel,0,,False,102
+92,IT,Italy,0,,False,102
+94,JM,Jamaica,0,,False,102
+95,JP,Japan,0,,False,102
+96,JO,Jordan,0,,False,102
+97,KZ,Kazakhstan,0,,False,102
+98,KE,Kenya,0,,False,102
+99,KW,Kuwait,0,,False,102
+100,KG,Kyrgyzstan,0,,False,102
+101,LV,Latvia,0,,False,102
+102,LB,Lebanon,0,,False,102
+103,LS,Lesotho,0,,False,102
+104,LI,Liechtenstein,0,,False,102
+105,LT,Lithuania,0,,False,102
+106,LU,Luxembourg,0,,False,102
+108,MK,Macedonia,0,,False,102
+109,MG,Madagascar,0,,False,102
+110,MW,Malawi,0,,False,102
+111,MY,Malaysia,0,,False,102
+112,MV,Maldives,0,,False,102
+113,ML,Mali,0,,False,102
+114,MT,Malta,0,,False,102
+115,MH,Marshall Islands,0,,True,102
+116,MQ,Martinique,0,,False,102
+117,MR,Mauritania,0,,False,102
+118,MU,Mauritius,0,,False,102
+119,MX,Mexico,0,,True,102
+120,FM,Micronesia,0,,False,103
+121,MD,Moldova,0,,False,102
+122,MC,Monaco (France),0,,False,102
+123,MN,Mongolia,0,,False,102
+124,MS,Montserrat,0,,False,102
+125,MA,Morocco,0,,False,102
+126,MZ,Mozambique,0,,False,102
+127,MM,Myanmar (Burma),0,,False,102
+128,NA,Namibia,0,,False,102
+129,NP,Nepal,0,,False,102
+130,NL,Netherlands,0,,False,102
+132,NC,New Caledonia,0,,False,102
+133,NZ,New Zealand,0,,False,102
+134,NI,Nicaragua,0,,False,102
+135,NE,Niger,0,,False,102
+137,NO,Norway,0,,True,102
+138,OM,Oman,0,,False,102
+139,PK,Pakistan,0,,False,102
+140,PW,Palau,0,,True,102
+141,PA,Panama,0,,False,102
+143,PY,Paraguay,0,,False,102
+144,PE,Peru,0,,False,102
+145,PH,Philippines,0,,False,102
+146,PL,Poland,0,,False,102
+147,PT,Portugal,0,,False,102
+149,QA,Qatar,0,,False,102
+150,RE,Reunion,0,,False,102
+151,RO,Romania,0,,False,102
+152,RU,Russia,0,,False,102
+153,RW,Rwanda,0,,False,102
+155,SM,San Marino,0,,False,102
+156,SA,Saudi Arabia,0,,False,102
+157,SN,Senegal,0,,False,102
+158,SC,Seychelles,0,,False,102
+159,SL,Sierra Leone,0,,False,102
+160,SG,Singapore,0,,False,102
+161,SK,Slovak Republic (Slovakia),0,,False,102
+162,SI,Slovenia,0,,False,102
+165,ES,Spain,0,,False,102
+166,LK,Sri Lanka,0,,False,102
+170,SR,Suriname,0,,False,102
+171,SZ,Swaziland,0,,False,102
+172,SE,Sweden,0,,False,102
+173,CH,Switzerland,0,,False,102
+174,SY,Syrian Arab Republic (Syria),0,,True,102
+175,TW,Taiwan,0,,False,102
+176,TZ,Tanzania,0,,False,102
+178,TG,Togo,0,,False,102
+179,TT,Trinidad and Tobago,0,,False,102
+180,TN,Tunisia,0,,False,102
+181,TR,Turkey,0,,False,102
+182,TM,Turkmenistan,0,,False,102
+184,AE,United Arab Emirates,0,,False,102
+186,US,United States,2,,False,102
+187,UG,Uganda,0,,False,102
+188,UA,Ukraine,0,,False,102
+190,UY,Uruguay,0,,False,102
+191,UZ,Uzbekistan,0,,False,102
+192,VU,Vanuatu,0,,False,102
+193,VA,Vatican City,0,,False,102
+194,VE,Venezuela,0,,False,102
+195,VN,Vietnam,0,,False,102
+196,WF,Wallis and Futuna Islands,0,,False,102
+197,YE,Yemen,0,,False,101
+198,ZM,Zambia,0,,False,102
+200,RS,Serbia, Republic of,0,,False,102
+203,AF,Afgahnistan,0,,False,102
+204,PG,Papua New Guinea,0,,False,102
+231,BA,Bosnia-Herzegovina,0,,False,102
+250,KM,Comoros,0,,False,102
+254,CU,Cuba,0,,True,101
+275,FK,Falkland Islands,0,,False,102
+304,IR,Iran,0,,True,102
+305,IQ,Iraq,0,,True,102
+324,KI,Kiribati,0,,False,102
+325,KP,North Korea,0,,True,102
+326,KR,South Korea,0,,False,102
+334,LA,Laos,0,,False,102
+338,LR,Liberia,0,,False,102
+339,LY,Libya,0,,False,101
+342,MO,Macao,0,,False,102
+365,NR,Nauru,0,,False,102
+368,AN,Netherlands Antilles,0,,False,102
+379,MP,Northern Mariana Islands,0,,True,103
+401,PN,Pitcairn Island,0,,False,102
+413,ZW,Zimbabwe,0,,False,102
+421,KN,Saint Christopher and Nevis,0,,False,102
+424,SH,Saint Helena,0,,False,102
+427,LC,Saint Lucia,0,,False,102
+430,PM,Saint Pierre and Miquelon,0,,False,102
+432,VC,Saint Vincent and the Grenadines,0,,False,102
+437,ST,Sao Tome and Principe,0,,False,102
+446,TH,Thailand,0,,False,102
+449,SB,Solomon Islands,0,,False,102
+451,SO,Somalia,0,,False,102
+458,SD,Sudan,0,,False,101
+465,TJ,Tajikistan,0,,False,102
+467,TD,Tchad (Chad),0,,False,102
+475,TO,Tonga,0,,False,102
+480,ZA,South Africa,0,,False,102
+488,TC,Turks and Caicos Islands,0,,False,102
+490,TV,Tuvalu,0,,False,102
+497,VI,Virgin Islands (U.S.),0,,True,103
+503,WS,Western Samoa,0,,False,102
+508,VG,Virgin Islands (British),0,,False,102
+509,UK,United Kingdom,0,,False,102
+511,MJ,Montenegro,0,False,False,102
+515,NG,Nigeria,0,False,True,102
+516,SX,Sint Maarten,0,False,False,102
+517,MF,Saint Martin,0,False,False,102
+520,PR,Puerto Rico,0,False,True,103
+521,AS,American Samoa,0,False,True,103

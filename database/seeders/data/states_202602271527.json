@@ -1,0 +1,471 @@
+{
+"states": [
+	{
+		"State" : "Alabama",
+		"Abbrev" : "AL",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Alaska",
+		"Abbrev" : "AK",
+		"SBZone" : 9,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Alberta",
+		"Abbrev" : "AB",
+		"SBZone" : 0,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "American Samoa",
+		"Abbrev" : "AS",
+		"SBZone" : 103,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Arizona",
+		"Abbrev" : "AZ",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Arkansas",
+		"Abbrev" : "AR",
+		"SBZone" : 3,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Armed Forces Africa",
+		"Abbrev" : "AE",
+		"SBZone" : 10,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Armed Forces Americas",
+		"Abbrev" : "AA",
+		"SBZone" : 10,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Armed Forces Canada",
+		"Abbrev" : "AE",
+		"SBZone" : 10,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Armed Forces Europe",
+		"Abbrev" : "AE",
+		"SBZone" : 10,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Armed Forces Middle East",
+		"Abbrev" : "AE",
+		"SBZone" : 10,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Armed Forces Pacific",
+		"Abbrev" : "AP",
+		"SBZone" : 10,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "British Columbia",
+		"Abbrev" : "BC",
+		"SBZone" : 0,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "California",
+		"Abbrev" : "CA",
+		"SBZone" : 3,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Colorado",
+		"Abbrev" : "CO",
+		"SBZone" : 5,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Connecticut",
+		"Abbrev" : "CT",
+		"SBZone" : 2,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Delaware",
+		"Abbrev" : "DE",
+		"SBZone" : 2,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "District of Columbia",
+		"Abbrev" : "DC",
+		"SBZone" : 3,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Federated States Of Micronesia",
+		"Abbrev" : "FM",
+		"SBZone" : 103,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Florida",
+		"Abbrev" : "FL",
+		"SBZone" : 5,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Georgia",
+		"Abbrev" : "GA",
+		"SBZone" : 5,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Guam",
+		"Abbrev" : "GU",
+		"SBZone" : 103,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Hawaii",
+		"Abbrev" : "HI",
+		"SBZone" : 9,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Idaho",
+		"Abbrev" : "ID",
+		"SBZone" : 5,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Illinois",
+		"Abbrev" : "IL",
+		"SBZone" : 5,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Indiana",
+		"Abbrev" : "IN",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Iowa",
+		"Abbrev" : "IA",
+		"SBZone" : 5,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Kansas",
+		"Abbrev" : "KS",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Kentucky",
+		"Abbrev" : "KY",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Louisiana",
+		"Abbrev" : "LA",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Maine",
+		"Abbrev" : "ME",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Manitoba",
+		"Abbrev" : "MB",
+		"SBZone" : 0,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Marshall Islands",
+		"Abbrev" : "MH",
+		"SBZone" : 102,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Maryland",
+		"Abbrev" : "MD",
+		"SBZone" : 2,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Massachusetts",
+		"Abbrev" : "MA",
+		"SBZone" : 3,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Michigan",
+		"Abbrev" : "MI",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Minnesota",
+		"Abbrev" : "MN",
+		"SBZone" : 5,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Mississippi",
+		"Abbrev" : "MS",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Missouri",
+		"Abbrev" : "MO",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Montana",
+		"Abbrev" : "MT",
+		"SBZone" : 5,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Nebraska",
+		"Abbrev" : "NE",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Nevada",
+		"Abbrev" : "NV",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "New Brunswick",
+		"Abbrev" : "NB",
+		"SBZone" : 0,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "New Hampshire",
+		"Abbrev" : "NH",
+		"SBZone" : 3,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "New Jersey",
+		"Abbrev" : "NJ",
+		"SBZone" : 1,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "New Mexico",
+		"Abbrev" : "NM",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "New York",
+		"Abbrev" : "NY",
+		"SBZone" : 3,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Newfoundland",
+		"Abbrev" : "NL",
+		"SBZone" : 0,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "North Carolina",
+		"Abbrev" : "NC",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "North Dakota",
+		"Abbrev" : "ND",
+		"SBZone" : 5,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Northern Mariana Islands",
+		"Abbrev" : "MP",
+		"SBZone" : 103,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Northwest Territories",
+		"Abbrev" : "NT",
+		"SBZone" : 0,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Nova Scotia",
+		"Abbrev" : "NS",
+		"SBZone" : 0,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Nunavut",
+		"Abbrev" : "NU",
+		"SBZone" : 0,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Ohio",
+		"Abbrev" : "OH",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Oklahoma",
+		"Abbrev" : "OK",
+		"SBZone" : 3,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Ontario",
+		"Abbrev" : "ON",
+		"SBZone" : 0,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Oregon",
+		"Abbrev" : "OR",
+		"SBZone" : 5,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Palau",
+		"Abbrev" : "PW",
+		"SBZone" : 102,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Pennsylvania",
+		"Abbrev" : "PA",
+		"SBZone" : 2,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Prince Edward Island",
+		"Abbrev" : "PE",
+		"SBZone" : 0,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Puerto Rico",
+		"Abbrev" : "PR",
+		"SBZone" : 103,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Quebec",
+		"Abbrev" : "QC",
+		"SBZone" : 0,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Rhode Island",
+		"Abbrev" : "RI",
+		"SBZone" : 3,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Saskatchewan",
+		"Abbrev" : "SK",
+		"SBZone" : 0,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "South Carolina",
+		"Abbrev" : "SC",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "South Dakota",
+		"Abbrev" : "SD",
+		"SBZone" : 5,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Tennessee",
+		"Abbrev" : "TN",
+		"SBZone" : 5,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Texas",
+		"Abbrev" : "TX",
+		"SBZone" : 3,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "U.S. Virgin Islands",
+		"Abbrev" : "VI",
+		"SBZone" : 103,
+		"StateContiguous" : 0
+	},
+	{
+		"State" : "Utah",
+		"Abbrev" : "UT",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Vermont",
+		"Abbrev" : "VT",
+		"SBZone" : 3,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Virginia",
+		"Abbrev" : "VA",
+		"SBZone" : 3,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Washington",
+		"Abbrev" : "WA",
+		"SBZone" : 5,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "West Virginia",
+		"Abbrev" : "WV",
+		"SBZone" : 4,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Wisconsin",
+		"Abbrev" : "WI",
+		"SBZone" : 5,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Wyoming",
+		"Abbrev" : "WY",
+		"SBZone" : 5,
+		"StateContiguous" : 1
+	},
+	{
+		"State" : "Yukon",
+		"Abbrev" : "YT",
+		"SBZone" : 0,
+		"StateContiguous" : 0
+	}
+]}
