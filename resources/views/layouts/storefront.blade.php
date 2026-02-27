@@ -23,9 +23,67 @@
         rel="icon"
         href="{{ asset('favicon.svg') }}"
     >
+    <!-- Google Translate -->
+    <script type="text/javascript">
+        var _googleTranslateInitialized = false;
+
+        function googleTranslateElementInit() {
+            var el = document.getElementById('google_translate_element');
+            if (!el || _googleTranslateInitialized) return;
+            _googleTranslateInitialized = true;
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                autoDisplay: false,
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
     @livewireStyles
     @stack('styles')
     <style>
+        /* Google Translate Widget Styling */
+        #google_translate_element {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        #google_translate_element .goog-te-gadget {
+            font-size: 0;
+            color: transparent;
+            display: inline-flex !important;
+            align-items: center;
+            vertical-align: middle;
+        }
+        #google_translate_element .goog-te-gadget > span {
+            display: inline-flex !important;
+            align-items: center;
+        }
+        #google_translate_element .goog-te-gadget .goog-te-combo {
+            font-size: 13px;
+            background-color: #d68910;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 3px;
+            padding: 2px 5px;
+            cursor: pointer;
+            outline: none;
+            vertical-align: middle;
+        }
+        #google_translate_element .goog-te-gadget .goog-te-combo option {
+            background-color: #fff;
+            color: #333;
+        }
+        #google_translate_element .goog-te-gadget img {
+            vertical-align: middle;
+            margin: 0 4px 0 0;
+        }
+        .goog-te-banner-frame.skiptranslate {
+            display: none !important;
+        }
+        body {
+            top: 0px !important;
+        }
         /* Top Header Styles */
         .topheader {
             background-color: #d68910;
@@ -36,6 +94,12 @@
         }
         .topheader .language-selector {
             cursor: pointer;
+        }
+        .topheader .translate-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            white-space: nowrap;
         }
 
         /* Dropdown Styles */
