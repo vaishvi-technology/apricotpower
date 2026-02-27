@@ -9,7 +9,7 @@
             /* Store Header Banner */
             .store-header-banner {
                 background: linear-gradient(135deg, #2d5a27 0%, #3d7a34 100%);
-                padding: 50px 0;
+                padding: 140px 0 50px;
                 margin-bottom: 0;
                 position: relative;
                 z-index: 1;
@@ -283,61 +283,24 @@
                 transition: all 0.3s ease;
                 display: flex;
                 flex-direction: column;
+                text-align: center;
+                padding: 20px 15px;
             }
 
             .product-card:hover {
                 box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             }
 
-            .product-card-image {
-                position: relative;
-                padding: 15px;
-                background: #fafafa;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                min-height: 200px;
-            }
-
-            .product-card-image img {
-                max-width: 100%;
-                max-height: 170px;
-                object-fit: contain;
-            }
-
-            .product-badge {
-                position: absolute;
-                top: 10px;
-                left: 10px;
-                padding: 4px 8px;
-                border-radius: 3px;
-                font-size: 11px;
-                font-weight: 600;
-            }
-
-            .badge-sale {
-                background: #dc3545;
-                color: #fff;
-            }
-
-            .badge-new {
-                background: #28a745;
-                color: #fff;
-            }
-
-            .product-card-content {
-                padding: 15px;
-                flex: 1;
-                display: flex;
-                flex-direction: column;
+            .product-card-header {
+                margin-bottom: 10px;
             }
 
             .product-card-title {
-                font-size: 14px;
+                font-size: 16px;
                 font-weight: 600;
-                color: #0066c0;
+                color: #7cbf3d;
                 margin-bottom: 5px;
-                line-height: 1.4;
+                line-height: 1.3;
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
@@ -350,14 +313,168 @@
             }
 
             .product-card-title a:hover {
-                color: #c45500;
+                color: #5a9a2a;
                 text-decoration: underline;
             }
 
             .product-card-subtitle {
-                font-size: 12px;
-                color: #666;
+                font-size: 13px;
+                color: #333;
                 margin-bottom: 8px;
+            }
+
+            /* Rating */
+            .product-rating {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+                margin-bottom: 10px;
+            }
+
+            .stars {
+                display: flex;
+                color: #f5c518;
+            }
+
+            .stars i {
+                font-size: 14px;
+            }
+
+            .stars i.empty {
+                color: #ddd;
+            }
+
+            .stars i.half {
+                color: #f5c518;
+            }
+
+            .rating-count {
+                font-size: 13px;
+                color: #007185;
+            }
+
+            .product-card-image {
+                position: relative;
+                padding: 15px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 180px;
+            }
+
+            .product-card-image img {
+                max-width: 100%;
+                max-height: 160px;
+                object-fit: contain;
+            }
+
+            /* Pricing */
+            .product-pricing {
+                margin-bottom: 5px;
+                text-align: center;
+            }
+
+            .price-row {
+                display: flex;
+                align-items: baseline;
+                justify-content: center;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            .price-label {
+                font-size: 14px;
+                color: #333;
+            }
+
+            .compare-price {
+                font-size: 14px;
+                color: #666;
+                text-decoration: line-through;
+            }
+
+            .current-price {
+                font-size: 22px;
+                font-weight: 600;
+                color: #7cbf3d;
+            }
+
+            .savings-text {
+                font-size: 12px;
+                color: #333;
+                margin-top: 3px;
+            }
+
+            .min-purchase-text {
+                font-size: 10px;
+                color: #007185;
+                margin-top: 5px;
+            }
+
+            .min-purchase-text .tooltip-trigger {
+                color: #007185;
+                cursor: help;
+                text-decoration: none;
+                font-size: 10px;
+            }
+
+            .min-purchase-text .tooltip-trigger:hover {
+                text-decoration: underline;
+            }
+
+            /* Action Buttons */
+            .product-actions {
+                display: flex;
+                flex-direction: row;
+                gap: 10px;
+                margin-top: 15px;
+                justify-content: center;
+            }
+
+            .btn-add-cart,
+            .btn-buy-now {
+                flex: 1;
+                padding: 10px 15px;
+                border: none;
+                border-radius: 25px;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+            }
+
+            .btn-add-cart {
+                background: #7cbf3d;
+                color: #fff;
+            }
+
+            .btn-add-cart:hover {
+                background: #6aab2e;
+            }
+
+            .btn-buy-now {
+                background: #ffc107;
+                color: #333;
+            }
+
+            .btn-buy-now:hover {
+                background: #e0a800;
+            }
+
+            .btn-add-cart i,
+            .btn-buy-now i {
+                font-size: 12px;
+            }
+
+            .btn-disabled {
+                background: #ccc !important;
+                color: #666 !important;
+                cursor: not-allowed !important;
             }
 
             /* Product Tags Display */
@@ -366,6 +483,7 @@
                 flex-wrap: wrap;
                 gap: 4px;
                 margin-bottom: 8px;
+                justify-content: center;
             }
 
             .product-tag {
@@ -374,116 +492,6 @@
                 background: #e8f5e9;
                 color: #2e7d32;
                 border-radius: 3px;
-            }
-
-            /* Rating */
-            .product-rating {
-                display: flex;
-                align-items: center;
-                gap: 5px;
-                margin-bottom: 8px;
-            }
-
-            .stars {
-                display: flex;
-                color: #ff9800;
-            }
-
-            .stars i {
-                font-size: 12px;
-            }
-
-            .stars i.empty {
-                color: #ddd;
-            }
-
-            .rating-count {
-                font-size: 12px;
-                color: #007185;
-            }
-
-            /* Pricing */
-            .product-pricing {
-                margin-bottom: 10px;
-            }
-
-            .price-row {
-                display: flex;
-                align-items: baseline;
-                gap: 8px;
-                flex-wrap: wrap;
-            }
-
-            .current-price {
-                font-size: 18px;
-                font-weight: 400;
-                color: #0f1111;
-            }
-
-            .current-price sup {
-                font-size: 12px;
-                top: -0.5em;
-            }
-
-            .compare-price {
-                font-size: 13px;
-                color: #565959;
-                text-decoration: line-through;
-            }
-
-            .savings-text {
-                font-size: 12px;
-                color: #cc0c39;
-                font-weight: 500;
-            }
-
-            /* Action Buttons */
-            .product-actions {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-                margin-top: auto;
-            }
-
-            .btn-add-cart {
-                width: 100%;
-                padding: 8px 15px;
-                background: #ffd814;
-                border: 1px solid #fcd200;
-                border-radius: 20px;
-                color: #0f1111;
-                font-size: 13px;
-                font-weight: 500;
-                cursor: pointer;
-                transition: all 0.2s ease;
-            }
-
-            .btn-add-cart:hover {
-                background: #f7ca00;
-            }
-
-            .btn-buy-now {
-                width: 100%;
-                padding: 8px 15px;
-                background: #ffa41c;
-                border: 1px solid #ff8f00;
-                border-radius: 20px;
-                color: #0f1111;
-                font-size: 13px;
-                font-weight: 500;
-                cursor: pointer;
-                transition: all 0.2s ease;
-            }
-
-            .btn-buy-now:hover {
-                background: #fa8900;
-            }
-
-            .btn-disabled {
-                background: #e0e0e0 !important;
-                border-color: #ccc !important;
-                color: #888 !important;
-                cursor: not-allowed !important;
             }
 
             /* Status Badge */
@@ -593,6 +601,15 @@
                 .product-card-image {
                     min-height: 180px;
                 }
+
+                .product-actions {
+                    flex-direction: column;
+                }
+
+                .btn-add-cart,
+                .btn-buy-now {
+                    width: 100%;
+                }
             }
         </style>
     @endpush
@@ -601,11 +618,15 @@
     <section class="store-header-banner">
         <div class="container text-center">
             <h1>
-                @if($selectedCategory)
-                    @php
-                        $cat = $this->categories->firstWhere('id', $selectedCategory);
-                    @endphp
-                    {{ $cat ? $cat->name : 'Products' }}
+                @if(count($selectedCategories) > 0)
+                    @if(count($selectedCategories) === 1)
+                        @php
+                            $cat = $this->categories->firstWhere('id', $selectedCategories[0]);
+                        @endphp
+                        {{ $cat ? $cat->name : 'Products' }}
+                    @else
+                        {{ count($selectedCategories) }} Categories Selected
+                    @endif
                 @else
                     All Products
                 @endif
@@ -641,15 +662,15 @@
                         <span class="clear-all-btn" wire:click="clearFilters">Clear All</span>
                     </div>
                     <div class="filter-tags">
-                        @if($selectedCategory)
-                            @php $cat = $this->categories->firstWhere('id', $selectedCategory); @endphp
+                        @foreach($selectedCategories as $categoryId)
+                            @php $cat = $this->categories->firstWhere('id', $categoryId); @endphp
                             @if($cat)
                                 <span class="filter-tag">
                                     {{ $cat->name }}
-                                    <span class="remove-tag" wire:click="selectCategory(null)">&times;</span>
+                                    <span class="remove-tag" wire:click="toggleCategory({{ $categoryId }})">&times;</span>
                                 </span>
                             @endif
-                        @endif
+                        @endforeach
                         @foreach($selectedTags as $tagId)
                             @php $tag = $this->tags->firstWhere('id', $tagId); @endphp
                             @if($tag)
@@ -668,14 +689,14 @@
                 <div class="filter-card">
                     <div class="filter-card-header">
                         <span>Category</span>
-                        @if($selectedCategory)
-                            <span class="clear-btn" wire:click="clearCategoryFilter">Clear</span>
+                        @if(count($selectedCategories) > 0)
+                            <span class="clear-btn" wire:click="clearCategoryFilters">Clear</span>
                         @endif
                     </div>
                     <div class="filter-card-body">
                         @foreach($this->categories as $category)
-                            <div class="filter-item {{ $selectedCategory === $category->id ? 'active' : '' }}"
-                                 wire:click="selectCategory({{ $category->id }})">
+                            <div class="filter-item {{ in_array($category->id, $selectedCategories) ? 'active' : '' }}"
+                                 wire:click="toggleCategory({{ $category->id }})">
                                 <div class="filter-checkbox"></div>
                                 <span class="filter-label">{{ $category->name }}</span>
                                 <span class="filter-count">({{ $category->products_count }})</span>
@@ -771,34 +792,8 @@
                     @endphp
 
                     <div class="product-card">
-                        {{-- Product Image --}}
-                        <div class="product-card-image">
-                            @if($hasDiscount && $savingsPercent > 0)
-                                <span class="product-badge badge-sale">{{ $savingsPercent }}% OFF</span>
-                            @endif
-
-                            @if($product->defaultUrl)
-                                <a href="{{ route('product.view', $product->defaultUrl->slug) }}">
-                                    @if($product->thumbnail)
-                                        <img src="{{ $product->thumbnail->getUrl('medium') }}"
-                                             alt="{{ $product->translateAttribute('name') }}"
-                                             loading="lazy">
-                                    @else
-                                        <div style="width: 150px; height: 150px; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
-                                            <i class="bi bi-image" style="font-size: 40px; color: #ccc;"></i>
-                                        </div>
-                                    @endif
-                                </a>
-                            @endif
-                        </div>
-
-                        {{-- Product Content --}}
-                        <div class="product-card-content">
-                            {{-- Status Badge --}}
-                            <span class="status-badge {{ $product->status === 'published' ? 'status-published' : 'status-draft' }}">
-                                {{ $product->status }}
-                            </span>
-
+                        {{-- Product Header: Title, Subtitle, Rating --}}
+                        <div class="product-card-header">
                             {{-- Title --}}
                             <h3 class="product-card-title">
                                 @if($product->defaultUrl)
@@ -813,20 +808,8 @@
                             {{-- Subtitle --}}
                             @if($product->translateAttribute('product_descriptor'))
                                 <p class="product-card-subtitle">
-                                    {{ Str::limit($product->translateAttribute('product_descriptor'), 60) }}
+                                    {{ Str::limit($product->translateAttribute('product_descriptor'), 80) }}
                                 </p>
-                            @endif
-
-                            {{-- Product Tags --}}
-                            @if($product->tags->count())
-                                <div class="product-tags">
-                                    @foreach($product->tags->take(3) as $tag)
-                                        <span class="product-tag">{{ $tag->value }}</span>
-                                    @endforeach
-                                    @if($product->tags->count() > 3)
-                                        <span class="product-tag">+{{ $product->tags->count() - 3 }}</span>
-                                    @endif
-                                </div>
                             @endif
 
                             {{-- Rating --}}
@@ -841,59 +824,84 @@
                                     <div class="feefo-product-stars-widget d-none" data-product-sku="{{ $variant->sku }}"></div>
                                 @endif
                             </div>
+                        </div>
 
-                            {{-- Pricing --}}
-                            <div class="product-pricing">
-                                @if($basePrice)
-                                    <div class="price-row">
-                                        <span class="current-price">
-                                            ${{ $priceWhole }}<sup>{{ str_pad($priceCents, 2, '0', STR_PAD_LEFT) }}</sup>
-                                        </span>
-                                        @if($hasDiscount)
-                                            <span class="compare-price">${{ number_format($basePrice->compare_price->value / 100, 2) }}</span>
-                                        @endif
-                                    </div>
-                                    @if($hasDiscount)
-                                        <div class="savings-text">
-                                            Save ${{ number_format($savingsAmount, 2) }} ({{ $savingsPercent }}% off)
+                        {{-- Product Image --}}
+                        <div class="product-card-image">
+                            @php
+                                $thumbnail = $product->getFirstMedia('images');
+                            @endphp
+                            @if($product->defaultUrl)
+                                <a href="{{ route('product.view', $product->defaultUrl->slug) }}">
+                                    @if($thumbnail)
+                                        <img src="{{ $thumbnail->getUrl('medium') }}"
+                                             alt="{{ $product->translateAttribute('name') }}"
+                                             loading="lazy">
+                                    @else
+                                        <div style="width: 150px; height: 150px; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                                            <i class="bi bi-image" style="font-size: 40px; color: #ccc;"></i>
                                         </div>
                                     @endif
-                                @else
-                                    <span class="current-price">Price unavailable</span>
-                                @endif
-                            </div>
+                                </a>
+                            @endif
+                        </div>
 
-                            {{-- Action Buttons --}}
-                            <div class="product-actions">
-                                @if($variant && $product->status === 'published')
-                                    <button class="btn-add-cart"
-                                            wire:click="addToCart({{ $variant->id }})"
-                                            wire:loading.attr="disabled"
-                                            wire:target="addToCart({{ $variant->id }})">
-                                        <span wire:loading.remove wire:target="addToCart({{ $variant->id }})">
-                                            Add to Cart
-                                        </span>
-                                        <span wire:loading wire:target="addToCart({{ $variant->id }})">
-                                            Adding...
-                                        </span>
-                                    </button>
-                                    <button class="btn-buy-now"
-                                            wire:click="buyNow({{ $variant->id }})"
-                                            wire:loading.attr="disabled"
-                                            wire:target="buyNow({{ $variant->id }})">
-                                        <span wire:loading.remove wire:target="buyNow({{ $variant->id }})">
-                                            Buy Now
-                                        </span>
-                                        <span wire:loading wire:target="buyNow({{ $variant->id }})">
-                                            Processing...
-                                        </span>
-                                    </button>
-                                @else
-                                    <button class="btn-add-cart btn-disabled" disabled>
-                                        Not Available
-                                    </button>
+                        {{-- Pricing --}}
+                        <div class="product-pricing">
+                            @if($basePrice)
+                                <div class="price-row">
+                                    <span class="price-label">Price:</span>
+                                    @if($hasDiscount)
+                                        <span class="compare-price">${{ number_format($basePrice->compare_price->value / 100, 2) }}</span>
+                                    @endif
+                                    <span class="current-price">${{ number_format($basePrice->price->value / 100, 2) }}</span>
+                                </div>
+                                @if($hasDiscount)
+                                    <div class="savings-text">
+                                        You save ${{ number_format($savingsAmount, 2) }} ({{ $savingsPercent }}%)
+                                    </div>
                                 @endif
-                            </div>
+                                <div class="min-purchase-text">
+                                    minimum purchase required <span class="tooltip-trigger" data-bs-toggle="tooltip" data-bs-placement="top" title="You must have at least 1 items in your cart to receive this discounted base price.">(?)</span>
+                                </div>
+                            @else
+                                <span class="current-price">Price unavailable</span>
+                            @endif
+                        </div>
+
+                        {{-- Action Buttons --}}
+                        <div class="product-actions">
+                            @if($variant && $product->status === 'published')
+                                <button class="btn-add-cart"
+                                        wire:click="addToCart({{ $variant->id }})"
+                                        wire:loading.attr="disabled"
+                                        wire:target="addToCart({{ $variant->id }})">
+                                    <i class="bi bi-lock-fill"></i>
+                                    <span wire:loading.remove wire:target="addToCart({{ $variant->id }})">
+                                        Add to Cart
+                                    </span>
+                                    <span wire:loading wire:target="addToCart({{ $variant->id }})">
+                                        Adding...
+                                    </span>
+                                </button>
+                                <button class="btn-buy-now"
+                                        wire:click="buyNow({{ $variant->id }})"
+                                        wire:loading.attr="disabled"
+                                        wire:target="buyNow({{ $variant->id }})">
+                                    <i class="bi bi-lock-fill"></i>
+                                    <span wire:loading.remove wire:target="buyNow({{ $variant->id }})">
+                                        Buy Now
+                                    </span>
+                                    <span wire:loading wire:target="buyNow({{ $variant->id }})">
+                                        Processing...
+                                    </span>
+                                </button>
+                            @else
+                                <button class="btn-add-cart btn-disabled" disabled>
+                                    <i class="bi bi-lock-fill"></i>
+                                    Not Available
+                                </button>
+                            @endif
                         </div>
                     </div>
                 @empty
@@ -926,5 +934,22 @@
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script type="text/javascript" src="https://api.feefo.com/api/javascript/apricot-power" async></script>
+        <script>
+            // Initialize Bootstrap tooltips
+            document.addEventListener('DOMContentLoaded', function() {
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            });
+
+            // Re-initialize tooltips after Livewire updates
+            document.addEventListener('livewire:navigated', function() {
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            });
+        </script>
     @endpush
 </div>

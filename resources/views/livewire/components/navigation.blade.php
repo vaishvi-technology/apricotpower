@@ -54,12 +54,12 @@
                             <li>
                                 <a class="dropdown-item" href="{{ route('store') }}" wire:navigate>All Products</a>
                             </li>
-                            @foreach ($this->collections as $collection)
+                            @foreach ($this->categories as $category)
                                 <li>
                                     <a class="dropdown-item"
-                                       href="{{ route('collection.view', $collection->defaultUrl->slug) }}"
+                                       href="{{ route('store', ['categories' => [$category->id]]) }}"
                                        wire:navigate>
-                                        {{ $collection->translateAttribute('name') }}
+                                        {{ $category->name }}
                                     </a>
                                 </li>
                             @endforeach
