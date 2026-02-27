@@ -46,6 +46,11 @@ class AppServiceProvider extends ServiceProvider
         LunarPanel::panel(
             fn ($panel) => $panel
             ->path('admin')
+            ->brandName('Apricot Power')
+            ->brandLogo(fn () => view('filament.admin.logo'))
+            ->darkModeBrandLogo(fn () => view('filament.admin.logo-dark'))
+            ->favicon(asset('images/home/favicon.png'))
+            ->brandLogoHeight('3rem')
             ->login(\App\Filament\Pages\Auth\StaffLogin::class)
             ->passwordReset()
             ->authPasswordBroker('staff')
