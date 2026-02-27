@@ -49,10 +49,11 @@ class ProductResourceExtension extends ResourceExtension
                     return true;
                 })->values()->all();
 
-                // Add category select at the beginning of the section
-                $categorySelect = Forms\Components\Select::make('category_id')
-                    ->label('Category')
-                    ->options(fn () => \App\Models\Category::pluck('name', 'id'))
+                // Add categories multi-select at the beginning of the section
+                $categorySelect = Forms\Components\Select::make('categories')
+                    ->label('Categories')
+                    ->relationship('categories', 'name')
+                    ->multiple()
                     ->searchable()
                     ->preload();
 
@@ -63,6 +64,28 @@ class ProductResourceExtension extends ResourceExtension
 
         return $form->schema([
             ...$filtered,
+
+            Forms\Components\Section::make('Product Details')
+                ->description('Basic product information displayed on the storefront.')
+                ->schema([
+                    Forms\Components\TextInput::make('name')
+                        ->label('Product Name')
+                        ->required()
+                        ->maxLength(255)
+                        ->columnSpanFull(),
+
+                    Forms\Components\Textarea::make('description')
+                        ->label('Description')
+                        ->rows(4)
+                        ->helperText('Full product description displayed on the product page.')
+                        ->columnSpanFull(),
+
+                    Forms\Components\TextInput::make('quantity_size')
+                        ->label('Quantity/Size')
+                        ->placeholder('e.g., 8 oz, 16 oz, 100 tablets')
+                        ->maxLength(255)
+                        ->helperText('Product size or quantity displayed on the product page.'),
+                ]),
 
             Forms\Components\Section::make('SEO Meta Fields')
                 ->description('Search engine optimization settings for this product.')
@@ -120,7 +143,7 @@ class ProductResourceExtension extends ResourceExtension
                 ->collapsible()
                 ->schema([
                     Forms\Components\RichEditor::make('intro_content')
-                        ->label('Intro Content')
+                        ->label('Item Description')
                         ->helperText('Content displayed in the Intro tab on the product page.')
                         ->columnSpanFull(),
                     Forms\Components\RichEditor::make('learn_more')
@@ -146,8 +169,8 @@ class ProductResourceExtension extends ResourceExtension
         return $table
             ->columns([
                 ...$columns,
-                Tables\Columns\TextColumn::make('category.name')
-                    ->label('Category')
+                Tables\Columns\TextColumn::make('categories.name')
+                    ->label('Categories')
                     ->badge()
                     ->toggleable()
                     ->searchable(),
@@ -158,9 +181,11 @@ class ProductResourceExtension extends ResourceExtension
             ])
             ->filters([
                 ...$filters,
-                Tables\Filters\SelectFilter::make('category_id')
+                Tables\Filters\SelectFilter::make('categories')
                     ->label('Category')
-                    ->options(fn () => \App\Models\Category::pluck('name', 'id')),
+                    ->relationship('categories', 'name')
+                    ->multiple()
+                    ->preload(),
             ]);
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Lunar\Models\Product;
+use App\Models\Product;
 
 class Category extends Model
 {
@@ -49,9 +49,12 @@ class Category extends Model
         return $this->children()->with('allChildren');
     }
 
-    public function products(): HasMany
+    /**
+     * Get all products in this category (many-to-many).
+     */
+    public function products(): BelongsToMany
     {
-        return $this->hasMany(Product::class);
+        return $this->belongsToMany(Product::class, 'category_product');
     }
 
     public function coupons(): BelongsToMany

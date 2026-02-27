@@ -67,7 +67,7 @@ class StorePage extends Component
             'defaultUrl',
             'media',
             'variants.basePrices.currency',
-            'category',
+            'categories',
             'tags',
         ]);
 
@@ -78,17 +78,19 @@ class StorePage extends Component
             $query->where('status', 'draft');
         }
 
-        // Filter by search query
+        // Filter by search query (using direct database columns)
         if (!empty($this->searchQuery)) {
             $query->where(function ($q) {
-                $q->where('attribute_data->name->value', 'like', '%' . $this->searchQuery . '%')
-                    ->orWhere('attribute_data->description->value', 'like', '%' . $this->searchQuery . '%');
+                $q->where('name', 'like', '%' . $this->searchQuery . '%')
+                    ->orWhere('description', 'like', '%' . $this->searchQuery . '%');
             });
         }
 
-        // Filter by selected categories
+        // Filter by selected categories (many-to-many)
         if (!empty($this->selectedCategories)) {
-            $query->whereIn('category_id', $this->selectedCategories);
+            $query->whereHas('categories', function ($q) {
+                $q->whereIn('categories.id', $this->selectedCategories);
+            });
         }
 
         // Filter by selected tags
@@ -119,11 +121,11 @@ class StorePage extends Component
                 break;
 
             case 'name_asc':
-                $query->orderBy('attribute_data->name->value');
+                $query->orderBy('name');
                 break;
 
             case 'name_desc':
-                $query->orderByDesc('attribute_data->name->value');
+                $query->orderByDesc('name');
                 break;
 
             case 'newest':
