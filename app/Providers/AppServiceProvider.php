@@ -13,6 +13,8 @@ use App\Lunar\StaffResourceExtension;
 use App\Modifiers\ShippingModifier;
 use App\Observers\OrderObserver;
 use Illuminate\Support\ServiceProvider;
+use App\Models\RetailerProfile;
+use App\Observers\RetailerProfileObserver;
 use Lunar\Models\Order;
 use Lunar\Admin\Filament\Resources\CustomerResource;
 use Lunar\Admin\Filament\Resources\ProductResource;
@@ -55,6 +57,10 @@ class AppServiceProvider extends ServiceProvider
             ->discoverResources(
                 in: app_path('Filament/Resources'),
                 for: 'App\\Filament\\Resources'
+            )
+            ->discoverPages(
+                in: app_path('Filament/Pages'),
+                for: 'App\\Filament\\Pages'
             )
         )
             ->register();
@@ -114,5 +120,8 @@ class AppServiceProvider extends ServiceProvider
 
         // Track last_order_at on customer when an order is created
         Order::observe(OrderObserver::class);
+
+        // Geocode retailer profiles when address changes
+        RetailerProfile::observe(RetailerProfileObserver::class);
     }
 }
