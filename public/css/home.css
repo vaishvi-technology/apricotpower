@@ -1724,6 +1724,55 @@ ul.sreferFriend-content-list li {
   padding: 60px 0;
 }
 
+.faq-lead {
+  font-family: "Jost", sans-serif;
+  font-size: 18px;
+  color: #555;
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 45px;
+  line-height: 1.6;
+}
+
+.faq-lead a {
+  color: #7cbf3d;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.faq-lead a:hover {
+  color: #6aad2e;
+}
+
+/* Section Titles */
+.faq-section-title {
+  font-family: "lemonMilk", serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: #222;
+  padding-bottom: 12px;
+  margin-bottom: 30px;
+  position: relative;
+  display: inline-block;
+}
+
+.faq-section-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60%;
+  height: 3px;
+  background: linear-gradient(90deg, #fbbb00, #7cbf3d);
+  border-radius: 2px;
+}
+
+.faq-section-title.text-center::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Accordion Styles */
 .faq-accordians .accordion-button:focus {
   box-shadow: unset;
 }
@@ -1731,11 +1780,12 @@ ul.sreferFriend-content-list li {
 .faq-accordians .accordion-button::after {
   border: 1px solid #000;
   background-size: 65%;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   padding: 0px;
   background-position: center;
+  flex-shrink: 0;
 }
 
 .faq-accordians .accordion-button {
@@ -1744,25 +1794,29 @@ ul.sreferFriend-content-list li {
   font-family: "lemonMilk", serif;
   font-weight: 400;
   font-size: 12px;
-  padding: 17px 10px;
+  padding: 17px 15px;
   border-radius: unset !important;
   border-top-right-radius: 12px !important;
   border-bottom-left-radius: 12px !important;
+  transition: all 0.3s ease;
 }
 
 .faq-accordians .accordion-button span {
   font-weight: 700;
-  font-size: 30px;
+  font-size: 28px;
   font-family: "Poppins", serif;
+  line-height: 1;
+  opacity: 0.5;
 }
 
-.faq-accordians .faq-accordians .accordion-header {
+.faq-accordians .accordion-header {
   border-radius: unset;
 }
 
 .faq-accordians .accordion-button,
 .faq-accordians .accordion-button:not(.collapsed) {
   background: #fbbb00;
+  color: #222;
 }
 
 .faq-accordians .accordion-item {
@@ -1770,11 +1824,31 @@ ul.sreferFriend-content-list li {
   border-top-right-radius: 12px !important;
   border-top: unset;
   background: #fff;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.faq-accordians .accordion-item:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .faq-accordians .accordion-item:has(.accordion-button:not(.collapsed)) {
   border: 1px solid #fbbb00;
+  box-shadow: 0 4px 20px rgba(251, 187, 0, 0.15);
+}
+
+.faq-accordians .accordion-body {
+  font-family: "Jost", sans-serif;
+  font-size: 15px;
+  line-height: 1.8;
+  color: #444;
+  padding: 20px 20px 25px;
+}
+
+.faq-accordians .accordion-body a {
+  color: #7cbf3d;
+  font-weight: 600;
 }
 
 .faq-accordians.faq-accordians-col-1
@@ -1783,10 +1857,121 @@ ul.sreferFriend-content-list li {
   background: #7cbf3d;
 }
 
+.faq-accordians.faq-accordians-col-1
+  .accordion-item:nth-child(even):has(.accordion-button:not(.collapsed)) {
+  border-color: #7cbf3d;
+  box-shadow: 0 4px 20px rgba(124, 191, 61, 0.15);
+}
+
 .faq-accordians.faq-accordians-col-2
   .accordion-item:nth-child(odd)
   .accordion-button {
   background: #7cbf3d;
+}
+
+.faq-accordians.faq-accordians-col-2
+  .accordion-item:nth-child(odd):has(.accordion-button:not(.collapsed)) {
+  border-color: #7cbf3d;
+  box-shadow: 0 4px 20px rgba(124, 191, 61, 0.15);
+}
+
+/* Browse Products */
+.faq-browse-products .faq-product-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  background: #fff;
+  transition: box-shadow 0.3s ease;
+}
+
+.faq-browse-products .faq-product-card:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.faq-browse-products .faq-product-img {
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.faq-browse-products .faq-product-img img {
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.faq-browse-btn {
+  background: #7cbf3d;
+  color: #fff;
+  font-family: "lemonMilk", serif;
+  font-weight: 400;
+  font-size: 14px;
+  padding: 12px 30px;
+  border-radius: 5px;
+  display: block;
+  width: 100%;
+  transition: background 0.3s ease;
+}
+
+.faq-browse-btn:hover {
+  background: #6aad2e;
+  color: #fff;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+  .faq-section-title {
+    font-size: 20px;
+  }
+
+  .faq-accordians .accordion-button {
+    font-size: 11px;
+    padding: 14px 10px;
+  }
+
+  .faq-accordians .accordion-button span {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .faq-sec {
+    padding: 40px 0;
+  }
+
+  .faq-lead {
+    font-size: 16px;
+    margin-bottom: 30px;
+  }
+
+  .faq-section-title {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+  .faq-browse-products {
+    margin: 30px 0;
+    padding: 30px 0;
+  }
+
+  .faq-browse-products .faq-product-img {
+    height: 180px;
+  }
+
+  .faq-browse-btn {
+    font-size: 13px;
+    padding: 9px 40px 9px 18px;
+  }
+
+  .faq-browse-btn::after {
+    width: 40px;
+    height: 40px;
+  }
+
+  .faq-accordians .accordion-body {
+    padding: 15px 15px 20px;
+    font-size: 14px;
+  }
 }
 
 /* Faq Page End */
