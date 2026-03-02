@@ -50,6 +50,7 @@ class RetailerLocations extends Page
                     ->default('United States')
                     ->searchable()
                     ->preload()
+                    ->required()
                     ->live()
                     ->afterStateUpdated(fn (Forms\Set $set) => $set('state', null)),
 
@@ -70,7 +71,8 @@ class RetailerLocations extends Page
                             ->pluck('name', 'name')
                             ->toArray();
                     })
-                    ->searchable(),
+                    ->searchable()
+                    ->required(),
             ]),
 
             Forms\Components\Grid::make(2)->schema([

@@ -18,7 +18,7 @@ class GeocodingService
         }
 
         try {
-            $response = Http::get('https://maps.googleapis.com/maps/api/geocode/json', [
+            $response = Http::get(config('services.google_maps.geocoding_endpoint'), [
                 'address' => $address,
                 'key' => $apiKey,
             ]);
