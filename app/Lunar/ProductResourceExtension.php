@@ -2,6 +2,7 @@
 
 namespace App\Lunar;
 
+use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductInventoryLots;
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductNutritionFacts;
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductShipping;
 use Filament\Forms;
@@ -20,6 +21,7 @@ class ProductResourceExtension extends ResourceExtension
         return array_merge($pages, [
             'shipping' => ManageProductShipping::route('/{record}/shipping'),
             'nutrition-facts' => ManageProductNutritionFacts::route('/{record}/nutrition-facts'),
+            'inventory-lots' => ManageProductInventoryLots::route('/{record}/inventory-lots'),
         ]);
     }
 
@@ -36,6 +38,7 @@ class ProductResourceExtension extends ResourceExtension
         return array_merge($filtered, [
             ManageProductShipping::class,
             ManageProductNutritionFacts::class,
+            ManageProductInventoryLots::class,
         ]);
     }
 

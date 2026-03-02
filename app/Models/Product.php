@@ -107,4 +107,42 @@ class Product extends LunarProduct
             ->where('collection_name', 'images')
             ->orderBy('order_column');
     }
+
+    /**
+     * Get all inventory lots for this product.
+     */
+    public function inventoryLots(): HasMany
+    {
+        return $this->hasMany(InventoryLot::class);
+    }
+
+    /**
+     * Get all inventory movements for this product.
+     */
+    public function inventoryMovements(): HasMany
+    {
+        return $this->hasMany(InventoryMovement::class);
+    }
+
+    /**
+     * Get total stock (including expired) for this product.
+     */
+    public function getTotalStockAttribute(): int
+    {
+        return $this->inventoryLots()->sum('quantity');
+    }
+
+    /**
+     * Get available (non-expired, in-stock) quantity for this product.
+     */
+    public function getAvailableStockAttribute(): int
+    {
+        return $this->inventoryLots()
+            ->inStock()
+            ->where(function ($query) {
+                $query->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now());
+            })
+            ->sum('quantity');
+    }
 }
