@@ -21,6 +21,7 @@ class ManageProductShipping extends BaseEditRecord
     public bool $free_shipping = false;
     public $weight_lbs = 0;
     public $weight_oz = 0;
+    public $handling_fee = 0;
 
     public function getTitle(): string|Htmlable
     {
@@ -61,6 +62,7 @@ class ManageProductShipping extends BaseEditRecord
         $this->free_shipping = (bool) $variant->free_shipping;
         $this->weight_lbs = $variant->weight_lbs ?? 0;
         $this->weight_oz = $variant->weight_oz ?? 0;
+        $this->handling_fee = $variant->handling_fee ?? 0;
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
@@ -71,6 +73,7 @@ class ManageProductShipping extends BaseEditRecord
             'free_shipping' => $this->free_shipping,
             'weight_lbs' => $this->weight_lbs,
             'weight_oz' => $this->weight_oz,
+            'handling_fee' => $this->handling_fee,
         ]);
 
         return $record;
@@ -109,6 +112,14 @@ class ManageProductShipping extends BaseEditRecord
                         ->default(0)
                         ->suffix('oz'),
                 ]),
+
+                TextInput::make('handling_fee')
+                    ->label('Handling Fee')
+                    ->numeric()
+                    ->default(0)
+                    ->step(0.01)
+                    ->prefix('$')
+                    ->columnSpan(1),
             ])->columns(2),
         ])->statePath('');
     }

@@ -14,6 +14,7 @@ class ProductVariant extends LunarProductVariant
         'free_shipping',
         'weight_lbs',
         'weight_oz',
+        'handling_fee',
     ];
 
     /**
