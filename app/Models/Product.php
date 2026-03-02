@@ -39,6 +39,17 @@ class Product extends LunarProduct
         'learn_more',
         // Product details
         'quantity_size',
+        // Inventory notification settings
+        'notify_at',
+        'low_stock_notified_at',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     */
+    protected $casts = [
+        'notify_at' => 'integer',
+        'low_stock_notified_at' => 'datetime',
     ];
 
     /**
@@ -144,5 +155,54 @@ class Product extends LunarProduct
                     ->orWhere('expires_at', '>', now());
             })
             ->sum('quantity');
+    }
+
+    /**
+     * Check if product stock is at or below the notification threshold.
+     */
+    public function isLowStock(): bool
+    {
+        // notify_at of 0 means notifications are disabled
+        if (!$this->notify_at || $this->notify_at <= 0) {
+            return false;
+        }
+
+        return $this->available_stock <= $this->notify_at;
+    }
+
+    /**
+     * Check if a low stock notification should be sent.
+     * Returns true if stock is low and notification hasn't been sent recently (within 24 hours).
+     */
+    public function shouldSendLowStockNotification(): bool
+    {
+        if (!$this->isLowStock()) {
+            return false;
+        }
+
+        // If notification was never sent, or sent more than 24 hours ago
+        if (!$this->low_stock_notified_at) {
+            return true;
+        }
+
+        return $this->low_stock_notified_at->lt(now()->subHours(24));
+    }
+
+    /**
+     * Mark low stock notification as sent.
+     */
+    public function markLowStockNotified(): void
+    {
+        $this->update(['low_stock_notified_at' => now()]);
+    }
+
+    /**
+     * Reset low stock notification when stock is replenished above threshold.
+     */
+    public function resetLowStockNotification(): void
+    {
+        if ($this->low_stock_notified_at && !$this->isLowStock()) {
+            $this->update(['low_stock_notified_at' => null]);
+        }
     }
 }

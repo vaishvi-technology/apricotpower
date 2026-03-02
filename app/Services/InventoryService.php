@@ -7,8 +7,11 @@ use App\Models\InventoryMovement;
 use App\Models\Product;
 use App\Models\ProductBundle;
 use App\Models\User;
+use App\Notifications\LowStockNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
+use Lunar\Admin\Models\Staff;
 
 class InventoryService
 {
@@ -36,7 +39,7 @@ class InventoryService
      */
     public function adjustInventory(InventoryLot $lot, array $data): InventoryMovement
     {
-        return DB::transaction(function () use ($lot, $data) {
+        $movement = DB::transaction(function () use ($lot, $data) {
             $quantityChange = $data['type'] === 'add'
                 ? abs($data['quantity'])
                 : -abs($data['quantity']);
@@ -60,6 +63,14 @@ class InventoryService
                 'user_id' => $this->getCurrentUserId(),
             ]);
         });
+
+        // Check for low stock notification after adjustment
+        $product = Product::find($lot->product_id);
+        if ($product) {
+            $this->checkAndSendLowStockNotification($product);
+        }
+
+        return $movement;
     }
 
     /**
@@ -144,6 +155,9 @@ class InventoryService
                 $remainingToDeduct -= $deductFromLot;
             }
         });
+
+        // Check for low stock notification after sale
+        $this->checkAndSendLowStockNotification($product);
     }
 
     /**
@@ -222,5 +236,55 @@ class InventoryService
             'lots_count' => $lots->count(),
             'lots_in_stock' => $lots->where('quantity', '>', 0)->count(),
         ];
+    }
+
+    /**
+     * Check if low stock notification should be sent and send it.
+     */
+    public function checkAndSendLowStockNotification(Product $product): void
+    {
+        // Refresh product to get latest stock levels
+        $product->refresh();
+
+        // Check if notification should be sent
+        if (!$product->shouldSendLowStockNotification()) {
+            // If stock is replenished, reset the notification flag
+            $product->resetLowStockNotification();
+            return;
+        }
+
+        // Get all admin staff members to notify
+        $adminStaff = Staff::where('admin', true)->get();
+
+        if ($adminStaff->isEmpty()) {
+            return;
+        }
+
+        // Send notification to all admin staff
+        Notification::send($adminStaff, new LowStockNotification($product));
+
+        // Mark notification as sent
+        $product->markLowStockNotified();
+    }
+
+    /**
+     * Check all products for low stock and send notifications.
+     * This method is intended to be called from a scheduled command.
+     */
+    public function checkAllProductsForLowStock(): array
+    {
+        $notifiedProducts = [];
+
+        // Get all products with notify_at > 0
+        $products = Product::where('notify_at', '>', 0)->get();
+
+        foreach ($products as $product) {
+            if ($product->shouldSendLowStockNotification()) {
+                $this->checkAndSendLowStockNotification($product);
+                $notifiedProducts[] = $product->id;
+            }
+        }
+
+        return $notifiedProducts;
     }
 }

@@ -30,6 +30,9 @@ class ManageProductInventoryLots extends BaseEditRecord
     public int $expiringStock = 0;
     public int $expiredStock = 0;
 
+    // Notification settings
+    public ?int $notifyAt = 0;
+
     // Quick adjustment form
     public ?string $adjustmentType = 'add';
     public ?int $adjustmentQuantity = 1;
@@ -80,6 +83,7 @@ class ManageProductInventoryLots extends BaseEditRecord
         parent::mount($record);
         $this->calculateInventorySummary();
         $this->newReceivedAt = now()->format('Y-m-d');
+        $this->notifyAt = $this->getRecord()->notify_at ?? 0;
     }
 
     protected function calculateInventorySummary(): void
@@ -126,6 +130,31 @@ class ManageProductInventoryLots extends BaseEditRecord
                         Placeholder::make('expired_stock_display')
                             ->label('Expired')
                             ->content(fn () => $this->expiredStock),
+                    ]),
+                ]),
+
+            // Notification Settings Section
+            Section::make('Low Stock Notification')
+                ->description('Email notification sent to admin users when inventory reaches this amount.')
+                ->schema([
+                    Grid::make(2)->schema([
+                        TextInput::make('notifyAt')
+                            ->label('Notify At')
+                            ->numeric()
+                            ->default(0)
+                            ->minValue(0)
+                            ->helperText('Set to 0 to disable notifications. Admin users will be emailed when stock falls to this level.'),
+
+                        Placeholder::make('notification_status')
+                            ->label('Status')
+                            ->content(fn () => $this->getNotificationStatusHtml()),
+                    ]),
+                    Actions::make([
+                        Action::make('saveNotificationSettings')
+                            ->label('Save Notification Settings')
+                            ->icon('heroicon-o-bell')
+                            ->color('primary')
+                            ->action(fn () => $this->saveNotificationSettings()),
                     ]),
                 ]),
 
@@ -380,6 +409,52 @@ class ManageProductInventoryLots extends BaseEditRecord
 
         Notification::make()
             ->title('Inventory received successfully')
+            ->success()
+            ->send();
+    }
+
+    protected function getNotificationStatusHtml(): \Illuminate\Support\HtmlString
+    {
+        $product = $this->getRecord();
+        $notifyAt = $product->notify_at ?? 0;
+
+        if ($notifyAt <= 0) {
+            return new \Illuminate\Support\HtmlString(
+                '<span class="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">Disabled</span>'
+            );
+        }
+
+        $availableStock = $this->availableStock;
+        $isLow = $availableStock <= $notifyAt;
+
+        if ($isLow) {
+            $lastNotified = $product->low_stock_notified_at
+                ? $product->low_stock_notified_at->format('M j, Y g:i A')
+                : 'Never';
+
+            return new \Illuminate\Support\HtmlString(
+                '<span class="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">Low Stock Alert Active</span>' .
+                '<div class="text-xs text-gray-500 mt-1">Last notified: ' . $lastNotified . '</div>'
+            );
+        }
+
+        return new \Illuminate\Support\HtmlString(
+            '<span class="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Stock OK</span>' .
+            '<div class="text-xs text-gray-500 mt-1">Will notify when stock reaches ' . $notifyAt . ' or below</div>'
+        );
+    }
+
+    public function saveNotificationSettings(): void
+    {
+        $this->getRecord()->update([
+            'notify_at' => $this->notifyAt ?? 0,
+        ]);
+
+        // Reset notification timestamp if threshold changed and stock is now OK
+        $this->getRecord()->resetLowStockNotification();
+
+        Notification::make()
+            ->title('Notification settings saved')
             ->success()
             ->send();
     }
