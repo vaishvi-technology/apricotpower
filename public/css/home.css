@@ -1525,7 +1525,24 @@ ul.affiliate-marketing-ul li,
   background-image: url(/images/home/contact-us-content-bg.png);
   background-position: bottom right;
   background-size: cover;
-  padding: 30px 30px;
+  padding: 40px 35px;
+  position: relative;
+}
+
+.contact-us-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 0;
+}
+
+.contact-us-content > * {
+  position: relative;
+  z-index: 1;
 }
 
 .contact-form-group {
@@ -1575,6 +1592,125 @@ ul.affiliate-marketing-ul li,
 
 .contact-info {
   margin-bottom: 16px;
+}
+
+.contact-us-content .page-content {
+  font-family: "Poppins", serif;
+  font-size: 18px;
+  line-height: 1.8;
+  color: #fff;
+}
+
+.contact-us-content .page-content h1,
+.contact-us-content .page-content h2 {
+  font-family: "lemonMilk", serif;
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1.3;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.contact-us-content .page-content h3 {
+  font-family: "lemonMilk", serif;
+  font-weight: 400;
+  font-size: 26px;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.contact-us-content .page-content p {
+  font-family: "Poppins", serif;
+  font-size: 18px;
+  line-height: 1.8;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.contact-us-content .page-content ul,
+.contact-us-content .page-content ol {
+  font-family: "Poppins", serif;
+  font-size: 18px;
+  line-height: 2;
+  padding-left: 5px;
+  margin-bottom: 15px;
+  list-style: none;
+}
+
+.contact-us-content .page-content li {
+  margin-bottom: 10px;
+  padding-left: 0;
+}
+
+.contact-us-content .page-content strong,
+.contact-us-content .page-content b {
+  font-weight: 700;
+  font-size: 19px;
+}
+
+.contact-us-content .page-content em,
+.contact-us-content .page-content i {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.contact-us-content .page-content a {
+  color: var(--secondary-color);
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.contact-us-content .page-content a:hover {
+  color: #fff;
+}
+
+/* About Us Section on Contact Page */
+.contact-about-section {
+  padding: 60px 0;
+  background-color: #f9f9f9;
+}
+
+.contact-about-heading h2 {
+  font-family: "lemonMilk", serif;
+  font-size: 36px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.contact-about-heading h2 .normal-font {
+  font-weight: 400;
+}
+
+.contact-about-heading h2 .bold-font {
+  font-weight: 700;
+}
+
+.contact-about-content {
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: "Poppins", serif;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #333;
+}
+
+.contact-about-content h4 {
+  font-family: "lemonMilk", serif;
+  font-size: 20px;
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+
+.contact-about-content p {
+  margin-bottom: 15px;
+}
+
+.contact-about-content .lead {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.contact-reviews-section {
+  padding: 60px 0 80px;
 }
 
 /* Contact Page End */
