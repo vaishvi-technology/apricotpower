@@ -65,6 +65,11 @@ class DemoCustomerSeeder extends Seeder
             ];
 
             foreach ($demoCustomers as $entry) {
+                $existing = Customer::where('email', $entry['data']['email'])->first();
+                if ($existing) {
+                    continue;
+                }
+
                 $customer = Customer::create($entry['data']);
 
                 // Attach customer groups by handle
