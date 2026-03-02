@@ -3,6 +3,7 @@
 namespace App\Lunar;
 
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductNutritionFacts;
+use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductShipping;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Tables;
@@ -17,6 +18,7 @@ class ProductResourceExtension extends ResourceExtension
     public function extendPages(array $pages): array
     {
         return array_merge($pages, [
+            'shipping' => ManageProductShipping::route('/{record}/shipping'),
             'nutrition-facts' => ManageProductNutritionFacts::route('/{record}/nutrition-facts'),
         ]);
     }
@@ -26,7 +28,13 @@ class ProductResourceExtension extends ResourceExtension
      */
     public function extendSubNavigation(array $pages): array
     {
-        return array_merge($pages, [
+        // Filter out the default shipping page and add our custom one
+        $filtered = collect($pages)->filter(function ($page) {
+            return $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductShipping::class;
+        })->values()->all();
+
+        return array_merge($filtered, [
+            ManageProductShipping::class,
             ManageProductNutritionFacts::class,
         ]);
     }
