@@ -5,7 +5,7 @@
                 Welcome to
 
                 <span class="text-orange-600">
-                    Apricot Power
+                    {{ config('app.name', 'Apricot Power') }}
                 </span>
 
                 <span role="img"
