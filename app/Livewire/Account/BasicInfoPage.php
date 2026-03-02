@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Account;
 
+use App\Services\ImpersonationService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -14,8 +16,15 @@ class BasicInfoPage extends Component
     public string $phone = '';
     public string $company_name = '';
 
+    // Change Password
+    public bool $isImpersonating = false;
+    public string $current_password = '';
+    public string $password = '';
+    public string $password_confirmation = '';
+
     public function mount(): void
     {
+        $this->isImpersonating = app(ImpersonationService::class)->isImpersonating();
         $customer = Auth::guard('customer')->user();
         $this->first_name = $customer->first_name ?? '';
         $this->last_name = $customer->last_name ?? '';
@@ -49,6 +58,32 @@ class BasicInfoPage extends Component
         ]);
 
         session()->flash('success', 'Your information has been updated.');
+    }
+
+    public function updatePassword(): void
+    {
+        $rules = ['password' => 'required|min:8|confirmed'];
+
+        if (! $this->isImpersonating) {
+            $rules['current_password'] = 'required';
+        }
+
+        $this->validate($rules);
+
+        $customer = Auth::guard('customer')->user();
+
+        if (! $this->isImpersonating && !Hash::check($this->current_password, $customer->password)) {
+            $this->addError('current_password', 'The current password is incorrect.');
+            return;
+        }
+
+        $customer->update([
+            'password' => Hash::make($this->password),
+        ]);
+
+        $this->reset(['current_password', 'password', 'password_confirmation']);
+
+        session()->flash('password_success', 'Your password has been updated.');
     }
 
     public function render(): View

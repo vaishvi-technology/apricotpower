@@ -27,7 +27,7 @@ class LoginPage extends Component
         if (Auth::guard('customer')->attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             $customer = Auth::guard('customer')->user();
 
-            if (!$customer->is_active || $customer->account_locked) {
+            if ($customer->account_locked) {
                 Auth::guard('customer')->logout();
                 session()->invalidate();
                 session()->regenerateToken();

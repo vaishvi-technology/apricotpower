@@ -2,19 +2,17 @@
 
 namespace App\Livewire\Account;
 
+use App\Models\CustomerGroup;
+use App\Services\ImpersonationService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 use Livewire\Component;
+use Lunar\Admin\Models\Staff;
 use Lunar\Models\Country;
 use Lunar\Models\State;
 
 class AccountDetailsPage extends Component
 {
-    public string $current_password = '';
-    public string $password = '';
-    public string $password_confirmation = '';
-
     // Account Information
     public string $referred_by = '';
     public string $b17_knowledge = '';
@@ -34,6 +32,38 @@ class AccountDetailsPage extends Component
     public string $address_phone = '';
     public bool $address_shipping_default = false;
 
+    // Admin options (only used during impersonation)
+    public bool $isImpersonating = false;
+    public bool $isWholesale = false;
+
+    // Account Settings fields
+    public ?int $customer_group_id = null;
+    public ?int $sales_rep_id = null;
+    public bool $is_tax_exempt = false;
+    public ?string $last_login_at = null;
+    public ?string $last_order_at = null;
+
+    // Wholesale / Billing fields
+    public bool $is_online_wholesaler = false;
+    public string $store_date = '';
+    public int $store_count = 1;
+    public bool $net_terms_approved = false;
+    public string $credit_limit_option = '';
+    public string $credit_limit = '';
+    public string $accounts_payable_email = '';
+    public bool $include_in_retailer_map = false;
+    public string $retailer_name = '';
+    public string $retailer_street = '';
+    public string $retailer_city = '';
+    public string $retailer_country = '';
+    public string $retailer_state = '';
+    public string $retailer_phone = '';
+    public string $retailer_toll_free_phone = '';
+    public string $retailer_website = '';
+    public string $retailer_email = '';
+    public string $retailer_products_sold = '';
+
+
     public function mount(): void
     {
         $customer = Auth::guard('customer')->user();
@@ -45,12 +75,104 @@ class AccountDetailsPage extends Component
         // Default to US
         $us = Country::where('iso3', 'USA')->orWhere('iso2', 'US')->first();
         $this->address_country_id = $us?->id;
+
+        // Load admin fields when impersonating
+        $this->isImpersonating = app(ImpersonationService::class)->isImpersonating();
+        if ($this->isImpersonating) {
+            $this->isWholesale = $customer->customerGroups()->where('is_wholesale', true)->exists();
+
+            // Account Settings
+            $this->customer_group_id = $customer->customerGroups()->first()?->id;
+            $this->sales_rep_id = $customer->sales_rep_id;
+            $this->is_tax_exempt = (bool) $customer->is_tax_exempt;
+            $this->last_login_at = $customer->last_login_at?->format('M d, Y h:i A');
+            $this->last_order_at = $customer->last_order_at?->format('M d, Y h:i A');
+
+            // Wholesale / Billing
+            $this->is_online_wholesaler = (bool) $customer->is_online_wholesaler;
+            $this->store_count = (int) ($customer->store_count ?? 1);
+            $this->net_terms_approved = (bool) $customer->net_terms_approved;
+            $this->credit_limit = $customer->credit_limit ?? '';
+            $presetLimits = ['', '500', '1000', '3000', '4000', '5000', '7000', '10000'];
+            $this->credit_limit_option = in_array($this->credit_limit, $presetLimits) ? $this->credit_limit : 'custom';
+            $this->accounts_payable_email = $customer->accounts_payable_email ?? '';
+
+            $profile = $customer->retailerProfile;
+            if ($profile) {
+                $this->include_in_retailer_map = (bool) $profile->include_in_retailer_map;
+                $this->retailer_name = $profile->name ?? '';
+                $this->retailer_street = $profile->street ?? '';
+                $this->retailer_city = $profile->city ?? '';
+                $this->retailer_country = $profile->country ?? '';
+                $this->retailer_state = $profile->state ?? '';
+                $this->retailer_phone = $profile->phone ?? '';
+                $this->retailer_toll_free_phone = $profile->toll_free_phone ?? '';
+                $this->retailer_website = $profile->website ?? '';
+                $this->retailer_email = $profile->email ?? '';
+                $this->retailer_products_sold = $profile->products_sold ?? '';
+            }
+
+        }
     }
 
     public function updatedAddressCountryId(): void
     {
         // Reset state when country changes
         $this->address_state = '';
+    }
+
+    public function updatedCreditLimitOption(): void
+    {
+        if ($this->credit_limit_option !== 'custom') {
+            $this->credit_limit = $this->credit_limit_option;
+        } else {
+            $this->credit_limit = '';
+        }
+    }
+
+    public function updatedRetailerCountry(): void
+    {
+        $this->retailer_state = '';
+    }
+
+    public function updatedCustomerGroupId(): void
+    {
+        if ($this->customer_group_id) {
+            $this->isWholesale = CustomerGroup::where('id', $this->customer_group_id)
+                ->where('is_wholesale', true)
+                ->exists();
+        } else {
+            $this->isWholesale = false;
+        }
+    }
+
+    public function getCustomerGroupsProperty()
+    {
+        return CustomerGroup::where('is_active', true)->orderBy('name')->get();
+    }
+
+    public function getStaffMembersProperty()
+    {
+        return Staff::orderBy('first_name')->orderBy('last_name')->get();
+    }
+
+    public function getRetailerCountriesProperty()
+    {
+        return Country::orderBy('name')->get();
+    }
+
+    public function getRetailerStatesProperty()
+    {
+        if (! $this->retailer_country) {
+            return collect();
+        }
+
+        $country = Country::where('name', $this->retailer_country)->first();
+        if (! $country) {
+            return collect();
+        }
+
+        return State::where('country_id', $country->id)->orderBy('name')->get();
     }
 
     public function getCountriesProperty()
@@ -67,29 +189,6 @@ class AccountDetailsPage extends Component
         return State::where('country_id', $this->address_country_id)
             ->orderBy('name')
             ->get();
-    }
-
-    public function updatePassword(): void
-    {
-        $this->validate([
-            'current_password' => 'required',
-            'password' => 'required|min:8|confirmed',
-        ]);
-
-        $customer = Auth::guard('customer')->user();
-
-        if (!Hash::check($this->current_password, $customer->password)) {
-            $this->addError('current_password', 'The current password is incorrect.');
-            return;
-        }
-
-        $customer->update([
-            'password' => Hash::make($this->password),
-        ]);
-
-        $this->reset(['current_password', 'password', 'password_confirmation']);
-
-        session()->flash('password_success', 'Your password has been updated.');
     }
 
     public function openAddressForm(): void
@@ -231,6 +330,87 @@ class AccountDetailsPage extends Component
         $customer->save();
 
         session()->flash('account_info_success', 'Account information has been updated.');
+    }
+
+    public function saveAccountSettings(): void
+    {
+        if (! $this->isImpersonating) {
+            abort(403);
+        }
+
+        $this->validate([
+            'customer_group_id' => 'nullable|exists:customer_groups,id',
+            'sales_rep_id' => 'nullable|exists:staff,id',
+        ]);
+
+        $customer = Auth::guard('customer')->user();
+
+        $customer->update([
+            'sales_rep_id' => $this->sales_rep_id,
+            'is_tax_exempt' => $this->is_tax_exempt,
+        ]);
+
+        if ($this->customer_group_id) {
+            $customer->customerGroups()->sync([$this->customer_group_id]);
+        } else {
+            $customer->customerGroups()->detach();
+        }
+
+        session()->flash('admin_settings_success', 'Account settings have been updated.');
+    }
+
+    public function saveWholesaleBilling(): void
+    {
+        if (! $this->isImpersonating) {
+            abort(403);
+        }
+
+        $this->validate([
+            'credit_limit' => 'nullable|numeric|min:0',
+            'store_date' => 'nullable|date',
+            'store_count' => 'nullable|integer|min:1|max:100',
+            'accounts_payable_email' => 'nullable|email|max:255',
+            'retailer_name' => 'nullable|string|max:255',
+            'retailer_street' => 'nullable|string|max:255',
+            'retailer_city' => 'nullable|string|max:255',
+            'retailer_country' => 'nullable|string|max:255',
+            'retailer_state' => 'nullable|string|max:255',
+            'retailer_phone' => 'nullable|string|max:50',
+            'retailer_toll_free_phone' => 'nullable|string|max:50',
+            'retailer_website' => 'nullable|url|max:255',
+            'retailer_email' => 'nullable|email|max:255',
+            'retailer_products_sold' => 'nullable|string',
+        ]);
+
+        $customer = Auth::guard('customer')->user();
+
+        $customer->update([
+            'is_online_wholesaler' => $this->is_online_wholesaler,
+            'store_count' => $this->store_count,
+            'net_terms_approved' => $this->net_terms_approved,
+            'credit_limit' => $this->credit_limit !== '' ? $this->credit_limit : null,
+            'accounts_payable_email' => $this->accounts_payable_email ?: null,
+        ]);
+
+
+        $customer->retailerProfile()->updateOrCreate(
+            ['customer_id' => $customer->id],
+            [
+                'include_in_retailer_map' => $this->include_in_retailer_map,
+                'name' => $this->retailer_name ?: null,
+                'street' => $this->retailer_street ?: null,
+                'city' => $this->retailer_city ?: null,
+                'country' => $this->retailer_country ?: null,
+                'state' => $this->retailer_state ?: null,
+                'phone' => $this->retailer_phone ?: null,
+                'toll_free_phone' => $this->retailer_toll_free_phone ?: null,
+                'website' => $this->retailer_website ?: null,
+                'email' => $this->retailer_email ?: null,
+                'products_sold' => $this->retailer_products_sold ?: null,
+            ]
+        );
+
+        session()->flash('admin_wholesale_success', 'Wholesale / Billing settings have been updated.');
     }
 
     public function render(): View
