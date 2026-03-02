@@ -1,0 +1,222 @@
+[
+    {
+        "name": "Apricot Seeds",
+        "slug": "apricot-seeds",
+        "description": "Premium quality apricot seeds for health and wellness",
+        "image": "apricot-seeds.png",
+        "meta_title": "Apricot Seeds",
+        "meta_description": "Browse our selection of premium apricot seeds",
+        "is_active": true,
+        "show_in_menu": true,
+        "sort_order": 1
+    },
+    {
+        "name": "B17 / Apricot Seed Extract",
+        "slug": "b17-apricot-seed-extract",
+        "description": "B17 and apricot seed extract products",
+        "image": "b17-apricot-seed-extract.png",
+        "meta_title": "B17 / Apricot Seed Extract",
+        "meta_description": "Shop B17 and apricot seed extract products",
+        "is_active": true,
+        "show_in_menu": true,
+        "sort_order": 2
+    },
+    {
+        "name": "B17 Rich Wholefoods",
+        "slug": "b17-rich-wholefoods",
+        "description": "B17 rich wholefood products",
+        "image": null,
+        "meta_title": "B17 Rich Wholefoods",
+        "meta_description": "Discover our B17 rich wholefood products",
+        "is_active": false,
+        "show_in_menu": false,
+        "sort_order": 3
+    },
+    {
+        "name": "B17 Boosters",
+        "slug": "b17-boosters",
+        "description": "B17 booster supplements and products",
+        "image": "b17-boosters.png",
+        "meta_title": "B17 Boosters",
+        "meta_description": "Shop B17 booster products",
+        "is_active": true,
+        "show_in_menu": true,
+        "sort_order": 4
+    },
+    {
+        "name": "Combo Packs",
+        "slug": "combo-packs",
+        "description": "Value combo packs and bundles",
+        "image": "combo-packs.png",
+        "meta_title": "Combo Packs",
+        "meta_description": "Save with our combo pack bundles",
+        "is_active": true,
+        "show_in_menu": true,
+        "sort_order": 5
+    },
+    {
+        "name": "Immune Support",
+        "slug": "immune-support",
+        "description": "Products to support your immune system",
+        "image": "immune-support.png",
+        "meta_title": "Immune Support",
+        "meta_description": "Boost your immune system with our products",
+        "is_active": true,
+        "show_in_menu": true,
+        "sort_order": 6
+    },
+    {
+        "name": "Skin Care",
+        "slug": "skin-care",
+        "description": "Natural skin care products",
+        "image": null,
+        "meta_title": "Skin Care",
+        "meta_description": "Browse our natural skin care products",
+        "is_active": true,
+        "show_in_menu": true,
+        "sort_order": 7
+    },
+    {
+        "name": "AP Fuel Products",
+        "slug": "ap-fuel-products",
+        "description": "AP Fuel product line",
+        "image": null,
+        "meta_title": "AP Fuel Products",
+        "meta_description": "Shop AP Fuel products",
+        "is_active": true,
+        "show_in_menu": true,
+        "sort_order": 8
+    },
+    {
+        "name": "Accessories",
+        "slug": "accessories",
+        "description": "Accessories and related products",
+        "image": null,
+        "meta_title": "Accessories",
+        "meta_description": "Browse our accessories",
+        "is_active": true,
+        "show_in_menu": true,
+        "sort_order": 9
+    },
+    {
+        "name": "Gift Cards",
+        "slug": "gift-cards",
+        "description": "Gift cards for any occasion",
+        "image": null,
+        "meta_title": "Gift Cards",
+        "meta_description": "Purchase gift cards",
+        "is_active": false,
+        "show_in_menu": false,
+        "sort_order": 10
+    },
+    {
+        "name": "Wholesale",
+        "slug": "wholesale",
+        "description": "Wholesale products for businesses",
+        "image": null,
+        "meta_title": "Wholesale",
+        "meta_description": "Wholesale ordering for businesses",
+        "is_active": false,
+        "show_in_menu": false,
+        "sort_order": 11
+    },
+    {
+        "name": "Bulk Raw Materials",
+        "slug": "bulk-raw-materials",
+        "description": "Bulk raw materials for manufacturing",
+        "image": null,
+        "meta_title": "Bulk Raw Materials",
+        "meta_description": "Order bulk raw materials",
+        "is_active": false,
+        "show_in_menu": false,
+        "sort_order": 12
+    },
+    {
+        "name": "Promotional Material",
+        "slug": "promotional-material",
+        "description": "Promotional materials and marketing items",
+        "image": null,
+        "meta_title": "Promotional Material",
+        "meta_description": "Access promotional materials",
+        "is_active": false,
+        "show_in_menu": false,
+        "sort_order": 13
+    },
+    {
+        "name": "Healthy Holiday Bundle",
+        "slug": "healthy-holiday-bundle",
+        "description": "Special holiday bundle offers",
+        "image": null,
+        "meta_title": "Healthy Holiday Bundle",
+        "meta_description": "Shop healthy holiday bundles",
+        "is_active": false,
+        "show_in_menu": false,
+        "sort_order": 14
+    },
+    {
+        "name": "South African Apricot Seeds",
+        "slug": "south-african-apricot-seeds",
+        "description": "Premium South African apricot seeds",
+        "image": null,
+        "meta_title": "South African Apricot Seeds",
+        "meta_description": "Shop South African apricot seeds",
+        "is_active": false,
+        "show_in_menu": false,
+        "sort_order": 15
+    },
+    {
+        "name": "Clearance / Short Dated Products",
+        "slug": "clearance-short-dated-products",
+        "description": "Clearance and short dated products at discounted prices",
+        "image": null,
+        "meta_title": "Clearance / Short Dated Products",
+        "meta_description": "Shop clearance and short dated products",
+        "is_active": false,
+        "show_in_menu": false,
+        "sort_order": 16
+    },
+    {
+        "name": "Pet Products",
+        "slug": "pet-products",
+        "description": "Natural products for your pets",
+        "image": null,
+        "meta_title": "Pet Products",
+        "meta_description": "Browse natural pet products",
+        "is_active": true,
+        "show_in_menu": true,
+        "sort_order": 17
+    },
+    {
+        "name": "Apricot Power Deals",
+        "slug": "apricot-power-deals",
+        "description": "Special deals and offers from Apricot Power",
+        "image": null,
+        "meta_title": "Apricot Power Deals",
+        "meta_description": "Shop Apricot Power deals",
+        "is_active": false,
+        "show_in_menu": false,
+        "sort_order": 18
+    },
+    {
+        "name": "Sell Sheets",
+        "slug": "sell-sheets",
+        "description": "Product sell sheets and information",
+        "image": null,
+        "meta_title": "Sell Sheets",
+        "meta_description": "Access product sell sheets",
+        "is_active": false,
+        "show_in_menu": false,
+        "sort_order": 19
+    },
+    {
+        "name": "Big 3",
+        "slug": "big-3",
+        "description": "The Big 3 product collection",
+        "image": null,
+        "meta_title": "Big 3",
+        "meta_description": "Shop the Big 3 collection",
+        "is_active": true,
+        "show_in_menu": true,
+        "sort_order": 20
+    }
+]

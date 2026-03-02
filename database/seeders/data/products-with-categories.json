@@ -1,0 +1,134 @@
+[
+    {
+        "attributes": {
+            "name": "California Bitter Raw Apricot Seeds, 8 oz.",
+            "description": "Premium California bitter raw apricot seeds, naturally dried and packed fresh. Rich in essential nutrients and B17."
+        },
+        "category_slug": "apricot-seeds",
+        "sku": "CA-SEEDS-8OZ",
+        "price": "2495",
+        "image": "california-bitter-raw-apricot-seeds-8oz.png",
+        "brand": "Apricot Power"
+    },
+    {
+        "attributes": {
+            "name": "California Bitter Raw Apricot Seeds, 16 oz.",
+            "description": "Premium California bitter raw apricot seeds, naturally dried and packed fresh. Rich in essential nutrients and B17."
+        },
+        "category_slug": "apricot-seeds",
+        "sku": "CA-SEEDS-16OZ",
+        "price": "3995",
+        "image": "california-bitter-raw-apricot-seeds-16oz.png",
+        "brand": "Apricot Power"
+    },
+    {
+        "attributes": {
+            "name": "California Bitter Raw Apricot Seeds, 32 oz.",
+            "description": "Premium California bitter raw apricot seeds, naturally dried and packed fresh. Rich in essential nutrients and B17."
+        },
+        "category_slug": "apricot-seeds",
+        "sku": "CA-SEEDS-32OZ",
+        "price": "6995",
+        "image": "california-bitter-raw-apricot-seeds-32oz.png",
+        "brand": "Apricot Power"
+    },
+    {
+        "attributes": {
+            "name": "Turkish Organic Bitter Raw Apricot Seeds - 8 oz.",
+            "description": "Organic Turkish bitter raw apricot seeds sourced from the finest orchards. Naturally rich in B17 and essential nutrients."
+        },
+        "category_slug": "apricot-seeds",
+        "sku": "TR-SEEDS-8OZ",
+        "price": "2795",
+        "image": "turkish-organic-bitter-raw-apricot-seeds-8oz.png",
+        "brand": "Apricot Power"
+    },
+    {
+        "attributes": {
+            "name": "Turkish Organic Bitter Raw Apricot Seeds - 16 oz.",
+            "description": "Organic Turkish bitter raw apricot seeds sourced from the finest orchards. Naturally rich in B17 and essential nutrients."
+        },
+        "category_slug": "apricot-seeds",
+        "sku": "TR-SEEDS-16OZ",
+        "price": "4495",
+        "image": "turkish-organic-bitter-raw-apricot-seeds-16oz.png",
+        "brand": "Apricot Power"
+    },
+    {
+        "attributes": {
+            "name": "Turkish Organic Bitter Raw Apricot Seeds - 32 oz.",
+            "description": "Organic Turkish bitter raw apricot seeds sourced from the finest orchards. Naturally rich in B17 and essential nutrients."
+        },
+        "category_slug": "apricot-seeds",
+        "sku": "TR-SEEDS-32OZ",
+        "price": "7495",
+        "image": "turkish-organic-bitter-raw-apricot-seeds-32oz.png",
+        "brand": "Apricot Power"
+    },
+    {
+        "attributes": {
+            "name": "Apricot Power B17/Amygdalin 100mg Tablets",
+            "description": "High-quality B17/Amygdalin tablets in 100mg strength. Formulated for optimal absorption and effectiveness."
+        },
+        "category_slug": "b17-apricot-seed-extract",
+        "sku": "AP-B17-100MG-TAB",
+        "price": "3995",
+        "image": "apricot-power-b17-amygdalin-100mg-tablets.png",
+        "brand": "Apricot Power"
+    },
+    {
+        "attributes": {
+            "name": "Apricot Power B17/Amygdalin 500mg Tablets",
+            "description": "High-quality B17/Amygdalin tablets in 500mg strength. Formulated for optimal absorption and effectiveness."
+        },
+        "category_slug": "b17-apricot-seed-extract",
+        "sku": "AP-B17-500MG-TAB",
+        "price": "7995",
+        "image": "apricot-power-b17-amygdalin-500mg-tablets.png",
+        "brand": "Apricot Power"
+    },
+    {
+        "attributes": {
+            "name": "Apricot Power B17/Amygdalin 100mg Capsules",
+            "description": "Premium B17/Amygdalin capsules in 100mg strength. Easy to swallow and quickly absorbed."
+        },
+        "category_slug": "b17-apricot-seed-extract",
+        "sku": "AP-B17-100MG-CAP",
+        "price": "4295",
+        "image": "apricot-power-b17-amygdalin-100mg-capsules.png",
+        "brand": "Apricot Power"
+    },
+    {
+        "attributes": {
+            "name": "Apricot Power B17/Amygdalin 500mg Capsules",
+            "description": "Premium B17/Amygdalin capsules in 500mg strength. Easy to swallow and quickly absorbed."
+        },
+        "category_slug": "b17-apricot-seed-extract",
+        "sku": "AP-B17-500MG-CAP",
+        "price": "8495",
+        "image": "apricot-power-b17-amygdalin-500mg-capsules.png",
+        "brand": "Apricot Power"
+    },
+    {
+        "attributes": {
+            "name": "NOVODALIN B17/Amygdalin 500mg Tablets",
+            "description": "NOVODALIN brand B17/Amygdalin tablets in 500mg strength. Trusted quality and purity."
+        },
+        "category_slug": "b17-apricot-seed-extract",
+        "sku": "NOV-B17-500MG-TAB",
+        "price": "8995",
+        "image": "novodalin-b17-amygdalin-500mg-tablets.png",
+        "brand": "NOVODALIN"
+    },
+    {
+        "attributes": {
+            "name": "NOVODALIN B17/Amygdalin 100mg Tablets",
+            "description": "NOVODALIN brand B17/Amygdalin tablets in 100mg strength. Trusted quality and purity."
+        },
+        "category_slug": "b17-apricot-seed-extract",
+        "sku": "NOV-B17-100MG-TAB",
+        "price": "4495",
+        "image": null,
+        "brand": "NOVODALIN"
+    }
+]

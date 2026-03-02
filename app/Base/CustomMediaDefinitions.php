@@ -29,7 +29,7 @@ class CustomMediaDefinitions implements MediaDefinitionsInterface
 
         $collection = $model->addMediaCollection(
             config('lunar.media.collection')
-        );
+        )->useDisk(config('media-library.disk_name'));
 
         if ($fallbackUrl) {
             $collection = $collection->useFallbackUrl($fallbackUrl);

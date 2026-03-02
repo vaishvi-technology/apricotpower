@@ -30,7 +30,7 @@ class CategoryPage extends Component
         }
 
         return $this->category->products()
-            ->with(['defaultUrl', 'thumbnail'])
+            ->with(['defaultUrl', 'media'])
             ->paginate(12);
     }
 

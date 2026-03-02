@@ -8,11 +8,13 @@ class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
-     *
      */
     public function run(): void
     {
-        $this->call(CollectionSeeder::class);
+        $this->call(SuperAdminSeeder::class);
+        $this->call(LunarSetupSeeder::class);
+        $this->call(CountryStateSeeder::class);
+        $this->call(DemoCustomerSeeder::class);
         $this->call(AttributeSeeder::class);
         $this->call(TaxSeeder::class);
         $this->call(ProductSeeder::class);
@@ -20,5 +22,9 @@ class DatabaseSeeder extends Seeder
         $this->call(ShippingSeeder::class);
         $this->call(OrderSeeder::class);
         $this->call(PageSeeder::class);
+        $this->call(TagSeeder::class);
+        $this->call(CategorySeeder::class);
+        $this->call(ProductCategorySeeder::class);
+        $this->call(FaqSeeder::class);
     }
 }

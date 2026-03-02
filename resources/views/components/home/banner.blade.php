@@ -32,11 +32,12 @@
                         <div class="swiper banner-swiper">
                             <div class="swiper-wrapper">
                                 @foreach($products as $product)
+                                    @php $thumbnail = $product->getFirstMedia('images'); @endphp
                                     <div class="swiper-slide">
                                         <div class="banner-parent">
                                             <a href="{{ route('product.view', $product->defaultUrl->slug) }}">
-                                                @if($product->thumbnail)
-                                                    <img src="{{ $product->thumbnail->getUrl('large') }}" class="banner-img cursor-pointer" alt="{{ $product->translateAttribute('name') }}">
+                                                @if($thumbnail)
+                                                    <img src="{{ $thumbnail->getUrl('large') }}" class="banner-img cursor-pointer" alt="{{ $product->translateAttribute('name') }}">
                                                 @endif
                                             </a>
                                         </div>

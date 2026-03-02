@@ -13,7 +13,7 @@ class Home extends Component
         $eagerLoads = [
             'products.variants.basePrices.currency',
             'products.defaultUrl',
-            'products.thumbnail',
+            'products.media',
         ];
 
         $bannerProducts = $this->getCollectionProducts('banner', $eagerLoads);

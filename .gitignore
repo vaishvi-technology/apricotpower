@@ -39,3 +39,7 @@ config/lunar/search.php
 config/lunar/shipping.php
 config/lunar/taxes.php
 config/lunar/urls.php
+.localstack/cache/machine.json
+.localstack/cache/server.test.pem
+.localstack/cache/server.test.pem.crt
+.localstack/cache/server.test.pem.key

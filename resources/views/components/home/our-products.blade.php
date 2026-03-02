@@ -18,12 +18,13 @@
                 <div class="swiper our-products-swiper">
                     <div class="swiper-wrapper">
                         @foreach($products as $product)
+                            @php $thumbnail = $product->getFirstMedia('images'); @endphp
                             <div class="swiper-slide">
                                 <div class="our-products-item">
                                     <div class="our-products-item-img cursor-pointer">
                                         <a href="{{ route('product.view', $product->defaultUrl->slug) }}">
-                                            @if($product->thumbnail)
-                                                <img width="300" height="400" src="{{ $product->thumbnail->getUrl('medium') }}" alt="{{ $product->translateAttribute('name') }}">
+                                            @if($thumbnail)
+                                                <img width="300" height="400" src="{{ $thumbnail->getUrl('medium') }}" alt="{{ $product->translateAttribute('name') }}">
                                             @endif
                                         </a>
                                     </div>

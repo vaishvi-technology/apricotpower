@@ -94,6 +94,41 @@ services:
             - '${MAILHOG_DASHBOARD_PORT:-8025}:8025'
         networks:
             - sail
+
+    localstack:
+        image: localstack/localstack:latest
+        container_name: "${APP_NAME}-localstack"
+        hostname: localstack
+        environment:
+            - SERVICES=s3,sqs,dynamodb
+            - BUCKET_NAME=${AWS_BUCKET:-rcm}
+            - AWS_DEFAULT_REGION=us-east-1
+            - AWS_ACCESS_KEY_ID=test
+            - AWS_SECRET_ACCESS_KEY=test
+            - EDGE_PORT=4566
+            - LOCALSTACK_HOST=localstack
+            - HOSTNAME_EXTERNAL=localstack
+            - DOCKER_HOST=unix:///var/run/docker.sock
+            - DEBUG=1
+            - PERSISTENCE=1
+            - PERSIST_ALL=1
+            - LS_LOG=trace
+            - TMPDIR=/var/lib/localstack/tmp
+            - LOCALSTACK_AUTHORIZATION=0
+        ports:
+            - "4566-4599:4566-4599"
+        volumes:
+            - "./docker/init-s3.sh:/etc/localstack/init/ready.d/init-s3.sh"
+            - "./.localstack:/var/lib/localstack"
+            - "/var/run/docker.sock:/var/run/docker.sock"
+            - ./cors.json:/etc/localstack/cors.json
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localstack:4566/_localstack/health"]
+            interval: 5s
+            timeout: 10s
+            retries: 30
+        networks:
+            - sail
 volumes:
     sail-mysql:
         driver: local
