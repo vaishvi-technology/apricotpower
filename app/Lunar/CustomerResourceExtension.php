@@ -299,6 +299,7 @@ class CustomerResourceExtension extends ResourceExtension
                                                             ->default('United States')
                                                             ->searchable()
                                                             ->preload()
+                                                            ->required()
                                                             ->live()
                                                             ->afterStateUpdated(fn (Forms\Set $set) => $set('state', null)),
 
@@ -319,7 +320,8 @@ class CustomerResourceExtension extends ResourceExtension
                                                                     ->pluck('name', 'name')
                                                                     ->toArray();
                                                             })
-                                                            ->searchable(),
+                                                            ->searchable()
+                                                            ->required(),
                                                     ]),
 
                                                     Forms\Components\Grid::make(2)->schema([

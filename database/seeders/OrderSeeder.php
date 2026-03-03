@@ -26,6 +26,10 @@ class OrderSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function () {
+            if (Order::count() > 0) {
+                return;
+            }
+
             $variants = ProductVariant::get();
             $users = User::get();
             $faker = Factory::create();

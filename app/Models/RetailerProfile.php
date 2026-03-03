@@ -11,6 +11,8 @@ class RetailerProfile extends Model
 
     protected $casts = [
         'include_in_retailer_map' => 'boolean',
+        'latitude' => 'float',
+        'longitude' => 'float',
     ];
 
     public function customer(): BelongsTo

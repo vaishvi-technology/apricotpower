@@ -1,6 +1,6 @@
 <div>
     {{-- Inner Banner --}}
-    <section class="inner-banner" @if($page && $page->banner_image) style="background-image: url('{{ Storage::url($page->banner_image) }}') !important; background-size: cover; background-position: center;" @endif>
+    <section class="inner-banner" @if($aboutPage && $aboutPage->banner_image) style="background-image: url('{{ Storage::url($aboutPage->banner_image) }}') !important; background-size: cover; background-position: center;" @elseif($page && $page->banner_image) style="background-image: url('{{ Storage::url($page->banner_image) }}') !important; background-size: cover; background-position: center;" @endif>
         <div class="container">
             <div class="inner-banner-head">
                 <h1><span class="normal-font">CONTACT</span> <span class="bold-font">US</span></h1>
@@ -77,41 +77,41 @@
                 {{-- Contact Information --}}
                 <div class="col-lg-5 col-md-12">
                     <div class="contact-us-content h-100">
-                        <h2>GET IN TOUCH</h2>
-
                         @if($page && $page->content)
-                            <div class="page-content mb-4">
+                            <div class="page-content">
                                 {!! $page->content !!}
                             </div>
                         @else
+                            <h2>GET IN TOUCH</h2>
+
                             <p>We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+
+                            <div class="contact-info mt-4">
+                                <p><span>Address:</span><br>
+                                13501 Ranch Road 12,<br>
+                                Ste 103 Wimberley, Tx. 78676</p>
+                            </div>
+
+                            <div class="contact-info">
+                                <p><span>Toll Free:</span><br>
+                                <a href="tel:+18664687487">1-866-468-7487 (866-GOT-PITS)</a></p>
+                            </div>
+
+                            <div class="contact-info">
+                                <p><span>Local / International:</span><br>
+                                <a href="tel:+17072621394">1-707-262-1394</a></p>
+                            </div>
+
+                            <div class="contact-info">
+                                <p><span>Email:</span><br>
+                                <a href="mailto:customerservice@apricotpower.com">customerservice@apricotpower.com</a></p>
+                            </div>
+
+                            <div class="contact-info mt-4">
+                                <p><span>Business Hours:</span><br>
+                                Monday - Friday: 9:00 AM - 5:00 PM CST</p>
+                            </div>
                         @endif
-
-                        <div class="contact-info mt-4">
-                            <p><span>Address:</span><br>
-                            13501 Ranch Road 12,<br>
-                            Ste 103 Wimberley, Tx. 78676</p>
-                        </div>
-
-                        <div class="contact-info">
-                            <p><span>Toll Free:</span><br>
-                            <a href="tel:+18664687487">1-866-468-7487 (866-GOT-PITS)</a></p>
-                        </div>
-
-                        <div class="contact-info">
-                            <p><span>Local / International:</span><br>
-                            <a href="tel:+17072621394">1-707-262-1394</a></p>
-                        </div>
-
-                        <div class="contact-info">
-                            <p><span>Email:</span><br>
-                            <a href="mailto:customerservice@apricotpower.com">customerservice@apricotpower.com</a></p>
-                        </div>
-
-                        <div class="contact-info mt-4">
-                            <p><span>Business Hours:</span><br>
-                            Monday - Friday: 9:00 AM - 5:00 PM CST</p>
-                        </div>
 
                         <div class="mt-4">
                             <img src="{{ asset('images/home/contact-feefo-image.png') }}" alt="Feefo Reviews" style="max-width: 120px;">
@@ -121,4 +121,50 @@
             </div>
         </div>
     </section>
+
+    {{-- About Us Section --}}
+    <section class="contact-about-section">
+        <div class="container">
+            <div class="contact-about-heading">
+                <h2><span class="normal-font">ABOUT</span> <span class="bold-font">US</span></h2>
+            </div>
+            <div class="contact-about-content">
+                @if($aboutPage && $aboutPage->content)
+                    {!! $aboutPage->content !!}
+                @else
+                    <p class="lead">Apricot Power has been providing apricot seeds since 1999.</p>
+                    <p>Over the years our company has grown and now sells more than 100 different products and supplements to health conscious customers around the world. Apricot seeds and B17 are our top sellers.</p>
+                    <p>Apricot Power is your reliable source for quality apricot seeds and B17 products.</p>
+                    <h4>Our Mission</h4>
+                    <p>To provide the highest quality natural health products to our customers while maintaining the best customer service in the industry.</p>
+                @endif
+            </div>
+        </div>
+    </section>
+
+    {{-- Reviews / Feefo Widget Section --}}
+    <section class="testimoinal-sec contact-reviews-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="sec-content">
+                        <h2>
+                            Our Customers <span class="secondary-color">Love Us!</span>
+                        </h2>
+                    </div>
+                </div>
+                <div id="feefo-service-review-widgetId"
+                     style="height: 310px; overflow: hidden;"
+                     class="feefo-review-widget-service">
+                </div>
+                <div class="justify-content-center d-flex mt-5">
+                    <a href="/reviews" class="button-with-icon">View All Reviews</a>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
+
+@push('scripts')
+    <script type="text/javascript" src="https://api.feefo.com/api/javascript/apricot-power" async></script>
+@endpush

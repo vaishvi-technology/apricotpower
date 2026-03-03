@@ -17,14 +17,14 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('state')->nullable();
             $table->string('country')->nullable()->default('United States');
+            $table->decimal('latitude', 10, 7)->nullable();
+            $table->decimal('longitude', 10, 7)->nullable();
             $table->string('phone', 50)->nullable();
             $table->string('toll_free_phone', 50)->nullable();
             $table->string('website')->nullable();
             $table->string('email')->nullable();
             $table->text('products_sold')->nullable();
             $table->timestamps();
-
-            $table->unique('customer_id');
         });
     }
 
