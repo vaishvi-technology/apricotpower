@@ -26,7 +26,6 @@ use Lunar\Admin\Support\Facades\LunarPanel;
 use Lunar\Base\ShippingModifiers;
 use Lunar\Facades\Telemetry;
 use Lunar\Models\Order;
-use Lunar\Models\Order;
 use Lunar\Shipping\ShippingPlugin;
 
 class AppServiceProvider extends ServiceProvider
