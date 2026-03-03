@@ -45,6 +45,9 @@ class Product extends LunarProduct
         // Supplier information
         'supplier_id',
         'inventory_notes',
+        // Disclaimer fields
+        'disclaimer',
+        'disclaimer_agreement',
     ];
 
     /**
@@ -53,6 +56,7 @@ class Product extends LunarProduct
     protected $casts = [
         'notify_at' => 'integer',
         'low_stock_notified_at' => 'datetime',
+        'disclaimer_agreement' => 'boolean',
     ];
 
     /**
@@ -233,5 +237,21 @@ class Product extends LunarProduct
         if ($this->low_stock_notified_at && !$this->isLowStock()) {
             $this->update(['low_stock_notified_at' => null]);
         }
+    }
+
+    /**
+     * Check if this product has a disclaimer to display.
+     */
+    public function hasDisclaimer(): bool
+    {
+        return !empty($this->disclaimer);
+    }
+
+    /**
+     * Check if this product has a disclaimer that requires acknowledgment.
+     */
+    public function requiresDisclaimerAgreement(): bool
+    {
+        return $this->hasDisclaimer() && $this->disclaimer_agreement;
     }
 }

@@ -203,6 +203,22 @@ class ProductResourceExtension extends ResourceExtension
                         ->helperText('Internal notes about inventory management for this product.')
                         ->columnSpanFull(),
                 ]),
+
+            Forms\Components\Section::make('Miscellaneous')
+                ->description('Cart message and disclaimer settings.')
+                ->collapsible()
+                ->schema([
+                    Forms\Components\Textarea::make('disclaimer')
+                        ->label('Item Disclaimer / Cart Message')
+                        ->rows(4)
+                        ->helperText('Message displayed in shopping cart for this product. Leave empty for no message.')
+                        ->columnSpanFull(),
+
+                    Forms\Components\Toggle::make('disclaimer_agreement')
+                        ->label('Require Customer Agreement')
+                        ->helperText('Customer must check a box to acknowledge before checkout.')
+                        ->default(false),
+                ]),
         ]);
     }
 

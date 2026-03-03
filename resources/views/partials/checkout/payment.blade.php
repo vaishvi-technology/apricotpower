@@ -7,6 +7,31 @@
 
     @if ($currentStep >= $step)
         <div class="p-6 space-y-4">
+            {{-- Disclaimer Agreement Section --}}
+            @if($this->hasDisclaimerRequirements)
+                <div class="p-4 mb-4 bg-amber-50 border border-amber-200 rounded-lg">
+                    <h4 class="font-medium text-amber-800 mb-2">Product Disclaimers</h4>
+                    @foreach($this->productsRequiringAgreement as $product)
+                        <div class="p-2 mb-2 bg-white rounded border text-sm">
+                            <p class="font-medium">{{ $product['name'] }}</p>
+                            <p class="mt-1 text-gray-600">{{ $product['disclaimer'] }}</p>
+                        </div>
+                    @endforeach
+                    <div class="mt-3 flex items-start">
+                        <input type="checkbox"
+                               id="disclaimersAgreed"
+                               wire:model="disclaimersAgreed"
+                               class="mt-1 rounded border-amber-300 text-amber-600 focus:ring-amber-500 @error('disclaimersAgreed') border-red-500 @enderror">
+                        <label for="disclaimersAgreed" class="ml-2 text-sm font-medium text-amber-800">
+                            I have read and acknowledge the above product disclaimers <span class="text-red-600">*</span>
+                        </label>
+                    </div>
+                    @error('disclaimersAgreed')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+            @endif
+
             <div class="flex gap-4">
                 <button @class([
                     'px-5 py-2 text-sm border font-medium rounded-lg',
