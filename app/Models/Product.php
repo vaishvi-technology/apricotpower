@@ -42,6 +42,9 @@ class Product extends LunarProduct
         // Inventory notification settings
         'notify_at',
         'low_stock_notified_at',
+        // Supplier information
+        'supplier_id',
+        'inventory_notes',
     ];
 
     /**
@@ -133,6 +136,32 @@ class Product extends LunarProduct
     public function inventoryMovements(): HasMany
     {
         return $this->hasMany(InventoryMovement::class);
+    }
+
+    /**
+     * Get the supplier for this product.
+     */
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+
+    /**
+     * Get all incoming shipments for this product.
+     */
+    public function incomingShipments(): HasMany
+    {
+        return $this->hasMany(IncomingShipment::class);
+    }
+
+    /**
+     * Get the total pending incoming quantity from all active shipments.
+     */
+    public function getPendingIncomingQuantityAttribute(): int
+    {
+        return $this->incomingShipments()
+            ->active()
+            ->sum('quantity');
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\IncomingShipment;
 use App\Models\InventoryLot;
 use App\Models\InventoryMovement;
 use App\Models\Product;
@@ -89,6 +90,7 @@ class InventoryService
                 'expires_at' => $data['expires_at'] ?? null,
                 'location' => $data['location'] ?? null,
                 'notes' => $data['notes'] ?? null,
+                'supplier_id' => $data['supplier_id'] ?? $product->supplier_id,
             ]);
 
             // Record movement
@@ -102,6 +104,35 @@ class InventoryService
                 'quantity_after' => $data['quantity'],
                 'reason' => $data['reason'] ?? 'Initial receipt',
                 'user_id' => $this->getCurrentUserId(),
+            ]);
+
+            return $lot;
+        });
+    }
+
+    /**
+     * Receive inventory from an incoming shipment.
+     * Creates an inventory lot and marks the shipment as received.
+     */
+    public function receiveFromShipment(IncomingShipment $shipment): InventoryLot
+    {
+        return DB::transaction(function () use ($shipment) {
+            $product = Product::find($shipment->product_id);
+
+            $lot = $this->receiveInventory($product, [
+                'product_variant_id' => $shipment->product_variant_id,
+                'quantity' => $shipment->quantity,
+                'supplier_id' => $shipment->supplier_id ?? $product->supplier_id,
+                'received_at' => now(),
+                'notes' => $shipment->notes
+                    ? "Received from shipment #{$shipment->id}: {$shipment->notes}"
+                    : "Received from shipment #{$shipment->id}",
+            ]);
+
+            // Update shipment status and link to lot
+            $shipment->update([
+                'status' => IncomingShipment::STATUS_RECEIVED,
+                'inventory_lot_id' => $lot->id,
             ]);
 
             return $lot;

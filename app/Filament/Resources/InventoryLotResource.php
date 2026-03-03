@@ -7,6 +7,7 @@ use App\Filament\Resources\InventoryLotResource\RelationManagers;
 use App\Models\InventoryLot;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Supplier;
 use App\Services\InventoryService;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -85,6 +86,13 @@ class InventoryLotResource extends Resource
                             ->label('Storage Location')
                             ->maxLength(255)
                             ->placeholder('e.g., Warehouse A, Shelf 3'),
+
+                        Forms\Components\Select::make('supplier_id')
+                            ->label('Supplier')
+                            ->options(fn () => Supplier::active()->pluck('company_name', 'id'))
+                            ->searchable()
+                            ->preload()
+                            ->helperText('Optional: Override product\'s default supplier for this lot'),
                     ])->columns(2),
 
                 Forms\Components\Section::make('Dates')
@@ -156,6 +164,12 @@ class InventoryLotResource extends Resource
                     ->label('Location')
                     ->searchable()
                     ->toggleable(),
+
+                Tables\Columns\TextColumn::make('supplier.company_name')
+                    ->label('Supplier')
+                    ->placeholder('Default')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('received_at')
                     ->label('Received')
@@ -234,6 +248,12 @@ class InventoryLotResource extends Resource
                     ->label('Has Location')
                     ->query(fn (Builder $query) => $query->whereNotNull('location'))
                     ->toggle(),
+
+                Tables\Filters\SelectFilter::make('supplier_id')
+                    ->label('Supplier')
+                    ->relationship('supplier', 'company_name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([

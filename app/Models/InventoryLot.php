@@ -21,6 +21,7 @@ class InventoryLot extends Model
         'expires_at',
         'location',
         'notes',
+        'supplier_id',
     ];
 
     protected function casts(): array
@@ -45,6 +46,22 @@ class InventoryLot extends Model
     public function movements(): HasMany
     {
         return $this->hasMany(InventoryMovement::class);
+    }
+
+    /**
+     * Get the supplier for this lot.
+     */
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+
+    /**
+     * Get the effective supplier (lot's supplier or product's default).
+     */
+    public function getEffectiveSupplierAttribute(): ?Supplier
+    {
+        return $this->supplier ?? $this->product->supplier;
     }
 
     public function scopeExpiringSoon($query, int $days = 30)

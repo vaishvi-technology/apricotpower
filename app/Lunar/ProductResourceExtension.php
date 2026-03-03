@@ -5,6 +5,8 @@ namespace App\Lunar;
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductInventoryLots;
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductNutritionFacts;
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductShipping;
+use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductSupplier;
+use App\Models\Supplier;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Tables;
@@ -22,6 +24,7 @@ class ProductResourceExtension extends ResourceExtension
             'shipping' => ManageProductShipping::route('/{record}/shipping'),
             'nutrition-facts' => ManageProductNutritionFacts::route('/{record}/nutrition-facts'),
             'inventory-lots' => ManageProductInventoryLots::route('/{record}/inventory-lots'),
+            'supplier' => ManageProductSupplier::route('/{record}/supplier'),
         ]);
     }
 
@@ -39,6 +42,7 @@ class ProductResourceExtension extends ResourceExtension
             ManageProductShipping::class,
             ManageProductNutritionFacts::class,
             ManageProductInventoryLots::class,
+            ManageProductSupplier::class,
         ]);
     }
 
@@ -162,6 +166,43 @@ class ProductResourceExtension extends ResourceExtension
                         ->helperText('Content displayed in the Learn More tab on the product page.')
                         ->columnSpanFull(),
                 ]),
+
+            Forms\Components\Section::make('Supplier Information')
+                ->description('Primary supplier and inventory notes for this product.')
+                ->collapsible()
+                ->schema([
+                    Forms\Components\Select::make('supplier_id')
+                        ->label('Primary Supplier')
+                        ->relationship('supplier', 'company_name')
+                        ->searchable()
+                        ->preload()
+                        ->createOptionForm([
+                            Forms\Components\TextInput::make('company_name')
+                                ->required()
+                                ->maxLength(100),
+                            Forms\Components\TextInput::make('contact_name')
+                                ->maxLength(100),
+                            Forms\Components\TextInput::make('phone')
+                                ->tel(),
+                            Forms\Components\TextInput::make('email')
+                                ->email(),
+                            Forms\Components\TextInput::make('supplier_terms')
+                                ->label('Supplier Terms')
+                                ->placeholder('e.g., Net 30'),
+                            Forms\Components\TextInput::make('lead_time')
+                                ->label('Lead Time (Days)')
+                                ->numeric(),
+                        ])
+                        ->createOptionUsing(function (array $data) {
+                            return Supplier::create($data)->id;
+                        }),
+
+                    Forms\Components\Textarea::make('inventory_notes')
+                        ->label('Inventory Notes')
+                        ->rows(3)
+                        ->helperText('Internal notes about inventory management for this product.')
+                        ->columnSpanFull(),
+                ]),
         ]);
     }
 
@@ -187,6 +228,10 @@ class ProductResourceExtension extends ResourceExtension
                     ->searchable(),
                 Tables\Columns\TextColumn::make('meta_title')
                     ->label('Meta Title')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('supplier.company_name')
+                    ->label('Supplier')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
