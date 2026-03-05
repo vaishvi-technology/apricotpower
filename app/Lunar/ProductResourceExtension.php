@@ -2,6 +2,7 @@
 
 namespace App\Lunar;
 
+use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductGroupPricing;
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductInventoryLots;
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductNutritionFacts;
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductShipping;
@@ -25,6 +26,7 @@ class ProductResourceExtension extends ResourceExtension
             'nutrition-facts' => ManageProductNutritionFacts::route('/{record}/nutrition-facts'),
             'inventory-lots' => ManageProductInventoryLots::route('/{record}/inventory-lots'),
             'supplier' => ManageProductSupplier::route('/{record}/supplier'),
+            'group-pricing' => ManageProductGroupPricing::route('/{record}/group-pricing'),
         ]);
     }
 
@@ -43,6 +45,7 @@ class ProductResourceExtension extends ResourceExtension
             ManageProductNutritionFacts::class,
             ManageProductInventoryLots::class,
             ManageProductSupplier::class,
+            ManageProductGroupPricing::class,
         ]);
     }
 

@@ -222,6 +222,9 @@ class StorePage extends Component
      */
     public function addToCart(int $variantId, int $quantity = 1): void
     {
+        // Ensure Lunar defaults exist before any cart operations
+        $this->ensureLunarDefaults();
+
         $cart = CartSession::current();
 
         if (!$cart) {
@@ -236,6 +239,31 @@ class StorePage extends Component
 
         $this->dispatch('cart-updated');
         $this->dispatch('notify', message: 'Product added to cart!', type: 'success');
+    }
+
+    /**
+     * Ensure Lunar default Currency and Channel exist.
+     */
+    protected function ensureLunarDefaults(): void
+    {
+        if (!Currency::getDefault()) {
+            Currency::create([
+                'code' => 'USD',
+                'name' => 'US Dollar',
+                'exchange_rate' => 1,
+                'decimal_places' => 2,
+                'default' => true,
+                'enabled' => true,
+            ]);
+        }
+
+        if (!Channel::getDefault()) {
+            Channel::create([
+                'handle' => 'webstore',
+                'name' => 'Webstore',
+                'default' => true,
+            ]);
+        }
     }
 
     /**

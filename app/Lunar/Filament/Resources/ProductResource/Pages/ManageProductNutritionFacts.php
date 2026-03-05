@@ -178,7 +178,7 @@ class ManageProductNutritionFacts extends BaseEditRecord
                                 ->label('Serving Size')
                                 ->placeholder('e.g., 3 seeds'),
                             Forms\Components\TextInput::make('servings_per_container')
-                                ->label('Servings Per Size')
+                                ->label('Servings per Container')
                                 ->placeholder('e.g., apx. 125'),
                         ]),
                         Forms\Components\Grid::make(2)->schema([
@@ -261,7 +261,7 @@ class ManageProductNutritionFacts extends BaseEditRecord
                 Forms\Components\Section::make('Ingredients')
                     ->schema([
                         Forms\Components\Textarea::make('ingredients')
-                            ->label('Ingredients List')
+                            ->label('')
                             ->rows(4)
                             ->placeholder('Enter ingredients separated by commas'),
                     ]),

@@ -159,6 +159,22 @@ class Product extends LunarProduct
     }
 
     /**
+     * Get all customer group prices for this product.
+     */
+    public function customerGroupPrices(): HasMany
+    {
+        return $this->hasMany(CustomerGroupPrice::class);
+    }
+
+    /**
+     * Get active (non-expired) customer group prices for this product.
+     */
+    public function activeCustomerGroupPrices(): HasMany
+    {
+        return $this->customerGroupPrices()->active();
+    }
+
+    /**
      * Get the total pending incoming quantity from all active shipments.
      */
     public function getPendingIncomingQuantityAttribute(): int
