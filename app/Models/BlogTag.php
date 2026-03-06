@@ -4,17 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class BlogCategory extends Model
+class BlogTag extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
         'slug',
-        'description',
-        'accent_color',
         'is_active',
         'sort_order',
     ];
@@ -26,23 +24,13 @@ class BlogCategory extends Model
         ];
     }
 
-    public function posts(): HasMany
+    public function posts(): BelongsToMany
     {
-        return $this->hasMany(BlogPost::class);
-    }
-
-    public function publishedPosts(): HasMany
-    {
-        return $this->hasMany(BlogPost::class)->published();
+        return $this->belongsToMany(BlogPost::class, 'blog_post_tag');
     }
 
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
-    }
-
-    public function getPostCountAttribute(): int
-    {
-        return $this->publishedPosts->count();
     }
 }

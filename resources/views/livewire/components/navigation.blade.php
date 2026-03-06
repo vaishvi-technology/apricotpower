@@ -69,10 +69,154 @@
                         <a class="nav-link" href="{{ route('retailer-locations') }}" wire:navigate>RETAIL LOCATIONS</a>
                     </li>
 
-                    <!-- Blogs -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('blogs') }}" wire:navigate>BLOGS</a>
+                    <!-- Blogs Dropdown -->
+                    <!-- Blogs Mega Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="{{ route('blogs') }}" id="blogsDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            BLOGS
+                        </a>
+                        <div class="dropdown-menu blog-mega-menu p-0" aria-labelledby="blogsDropdown">
+                            @if($this->navFeaturedBlogs->isNotEmpty())
+                                <div class="blog-mega-header px-3 py-2">
+                                    <span>Latest Articles</span>
+                                </div>
+                                <div class="blog-mega-grid">
+                                    @foreach ($this->navFeaturedBlogs as $blogPost)
+                                        <a href="{{ route('blog.detail', $blogPost->slug) }}" wire:navigate class="blog-mega-item">
+                                            <div class="blog-mega-thumb">
+                                                @if($blogPost->featured_image)
+                                                    <img src="{{ asset('storage/' . $blogPost->featured_image) }}"
+                                                         alt="{{ $blogPost->title }}">
+                                                @else
+                                                    <div class="blog-mega-thumb-placeholder">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#7cbf3d" viewBox="0 0 16 16">
+                                                            <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5M5 8a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1z"/>
+                                                            <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1"/>
+                                                        </svg>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="blog-mega-info">
+                                                <div class="blog-mega-title">{{ Str::limit($blogPost->title, 55) }}</div>
+                                                <div class="blog-mega-meta">
+                                                    @if($blogPost->category)
+                                                        <span class="blog-mega-category">{{ $blogPost->category->name }}</span>
+                                                    @endif
+                                                    @if($blogPost->published_at)
+                                                        <span>{{ $blogPost->published_at->format('M j, Y') }}</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @endif
+                            <div class="blog-mega-footer">
+                                <a href="{{ route('blogs') }}" wire:navigate>
+                                    View All Blog Posts &rarr;
+                                </a>
+                            </div>
+                        </div>
                     </li>
+
+                    <style>
+                        .blog-mega-menu {
+                            width: 480px;
+                            border: none;
+                            border-radius: 10px;
+                            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+                            overflow: hidden;
+                        }
+                        .blog-mega-header {
+                            background: #f8f9fa;
+                            border-bottom: 1px solid #e8e8e8;
+                            font-size: 11px;
+                            font-weight: 700;
+                            text-transform: uppercase;
+                            letter-spacing: 0.8px;
+                            color: #888;
+                        }
+                        .blog-mega-grid {
+                            padding: 8px 0;
+                            max-height: 360px;
+                            overflow-y: auto;
+                        }
+                        .blog-mega-item {
+                            display: flex;
+                            align-items: center;
+                            gap: 12px;
+                            padding: 8px 14px;
+                            text-decoration: none;
+                            color: #333;
+                            transition: background 0.15s ease;
+                        }
+                        .blog-mega-item:hover {
+                            background: #f0f7e6;
+                            color: #333;
+                            text-decoration: none;
+                        }
+                        .blog-mega-thumb {
+                            width: 58px;
+                            height: 44px;
+                            border-radius: 6px;
+                            overflow: hidden;
+                            flex-shrink: 0;
+                            background: #f0f0f0;
+                        }
+                        .blog-mega-thumb img {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                        }
+                        .blog-mega-thumb-placeholder {
+                            width: 100%;
+                            height: 100%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background: #e8f5e9;
+                        }
+                        .blog-mega-title {
+                            font-size: 13px;
+                            font-weight: 600;
+                            line-height: 1.3;
+                            color: #222;
+                        }
+                        .blog-mega-item:hover .blog-mega-title {
+                            color: #7cbf3d;
+                        }
+                        .blog-mega-meta {
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            margin-top: 3px;
+                            font-size: 11px;
+                            color: #888;
+                        }
+                        .blog-mega-category {
+                            background: #e8f5e9;
+                            color: #2e7d32;
+                            padding: 1px 6px;
+                            border-radius: 8px;
+                            font-weight: 600;
+                        }
+                        .blog-mega-footer {
+                            border-top: 1px solid #e8e8e8;
+                            padding: 10px 14px;
+                            background: #f8f9fa;
+                        }
+                        .blog-mega-footer a {
+                            font-size: 13px;
+                            font-weight: 700;
+                            color: #7cbf3d;
+                            text-decoration: none;
+                        }
+                        .blog-mega-footer a:hover {
+                            color: #5a9a2a;
+                            text-decoration: underline;
+                        }
+                    </style>
 
                     <!-- About Dropdown -->
                     <li class="nav-item dropdown">
