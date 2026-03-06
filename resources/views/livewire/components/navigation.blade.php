@@ -64,10 +64,10 @@
                         </ul>
                     </li>
 
-                    <!-- Retail Locations -->
-                    <li class="nav-item">
+                    <!-- Retail Locations (hidden) -->
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="{{ route('retailer-locations') }}" wire:navigate>RETAIL LOCATIONS</a>
-                    </li>
+                    </li> --}}
 
                     <!-- Blogs Dropdown -->
                     <!-- Blogs Mega Dropdown -->
