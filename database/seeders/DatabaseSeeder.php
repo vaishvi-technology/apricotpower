@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call(LunarSetupSeeder::class);
         $this->call(CountryStateSeeder::class);
         $this->call(DemoCustomerSeeder::class);
+        $this->call(CustomerGroupSeeder::class);
         $this->call(AttributeSeeder::class);
         $this->call(ProductSeeder::class);
         $this->call(PageSeeder::class);
