@@ -57,9 +57,13 @@
             .blog-card-image .no-image { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
             .blog-card-image .no-image i { font-size: 48px; color: #ccc; }
 
-            .blog-card-title-bar { padding: 12px 15px; color: #fff; font-weight: 600; font-size: 15px; line-height: 1.3; }
-            .blog-card-title-bar a { color: inherit; text-decoration: none; }
-            .blog-card-title-bar a:hover { text-decoration: underline; }
+            .blog-card-title { padding: 12px 15px 6px; font-weight: 700; font-size: 15px; line-height: 1.3; }
+            .blog-card-title a { color: #333; text-decoration: none; }
+            .blog-card-title a:hover { color: #7cbf3d; }
+
+            .blog-card-categories { padding: 0 15px 8px; display: flex; flex-wrap: wrap; gap: 5px; }
+            .blog-category-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; color: #fff; text-decoration: none; display: inline-block; line-height: 1.4; letter-spacing: 0.3px; transition: opacity 0.2s ease, transform 0.2s ease; }
+            .blog-category-badge:hover { opacity: 0.85; transform: translateY(-1px); color: #fff; }
 
             .blog-card-body { padding: 12px 15px; flex: 1; display: flex; flex-direction: column; }
             .blog-card-meta { font-size: 12px; color: #888; margin-bottom: 8px; display: flex; gap: 10px; flex-wrap: wrap; }
@@ -136,9 +140,18 @@
                             <div class="filter-item {{ $selectedCategory === $category->id ? 'active' : '' }}"
                                  wire:click="selectCategory({{ $category->id }})">
                                 <div class="filter-checkbox"></div>
-                                <span class="filter-label">{{ $category->name }}</span>
+                                <span class="filter-label" style="font-weight: 600;">{{ $category->name }}</span>
                                 <span class="filter-count">({{ $category->published_posts_count }})</span>
                             </div>
+                            @foreach($category->activeChildren as $child)
+                                <div class="filter-item {{ $selectedCategory === $child->id ? 'active' : '' }}"
+                                     wire:click="selectCategory({{ $child->id }})"
+                                     style="padding-left: 20px;">
+                                    <div class="filter-checkbox"></div>
+                                    <span class="filter-label">{{ $child->name }}</span>
+                                    <span class="filter-count">({{ $child->published_posts_count }})</span>
+                                </div>
+                            @endforeach
                         @endforeach
                     </div>
                 </div>
@@ -185,7 +198,6 @@
                     </div>
                     <div class="pinned-cards">
                         @foreach($this->pinnedPosts as $pinned)
-                            @php $accentColor = $pinned->category?->accent_color ?? '#7cbf3d'; @endphp
                             <div class="blog-card">
                                 <div class="blog-card-image">
                                     @if($pinned->featured_image)
@@ -197,11 +209,23 @@
                                         </div>
                                     @endif
                                 </div>
-                                <div class="blog-card-title-bar" style="background-color: {{ $accentColor }};">
+                                <div class="blog-card-title">
                                     <a href="{{ route('blog.detail', $pinned->slug) }}" wire:navigate>
                                         {{ Str::limit($pinned->title, 70) }}
                                     </a>
                                 </div>
+                                @if($pinned->categories->count())
+                                    <div class="blog-card-categories">
+                                        @foreach($pinned->categories as $cat)
+                                            <a href="{{ route('blogs', ['category' => $cat->id]) }}"
+                                               wire:navigate
+                                               class="blog-category-badge"
+                                               style="background-color: {{ $cat->accent_color ?? '#7cbf3d' }};">
+                                                {{ $cat->name }}
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                @endif
                                 <div class="blog-card-body">
                                     <div class="blog-card-meta">
                                         @if($pinned->author)
@@ -240,7 +264,6 @@
             {{-- Blog Grid --}}
             <div class="blog-grid">
                 @forelse($this->posts as $post)
-                    @php $accentColor = $post->category?->accent_color ?? '#7cbf3d'; @endphp
                     <div class="blog-card">
                         <a href="{{ route('blog.detail', $post->slug) }}" wire:navigate class="text-decoration-none">
                             <div class="blog-card-image">
@@ -254,11 +277,23 @@
                                 @endif
                             </div>
                         </a>
-                        <div class="blog-card-title-bar" style="background-color: {{ $accentColor }};">
+                        <div class="blog-card-title">
                             <a href="{{ route('blog.detail', $post->slug) }}" wire:navigate>
                                 {{ Str::limit($post->title, 70) }}
                             </a>
                         </div>
+                        @if($post->categories->count())
+                            <div class="blog-card-categories">
+                                @foreach($post->categories as $cat)
+                                    <a href="{{ route('blogs', ['category' => $cat->id]) }}"
+                                       wire:navigate
+                                       class="blog-category-badge"
+                                       style="background-color: {{ $cat->accent_color ?? '#7cbf3d' }};">
+                                        {{ $cat->name }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
                         <div class="blog-card-body">
                             <div class="blog-card-meta">
                                 @if($post->author)

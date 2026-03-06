@@ -28,6 +28,18 @@ class BlogCategoryResource extends Resource
         return $form->schema([
             Forms\Components\Section::make('Category Details')
                 ->schema([
+                    Forms\Components\Select::make('parent_id')
+                        ->label('Parent Category')
+                        ->options(fn (?BlogCategory $record) => BlogCategory::query()
+                            ->whereNull('parent_id')
+                            ->when($record, fn ($q) => $q->where('id', '!=', $record->id))
+                            ->orderBy('sort_order')
+                            ->pluck('name', 'id'))
+                        ->searchable()
+                        ->preload()
+                        ->placeholder('None (top-level category)')
+                        ->columnSpanFull(),
+
                     Forms\Components\TextInput::make('name')
                         ->required()
                         ->maxLength(255)
@@ -46,7 +58,7 @@ class BlogCategoryResource extends Resource
 
                     Forms\Components\ColorPicker::make('accent_color')
                         ->label('Accent Color')
-                        ->helperText('Used as the card title bar background color on the blog list page.'),
+                        ->helperText('Used as the badge background color on blog cards.'),
 
                     Forms\Components\Toggle::make('is_active')
                         ->label('Active')
@@ -66,6 +78,15 @@ class BlogCategoryResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
+                    ->sortable()
+                    ->formatStateUsing(function (BlogCategory $record) {
+                        $prefix = $record->parent_id ? '— ' : '';
+                        return $prefix . $record->name;
+                    }),
+
+                Tables\Columns\TextColumn::make('parent.name')
+                    ->label('Parent')
+                    ->placeholder('—')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('slug')
@@ -90,6 +111,14 @@ class BlogCategoryResource extends Resource
             ->reorderable('sort_order')
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')->label('Active'),
+                Tables\Filters\SelectFilter::make('parent_id')
+                    ->label('Parent')
+                    ->options(
+                        BlogCategory::whereNull('parent_id')
+                            ->orderBy('sort_order')
+                            ->pluck('name', 'id')
+                    )
+                    ->placeholder('All'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -14,7 +14,7 @@ class BlogDetailPage extends Component
     public function mount(string $slug): void
     {
         $this->post = BlogPost::published()
-            ->with(['category', 'author', 'tags'])
+            ->with(['categories', 'author', 'tags'])
             ->where('slug', $slug)
             ->firstOrFail();
 
@@ -23,13 +23,15 @@ class BlogDetailPage extends Component
 
     public function getRelatedPostsProperty(): Collection
     {
-        if (!$this->post->blog_category_id) {
+        $categoryIds = $this->post->categories->pluck('id');
+
+        if ($categoryIds->isEmpty()) {
             return collect();
         }
 
         return BlogPost::published()
-            ->with(['category', 'author'])
-            ->where('blog_category_id', $this->post->blog_category_id)
+            ->with(['categories', 'author'])
+            ->whereHas('categories', fn ($q) => $q->whereIn('blog_categories.id', $categoryIds))
             ->where('id', '!=', $this->post->id)
             ->orderByDesc('published_at')
             ->limit(3)

@@ -13,7 +13,6 @@ class BlogPost extends Model
     use HasFactory;
 
     protected $fillable = [
-        'blog_category_id',
         'author_id',
         'title',
         'slug',
@@ -43,9 +42,9 @@ class BlogPost extends Model
         ];
     }
 
-    public function category(): BelongsTo
+    public function categories(): BelongsToMany
     {
-        return $this->belongsTo(BlogCategory::class, 'blog_category_id');
+        return $this->belongsToMany(BlogCategory::class, 'blog_category_post');
     }
 
     public function author(): BelongsTo

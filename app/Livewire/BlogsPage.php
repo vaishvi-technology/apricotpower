@@ -66,6 +66,8 @@ class BlogsPage extends Component
     public function getCategoriesProperty(): Collection
     {
         return BlogCategory::active()
+            ->parentsOnly()
+            ->with(['activeChildren' => fn ($q) => $q->withCount('publishedPosts')])
             ->withCount('publishedPosts')
             ->orderBy('sort_order')
             ->get();
@@ -83,7 +85,7 @@ class BlogsPage extends Component
     {
         return BlogPost::published()
             ->pinned()
-            ->with(['category', 'author'])
+            ->with(['categories', 'author'])
             ->orderByDesc('published_at')
             ->limit(3)
             ->get();
@@ -92,7 +94,7 @@ class BlogsPage extends Component
     public function getPostsProperty(): LengthAwarePaginator
     {
         $query = BlogPost::published()
-            ->with(['category', 'author', 'tags']);
+            ->with(['categories', 'author', 'tags']);
 
         if (!empty($this->searchQuery)) {
             $query->where(function ($q) {
@@ -103,7 +105,7 @@ class BlogsPage extends Component
         }
 
         if ($this->selectedCategory) {
-            $query->where('blog_category_id', $this->selectedCategory);
+            $query->whereHas('categories', fn ($q) => $q->where('blog_categories.id', $this->selectedCategory));
         }
 
         if ($this->selectedTag) {

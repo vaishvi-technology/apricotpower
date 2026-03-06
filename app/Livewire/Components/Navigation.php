@@ -63,7 +63,7 @@ class Navigation extends Component
      */
     public function getNavFeaturedBlogsProperty()
     {
-        return BlogPost::published()->navFeatured()->with('category')->orderByDesc('published_at')->limit(5)->get();
+        return BlogPost::published()->navFeatured()->with('categories')->orderByDesc('published_at')->limit(5)->get();
     }
 
     public function render(): View

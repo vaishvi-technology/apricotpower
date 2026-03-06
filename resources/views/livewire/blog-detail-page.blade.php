@@ -21,9 +21,9 @@
         @if($post->published_at)
             <meta property="article:published_time" content="{{ $post->published_at->toIso8601String() }}">
         @endif
-        @if($post->category)
-            <meta property="article:section" content="{{ $post->category->name }}">
-        @endif
+        @foreach($post->categories as $cat)
+            <meta property="article:section" content="{{ $cat->name }}">
+        @endforeach
 
         {{-- Twitter Card --}}
         <meta name="twitter:card"        content="summary_large_image">
@@ -173,9 +173,11 @@
                     @endif
                     <span><i class="bi bi-clock"></i> {{ $post->reading_time }} min read</span>
                     <span><i class="bi bi-eye"></i> {{ number_format($post->views_count) }} views</span>
-                    @if($post->category)
-                        <span><i class="bi bi-folder2"></i> {{ $post->category->name }}</span>
-                    @endif
+                    @foreach($post->categories as $cat)
+                        <span style="background: {{ $cat->accent_color ?? '#7cbf3d' }}; padding: 2px 10px; border-radius: 20px; font-size: 12px; color: #fff;">
+                            <i class="bi bi-folder2"></i> {{ $cat->name }}
+                        </span>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -210,17 +212,28 @@
         <aside class="blog-sidebar">
             {{-- Categories --}}
             @php
-                $allCategories = \App\Models\BlogCategory::active()->withCount('publishedPosts')->orderBy('sort_order')->get();
+                $parentCategories = \App\Models\BlogCategory::active()
+                    ->whereNull('parent_id')
+                    ->with(['activeChildren' => fn ($q) => $q->withCount('publishedPosts')])
+                    ->withCount('publishedPosts')
+                    ->orderBy('sort_order')
+                    ->get();
             @endphp
-            @if($allCategories->count())
+            @if($parentCategories->count())
                 <div class="blog-sidebar-card">
                     <div class="blog-sidebar-card-header">Categories</div>
                     <div class="blog-sidebar-card-body p-0">
-                        @foreach($allCategories as $cat)
-                            <div class="sidebar-category-item px-3">
+                        @foreach($parentCategories as $cat)
+                            <div class="sidebar-category-item px-3" style="font-weight: 600;">
                                 <a href="{{ route('blogs', ['category' => $cat->id]) }}" wire:navigate>{{ $cat->name }}</a>
                                 <span class="sidebar-category-count">{{ $cat->published_posts_count }}</span>
                             </div>
+                            @foreach($cat->activeChildren as $child)
+                                <div class="sidebar-category-item px-3" style="padding-left: 30px;">
+                                    <a href="{{ route('blogs', ['category' => $child->id]) }}" wire:navigate>{{ $child->name }}</a>
+                                    <span class="sidebar-category-count">{{ $child->published_posts_count }}</span>
+                                </div>
+                            @endforeach
                         @endforeach
                     </div>
                 </div>

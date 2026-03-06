@@ -66,9 +66,16 @@ class BlogPostResource extends Resource
 
             Forms\Components\Section::make('Taxonomy')
                 ->schema([
-                    Forms\Components\Select::make('blog_category_id')
-                        ->label('Category')
-                        ->options(BlogCategory::active()->orderBy('sort_order')->pluck('name', 'id'))
+                    Forms\Components\Select::make('categories')
+                        ->label('Categories')
+                        ->relationship('categories', 'name')
+                        ->options(
+                            BlogCategory::active()
+                                ->orderBy('sort_order')
+                                ->get()
+                                ->mapWithKeys(fn (BlogCategory $cat) => [$cat->id => $cat->full_name])
+                        )
+                        ->multiple()
                         ->searchable()
                         ->preload(),
 
@@ -140,10 +147,10 @@ class BlogPostResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('category.name')
-                    ->label('Category')
-                    ->sortable()
-                    ->badge(),
+                Tables\Columns\TextColumn::make('categories.name')
+                    ->label('Categories')
+                    ->badge()
+                    ->separator(','),
 
                 Tables\Columns\TextColumn::make('published_at')
                     ->label('Publish Date')
@@ -152,9 +159,9 @@ class BlogPostResource extends Resource
             ])
             ->defaultSort('published_at', 'desc')
             ->filters([
-                Tables\Filters\SelectFilter::make('blog_category_id')
+                Tables\Filters\SelectFilter::make('categories')
                     ->label('Category')
-                    ->relationship('category', 'name'),
+                    ->relationship('categories', 'name'),
 
                 Tables\Filters\TernaryFilter::make('is_published')
                     ->label('Published'),

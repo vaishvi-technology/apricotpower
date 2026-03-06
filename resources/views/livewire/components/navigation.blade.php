@@ -100,9 +100,9 @@
                                             <div class="blog-mega-info">
                                                 <div class="blog-mega-title">{{ Str::limit($blogPost->title, 55) }}</div>
                                                 <div class="blog-mega-meta">
-                                                    @if($blogPost->category)
-                                                        <span class="blog-mega-category">{{ $blogPost->category->name }}</span>
-                                                    @endif
+                                                    @foreach($blogPost->categories->take(2) as $cat)
+                                                        <span class="blog-mega-category" style="background: {{ $cat->accent_color ?? '#7cbf3d' }}; color: #fff; padding: 1px 8px; border-radius: 10px; font-size: 10px;">{{ $cat->name }}</span>
+                                                    @endforeach
                                                     @if($blogPost->published_at)
                                                         <span>{{ $blogPost->published_at->format('M j, Y') }}</span>
                                                     @endif
