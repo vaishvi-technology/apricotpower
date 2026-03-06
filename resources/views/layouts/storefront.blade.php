@@ -8,10 +8,9 @@
         content="width=device-width, initial-scale=1"
     >
     <title>{{ $title ?? 'Apricot Power - Quality Apricot Seeds and B17 Products' }}</title>
-    <meta
-        name="description"
-        content="Apricot Power has been providing apricot seeds since 1999. Your reliable source for quality apricot seeds and B17 products."
-    >
+    <meta name="description"
+          content="{{ $metaDescription ?? 'Apricot Power has been providing apricot seeds since 1999. Your reliable source for quality apricot seeds and B17 products.' }}">
+    @stack('meta')
     <link
         href="{{ asset('css/app.css') }}"
         rel="stylesheet"

@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Lunar\Admin\Models\Staff;
 
 class BlogPost extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'blog_category_id',
         'author_id',
         'title',
         'slug',
@@ -22,6 +23,8 @@ class BlogPost extends Model
         'meta_description',
         'is_published',
         'is_featured',
+        'is_nav_featured',
+        'is_pinned',
         'allow_comments',
         'published_at',
         'views_count',
@@ -32,19 +35,26 @@ class BlogPost extends Model
         return [
             'is_published' => 'boolean',
             'is_featured' => 'boolean',
+            'is_nav_featured' => 'boolean',
+            'is_pinned' => 'boolean',
             'allow_comments' => 'boolean',
             'published_at' => 'datetime',
         ];
     }
 
-    public function category(): BelongsTo
+    public function categories(): BelongsToMany
     {
-        return $this->belongsTo(BlogCategory::class, 'blog_category_id');
+        return $this->belongsToMany(BlogCategory::class, 'blog_category_post');
     }
 
     public function author(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'author_id');
+        return $this->belongsTo(Staff::class, 'author_id');
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(BlogTag::class, 'blog_post_tag');
     }
 
     public function scopePublished($query)
@@ -59,6 +69,16 @@ class BlogPost extends Model
     public function scopeFeatured($query)
     {
         return $query->where('is_featured', true);
+    }
+
+    public function scopeNavFeatured($query)
+    {
+        return $query->where('is_nav_featured', true);
+    }
+
+    public function scopePinned($query)
+    {
+        return $query->where('is_pinned', true);
     }
 
     public function scopeDraft($query)

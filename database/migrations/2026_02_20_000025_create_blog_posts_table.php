@@ -10,8 +10,7 @@ return new class extends Migration
     {
         Schema::create('blog_posts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('blog_category_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('author_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('author_id')->nullable()->constrained('staff')->nullOnDelete();
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('excerpt')->nullable();
@@ -21,22 +20,30 @@ return new class extends Migration
             $table->text('meta_description')->nullable();
             $table->boolean('is_published')->default(false);
             $table->boolean('is_featured')->default(false);
+            $table->boolean('is_nav_featured')->default(false);
+            $table->boolean('is_pinned')->default(false);
             $table->boolean('allow_comments')->default(true);
             $table->timestamp('published_at')->nullable();
             $table->integer('views_count')->default(0);
             $table->timestamps();
 
-            $table->index('blog_category_id');
             $table->index('author_id');
             $table->index('slug');
             $table->index('is_published');
             $table->index('is_featured');
             $table->index('published_at');
         });
+
+        Schema::create('blog_category_post', function (Blueprint $table) {
+            $table->foreignId('blog_post_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('blog_category_id')->constrained()->cascadeOnDelete();
+            $table->primary(['blog_post_id', 'blog_category_id']);
+        });
     }
 
     public function down(): void
     {
+        Schema::dropIfExists('blog_category_post');
         Schema::dropIfExists('blog_posts');
     }
 };
