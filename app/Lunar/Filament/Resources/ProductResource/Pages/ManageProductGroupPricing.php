@@ -84,7 +84,11 @@ class ManageProductGroupPricing extends BaseEditRecord
         }
 
         // Load group pricing from customer_group_prices table
-        $customerGroups = CustomerGroup::where('is_active', true)
+        // Include groups where is_active is true OR null (treat null as active)
+        $customerGroups = CustomerGroup::where(function ($query) {
+                $query->where('is_active', true)
+                      ->orWhereNull('is_active');
+            })
             ->orderBy('sort_order')
             ->get();
 
@@ -222,6 +226,11 @@ class ManageProductGroupPricing extends BaseEditRecord
 
     public function getDefaultForm(Form $form): Form
     {
+        // Ensure data is loaded (in case form is built before mount)
+        if (empty($this->groupPricing) && $this->record) {
+            $this->loadPricingData();
+        }
+
         $schema = [];
 
         // MAP Price Section (read-only)
@@ -260,7 +269,6 @@ class ManageProductGroupPricing extends BaseEditRecord
         return Forms\Components\Section::make($groupData['group_name'] . ' Pricing')
             ->description("Configure pricing for {$groupData['group_name']} customers. Leave Group Price blank to use MAP price.")
             ->collapsible()
-            ->collapsed(!$isConsumer) // Expand Consumer by default
             ->schema([
                 Forms\Components\Grid::make(4)->schema([
                     Forms\Components\TextInput::make("groupPricing.{$groupId}.products_minimum")
