@@ -97,7 +97,7 @@ class BlogPostResource extends Resource
                             Staff::query()
                                 ->orderBy('first_name')
                                 ->get()
-                                ->mapWithKeys(fn (Staff $staff) => [$staff->id => $staff->full_name . ' (' . $staff->email . ')'])
+                                ->mapWithKeys(fn (Staff $staff) => [$staff->id => $staff->full_name.' ('.$staff->email.')'])
                         )
                         ->searchable()
                         ->preload(),
@@ -150,7 +150,8 @@ class BlogPostResource extends Resource
                 Tables\Columns\TextColumn::make('categories.name')
                     ->label('Categories')
                     ->badge()
-                    ->listWithLineBreaks(),
+                    ->separator(',')
+                    ->wrap(),
 
                 Tables\Columns\TextColumn::make('published_at')
                     ->label('Publish Date')
