@@ -16,6 +16,7 @@
         rel="stylesheet"
     >
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="{{ asset('css/home.css') }}" rel="stylesheet">
 
     <link
@@ -102,6 +103,10 @@
         }
 
         /* Dropdown Styles */
+        .main-header .nav-item.dropdown,
+        .main-header .dropdown {
+            position: relative;
+        }
         .main-header .dropdown-menu {
             background-color: #fff;
             border: none;
@@ -109,6 +114,8 @@
             border-radius: 0;
             padding: 0;
             min-width: 200px;
+            top: 100%;
+            left: 0;
         }
         .main-header .dropdown-item {
             padding: 10px 20px;

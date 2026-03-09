@@ -43,12 +43,12 @@
             <div class="collapse navbar-collapse" id="navbar-nav">
                 <ul class="navbar-nav me-auto main-navbar-links">
                     <!-- Products Dropdown -->
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
                         <a class="nav-link dropdown-toggle" href="#" id="productsDropdown" role="button"
-                           data-bs-toggle="dropdown" aria-expanded="false">
+                           @click.prevent="open = !open" aria-expanded="false">
                             PRODUCTS
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="productsDropdown">
+                        <ul class="dropdown-menu" :class="{ 'show': open }" aria-labelledby="productsDropdown">
                             <li>
                                 <a class="dropdown-item" href="{{ route('store') }}" wire:navigate>All Products</a>
                             </li>
@@ -71,12 +71,12 @@
 
                     <!-- Blogs Dropdown -->
                     <!-- Blogs Mega Dropdown -->
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
                         <a class="nav-link dropdown-toggle" href="{{ route('blogs') }}" id="blogsDropdown" role="button"
-                           data-bs-toggle="dropdown" aria-expanded="false">
+                           @click.prevent="open = !open" aria-expanded="false">
                             BLOGS
                         </a>
-                        <div class="dropdown-menu blog-mega-menu p-0" aria-labelledby="blogsDropdown">
+                        <div class="dropdown-menu blog-mega-menu p-0" :class="{ 'show': open }" aria-labelledby="blogsDropdown">
                             @if($this->navFeaturedBlogs->isNotEmpty())
                                 <div class="blog-mega-header px-3 py-2">
                                     <span>Latest Articles</span>
@@ -219,12 +219,12 @@
                     </style>
 
                     <!-- About Dropdown -->
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
                         <a class="nav-link dropdown-toggle" href="#" id="aboutDropdown" role="button"
-                           data-bs-toggle="dropdown" aria-expanded="false">
+                           @click.prevent="open = !open" aria-expanded="false">
                             ABOUT
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
+                        <ul class="dropdown-menu" :class="{ 'show': open }" aria-labelledby="aboutDropdown">
                             <li>
                                 <a class="dropdown-item" href="{{ route('contact') }}" wire:navigate>Contact / About Us</a>
                             </li>
@@ -283,15 +283,15 @@
                                 @endif
                             </a>
 
-                            <div class="dropdown">
+                            <div class="dropdown" x-data="{ open: false }" @click.outside="open = false">
                                 <button class="btn btn-link dropdown-toggle p-0 text-dark" type="button"
-                                        id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        id="userDropdown" @click="open = !open" aria-expanded="false">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
                                         <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
                                     </svg>
                                     <span class="user-name ms-1">{{ auth('customer')->user()->first_name ?? 'Account' }}</span>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <ul class="dropdown-menu dropdown-menu-end" :class="{ 'show': open }" aria-labelledby="userDropdown">
                                     <li>
                                         <a class="dropdown-item" href="{{ route('order-history.view') }}" wire:navigate>Order History</a>
                                     </li>

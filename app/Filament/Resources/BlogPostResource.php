@@ -150,7 +150,7 @@ class BlogPostResource extends Resource
                 Tables\Columns\TextColumn::make('categories.name')
                     ->label('Categories')
                     ->badge()
-                    ->separator(','),
+                    ->listWithLineBreaks(),
 
                 Tables\Columns\TextColumn::make('published_at')
                     ->label('Publish Date')
