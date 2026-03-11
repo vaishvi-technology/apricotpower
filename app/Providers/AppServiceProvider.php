@@ -11,10 +11,11 @@ use App\Lunar\ListProductsPageExtension;
 use App\Lunar\ProductResourceExtension;
 use App\Lunar\ProductTypeResourceExtension;
 use App\Lunar\StaffResourceExtension;
+use App\Models\RetailerProfile;
 use App\Modifiers\ShippingModifier;
 use App\Observers\OrderObserver;
+use App\Observers\RetailerProfileObserver;
 use Illuminate\Support\ServiceProvider;
-use Lunar\Models\Order;
 use Lunar\Admin\Filament\Resources\CustomerResource;
 use Lunar\Admin\Filament\Resources\ProductResource;
 use Lunar\Admin\Filament\Resources\ProductResource\Pages\EditProduct;
@@ -26,6 +27,7 @@ use Lunar\Admin\Filament\Resources\StaffResource\Pages\EditStaff;
 use Lunar\Admin\Support\Facades\LunarPanel;
 use Lunar\Base\ShippingModifiers;
 use Lunar\Facades\Telemetry;
+use Lunar\Models\Order;
 use Lunar\Shipping\ShippingPlugin;
 
 class AppServiceProvider extends ServiceProvider
@@ -48,17 +50,41 @@ class AppServiceProvider extends ServiceProvider
 
         LunarPanel::panel(
             fn ($panel) => $panel
-            ->path('admin')
-            ->login(\App\Filament\Pages\Auth\StaffLogin::class)
-            ->passwordReset()
-            ->authPasswordBroker('staff')
-            ->plugins([
-                new ShippingPlugin,
-            ])
-            ->discoverResources(
-                in: app_path('Filament/Resources'),
-                for: 'App\\Filament\\Resources'
-            )
+                ->path('admin')
+                ->login(\App\Filament\Pages\Auth\StaffLogin::class)
+                ->passwordReset()
+                ->authPasswordBroker('staff')
+                ->plugins([
+                    new ShippingPlugin,
+                ])
+                ->discoverResources(
+                    in: app_path('Filament/Resources'),
+                    for: 'App\\Filament\\Resources'
+                )
+                ->discoverPages(
+                    in: app_path('Filament/Pages'),
+                    for: 'App\\Filament\\Pages'
+                )
+                ->path('admin')
+                ->brandName(config('app.name', 'Apricot Power'))
+                ->brandLogo(fn () => view('filament.admin.logo'))
+                ->darkModeBrandLogo(fn () => view('filament.admin.logo-dark'))
+                ->favicon(asset('images/home/favicon.png'))
+                ->brandLogoHeight('3rem')
+                ->login(\App\Filament\Pages\Auth\StaffLogin::class)
+                ->passwordReset()
+                ->authPasswordBroker('staff')
+                ->plugins([
+                    new ShippingPlugin,
+                ])
+                ->discoverResources(
+                    in: app_path('Filament/Resources'),
+                    for: 'App\\Filament\\Resources'
+                )
+                ->discoverPages(
+                    in: app_path('Filament/Pages'),
+                    for: 'App\\Filament\\Pages'
+                )
         )
             ->register();
 
@@ -117,5 +143,8 @@ class AppServiceProvider extends ServiceProvider
 
         // Track last_order_at on customer when an order is created
         Order::observe(OrderObserver::class);
+
+        // Geocode retailer profiles when address changes
+        RetailerProfile::observe(RetailerProfileObserver::class);
     }
 }

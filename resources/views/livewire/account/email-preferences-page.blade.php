@@ -56,20 +56,7 @@
             <div class="row">
                 {{-- Sidebar --}}
                 <div class="col-lg-3 mb-4">
-                    <div class="account-sidebar">
-                        <h6 style="font-family:'lemonMilk',serif; font-weight:700; color:#333; margin-bottom:1rem;">MY ACCOUNT</h6>
-                        <nav class="nav flex-column">
-                            <a class="nav-link" href="{{ route('basic-info') }}" wire:navigate>Basic Info</a>
-                            <a class="nav-link" href="{{ route('account-details') }}" wire:navigate>Account Details</a>
-                            <a class="nav-link" href="{{ route('order-history.view') }}" wire:navigate>Order History</a>
-                            <a class="nav-link active" href="{{ route('email-preferences') }}" wire:navigate>Email Preferences</a>
-                            <hr class="my-2">
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="nav-link text-danger border-0 bg-transparent w-100 text-start">Logout</button>
-                            </form>
-                        </nav>
-                    </div>
+                    @include('partials.account-sidebar')
                 </div>
 
                 {{-- Content --}}

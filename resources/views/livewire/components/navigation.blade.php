@@ -6,11 +6,9 @@
                 <strong>Contact Us Today!</strong>
                 <span>866-468-7487 (866-GOT-PITS) or Outside The USA: 001+ 707-262-1394</span>
             </div>
-            <div class="language-selector d-none d-md-block">
-                <span>Select Language</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-chevron-down ms-1" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-                </svg>
+            <div class="language-selector d-none d-md-block d-flex align-items-center" wire:ignore>
+                <span class="translate-label me-2">Translate:</span>
+                <div id="google_translate_element"></div>
             </div>
         </div>
     </div>
@@ -84,34 +82,19 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
                             <li>
-                                <a class="dropdown-item" href="{{ route('contact') }}" wire:navigate>Contact Us</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('reviews') }}" wire:navigate>Reviews</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('testimonial') }}" wire:navigate>Testimonials</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('wholesale') }}" wire:navigate>Carry Our Products</a>
+                                <a class="dropdown-item" href="{{ route('contact') }}" wire:navigate>Contact / About Us</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="https://apricotpower.ositracker.com/myrefer" target="_blank" rel="noopener noreferrer">Affiliate Program</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{{ route('refer-friend') }}" wire:navigate>Refer A Friend</a>
+                                <a class="dropdown-item" href="https://form.jotform.com/200975742179161" target="_blank" rel="noopener noreferrer">Carry Our Products</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{{ route('faq') }}" wire:navigate>Common Questions</a>
+                                <a class="dropdown-item" href="{{ route('faq') }}" wire:navigate>Common Questions (FAQ)</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{{ route('seeds-recipes') }}" wire:navigate>Apricot Seed Recipes</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('superfood-recipes') }}" wire:navigate>B17 Superfood Recipes</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ route('lifestyle') }}" wire:navigate>Life Style</a>
+                                <a class="dropdown-item" href="{{ route('reviews') }}" wire:navigate>Reviews</a>
                             </li>
                         </ul>
                     </li>

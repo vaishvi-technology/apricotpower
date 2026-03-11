@@ -6,6 +6,7 @@ use App\Models\Customer;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Lunar\Models\Address;
+use Lunar\Models\Country;
 use Lunar\Models\CustomerGroup;
 
 class DemoCustomerSeeder extends Seeder
@@ -16,6 +17,14 @@ class DemoCustomerSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function () {
+            $usCountry = Country::where('iso2', 'US')->first();
+
+            if (! $usCountry) {
+                $this->command->warn('US country not found. Run CountryStateSeeder first.');
+
+                return;
+            }
+
             $demoCustomers = [
                 [
                     'data' => [
@@ -25,9 +34,7 @@ class DemoCustomerSeeder extends Seeder
                         'password' => 'password',
                         'phone' => '555-100-1001',
                         'company_name' => 'Doe Health Foods',
-                        'is_active' => true,
-                        'is_retailer' => false,
-                        'is_vip' => false,
+
                     ],
                     'groups' => ['consumer'],
                 ],
@@ -39,11 +46,6 @@ class DemoCustomerSeeder extends Seeder
                         'password' => 'password',
                         'phone' => '555-200-2002',
                         'company_name' => 'Smith Wellness Co.',
-                        'is_active' => true,
-                        'is_retailer' => true,
-                        'is_vip' => true,
-                        'vip_since' => now()->subYear(),
-                        'vip_expire' => now()->addYear(),
                     ],
                     'groups' => ['wholesale'],
                 ],
@@ -55,10 +57,6 @@ class DemoCustomerSeeder extends Seeder
                         'password' => 'password',
                         'phone' => '555-300-3003',
                         'company_name' => 'Johnson Naturals LLC',
-                        'is_active' => true,
-                        'is_retailer' => true,
-                        'is_online_retailer' => true,
-                        'is_vip' => false,
                         'net_terms_approved' => true,
                         'credit_limit' => 5000.00,
                     ],
@@ -67,6 +65,11 @@ class DemoCustomerSeeder extends Seeder
             ];
 
             foreach ($demoCustomers as $entry) {
+                $existing = Customer::where('email', $entry['data']['email'])->first();
+                if ($existing) {
+                    continue;
+                }
+
                 $customer = Customer::create($entry['data']);
 
                 // Attach customer groups by handle
@@ -76,7 +79,7 @@ class DemoCustomerSeeder extends Seeder
                 // Default shipping address
                 Address::create([
                     'customer_id' => $customer->id,
-                    'country_id' => 235,
+                    'country_id' => $usCountry->id,
                     'title' => null,
                     'first_name' => $customer->first_name,
                     'last_name' => $customer->last_name,

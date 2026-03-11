@@ -22,10 +22,16 @@ class DatabaseSeeder extends Seeder
 
         // Admin user
         $this->call(SuperAdminSeeder::class);
-
-        // Product organization
+        $this->call(LunarSetupSeeder::class);
+        $this->call(CountryStateSeeder::class);
+        $this->call(DemoCustomerSeeder::class);
+        $this->call(CustomerGroupSeeder::class);
+        $this->call(AttributeSeeder::class);
+        $this->call(ProductSeeder::class);
+        $this->call(PageSeeder::class);
         $this->call(TagSeeder::class);
         $this->call(CategorySeeder::class);
         $this->call(ProductCategorySeeder::class);
+        $this->call(FaqSeeder::class);
     }
 }

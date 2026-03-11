@@ -9,6 +9,7 @@ use Livewire\Component;
 class ContactPage extends Component
 {
     public ?Page $page = null;
+    public ?Page $aboutPage = null;
 
     public string $name = '';
     public string $email = '';
@@ -18,7 +19,11 @@ class ContactPage extends Component
 
     public function mount(): void
     {
-        $this->page = Page::where('slug', 'contact')
+        $this->page = Page::where('slug', 'contact-us')
+            ->where('status', 'published')
+            ->first();
+
+        $this->aboutPage = Page::where('slug', 'about')
             ->where('status', 'published')
             ->first();
     }

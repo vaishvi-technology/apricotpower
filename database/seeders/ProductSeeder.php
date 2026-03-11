@@ -96,12 +96,16 @@ class ProductSeeder extends AbstractSeeder
                     ]);
                 }
 
-                $media = $productModel->addMedia(
-                    base_path("database/seeders/data/images/{$product->image}")
-                )->preservingOriginal()->toMediaCollection('images');
+                $imagePath = base_path("database/seeders/data/images/{$product->image}");
 
-                $media->setCustomProperty('primary', true);
-                $media->save();
+                if ($product->image && file_exists($imagePath)) {
+                    $media = $productModel->addMedia($imagePath)
+                        ->preservingOriginal()
+                        ->toMediaCollection('images');
+
+                    $media->setCustomProperty('primary', true);
+                    $media->save();
+                }
 
                 $collections->each(function ($coll) use ($product, $productModel) {
                     if (in_array(strtolower($coll->translateAttribute('name')), $product->collections)) {
