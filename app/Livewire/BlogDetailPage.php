@@ -14,7 +14,7 @@ class BlogDetailPage extends Component
     public function mount(string $slug): void
     {
         $this->post = BlogPost::published()
-            ->with(['categories', 'author', 'tags'])
+            ->with(['categories', 'author', 'tags', 'socialLinks'])
             ->where('slug', $slug)
             ->firstOrFail();
 

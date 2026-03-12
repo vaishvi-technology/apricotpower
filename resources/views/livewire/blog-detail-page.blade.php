@@ -133,6 +133,17 @@
             .back-link { display: inline-flex; align-items: center; gap: 6px; color: #7cbf3d; font-size: 14px; font-weight: 600; text-decoration: none; margin-bottom: 20px; }
             .back-link:hover { color: #5a9a2a; text-decoration: underline; }
 
+            /* Social Share */
+            .social-share-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+            .social-share-bar span { font-size: 13px; font-weight: 600; color: #555; }
+            .social-share-btn {
+                display: inline-flex; align-items: center; justify-content: center;
+                width: 36px; height: 36px; border-radius: 50%;
+                text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;
+            }
+            .social-share-btn:hover { transform: scale(1.15); box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+            .social-share-btn img { width: 20px; height: 20px; object-fit: contain; }
+
             /* Sidebar */
             .blog-sidebar-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; margin-bottom: 20px; }
             .blog-sidebar-card-header { background: #f8f9fa; padding: 12px 15px; font-weight: 700; font-size: 14px; border-bottom: 1px solid #e0e0e0; color: #333; }
@@ -185,12 +196,63 @@
     <div class="blog-layout">
         {{-- Main Content --}}
         <article>
-            <a href="{{ route('blogs') }}" class="back-link" wire:navigate>
-                <i class="bi bi-arrow-left"></i> Back to Blog
-            </a>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <a href="{{ route('blogs') }}" class="back-link" wire:navigate style="margin-bottom: 0;">
+                    <i class="bi bi-arrow-left"></i> Back to Blog
+                </a>
+
+                @if($post->socialLinks->count())
+                    <div class="social-share-bar" style="margin-bottom: 0;">
+                        <span>Share:</span>
+                        @foreach($post->socialLinks as $social)
+                            @php
+                                $postUrl = route('blog.detail', $post->slug);
+                                $customUrl = $social->pivot->custom_url;
+                                $shareUrl = $customUrl ?: $social->buildShareUrl($postUrl, $post->title, $post->excerpt ?? '');
+                            @endphp
+                            <a href="{{ $shareUrl }}"
+                               class="social-share-btn"
+                               style="background-color: {{ $social->color ?? '#555' }};"
+                               title="Share on {{ $social->name }}"
+                               @if($social->open_in_new_tab) target="_blank" rel="noopener noreferrer" @endif>
+                                @if($social->icon)
+                                    <img src="{{ asset('storage/' . $social->icon) }}" alt="{{ $social->name }}">
+                                @else
+                                    <i class="bi bi-share" style="color: #fff; font-size: 16px;"></i>
+                                @endif
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
 
             <div class="blog-content">
                 {!! $post->content !!}
+
+                {{-- Bottom Social Share --}}
+                @if($post->socialLinks->count())
+                    <div class="social-share-bar" style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                        <span>Share this post:</span>
+                        @foreach($post->socialLinks as $social)
+                            @php
+                                $postUrl = route('blog.detail', $post->slug);
+                                $customUrl = $social->pivot->custom_url;
+                                $shareUrl = $customUrl ?: $social->buildShareUrl($postUrl, $post->title, $post->excerpt ?? '');
+                            @endphp
+                            <a href="{{ $shareUrl }}"
+                               class="social-share-btn"
+                               style="background-color: {{ $social->color ?? '#555' }};"
+                               title="Share on {{ $social->name }}"
+                               @if($social->open_in_new_tab) target="_blank" rel="noopener noreferrer" @endif>
+                                @if($social->icon)
+                                    <img src="{{ asset('storage/' . $social->icon) }}" alt="{{ $social->name }}">
+                                @else
+                                    <i class="bi bi-share" style="color: #fff; font-size: 16px;"></i>
+                                @endif
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
 
                 {{-- Tags --}}
                 @if($post->tags->count())

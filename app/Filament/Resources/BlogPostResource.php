@@ -6,6 +6,7 @@ use App\Filament\Resources\BlogPostResource\Pages;
 use App\Models\BlogCategory;
 use App\Models\BlogPost;
 use App\Models\BlogTag;
+use App\Models\SocialLink;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -29,113 +30,136 @@ class BlogPostResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Content')
+            Forms\Components\Grid::make(3)
                 ->schema([
-                    Forms\Components\TextInput::make('title')
-                        ->required()
-                        ->maxLength(255)
-                        ->live(onBlur: true)
-                        ->afterStateUpdated(fn (Forms\Set $set, ?string $state) => $set('slug', Str::slug($state ?? ''))),
+                    // ── Left Column (2/3) ──
+                    Forms\Components\Group::make([
+                        Forms\Components\Section::make('Content')
+                            ->schema([
+                                Forms\Components\TextInput::make('title')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->live(onBlur: true)
+                                    ->afterStateUpdated(fn (Forms\Set $set, ?string $state) => $set('slug', Str::slug($state ?? ''))),
 
-                    Forms\Components\TextInput::make('slug')
-                        ->required()
-                        ->maxLength(255)
-                        ->unique(BlogPost::class, 'slug', ignoreRecord: true)
-                        ->columnSpanFull(),
+                                Forms\Components\TextInput::make('slug')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->unique(BlogPost::class, 'slug', ignoreRecord: true),
 
-                    Forms\Components\Textarea::make('excerpt')
-                        ->maxLength(500)
-                        ->rows(3)
-                        ->columnSpanFull(),
+                                Forms\Components\Textarea::make('excerpt')
+                                    ->maxLength(500)
+                                    ->rows(3),
 
-                    Forms\Components\RichEditor::make('content')
-                        ->required()
-                        ->columnSpanFull(),
-                ])
-                ->columns(2),
+                                Forms\Components\RichEditor::make('content')
+                                    ->required(),
+                            ]),
 
-            Forms\Components\Section::make('Media')
-                ->schema([
-                    Forms\Components\FileUpload::make('featured_image')
-                        ->image()
-                        ->directory('blog/images')
-                        ->imageResizeMode('cover')
-                        ->imageCropAspectRatio('16:9')
-                        ->columnSpanFull(),
+                        Forms\Components\Section::make('Featured Image')
+                            ->schema([
+                                Forms\Components\FileUpload::make('featured_image')
+                                    ->image()
+                                    ->directory('blog/images')
+                                    ->imageResizeMode('cover')
+                                    ->imageCropAspectRatio('16:9'),
+                            ])
+                            ->compact(),
+
+                        Forms\Components\Section::make('SEO')
+                            ->schema([
+                                Forms\Components\TextInput::make('meta_title')
+                                    ->maxLength(255),
+
+                                Forms\Components\Textarea::make('meta_description')
+                                    ->maxLength(500)
+                                    ->rows(2),
+                            ])
+                            ->collapsed()
+                            ->compact(),
+                    ])->columnSpan(2),
+
+                    // ── Right Sidebar (1/3) ──
+                    Forms\Components\Group::make([
+                        Forms\Components\Section::make('Publishing')
+                            ->schema([
+                                Forms\Components\Toggle::make('is_published')
+                                    ->label('Published')
+                                    ->default(false),
+
+                                Forms\Components\Select::make('author_id')
+                                    ->label('Author')
+                                    ->options(
+                                        Staff::query()
+                                            ->orderBy('first_name')
+                                            ->get()
+                                            ->mapWithKeys(fn (Staff $staff) => [$staff->id => $staff->full_name.' ('.$staff->email.')'])
+                                    )
+                                    ->searchable()
+                                    ->preload(),
+
+                                Forms\Components\DatePicker::make('published_at')
+                                    ->label('Publish Date'),
+
+                                Forms\Components\Toggle::make('is_pinned')
+                                    ->label('Featured / Pin at Top')
+                                    ->helperText('Highlighted strip at top of /blogs.')
+                                    ->default(false),
+
+                                Forms\Components\Toggle::make('is_nav_featured')
+                                    ->label('Show in Nav Dropdown')
+                                    ->helperText('BLOG nav hover dropdown (max 5).')
+                                    ->default(false),
+                            ])
+                            ->compact(),
+
+                        Forms\Components\Section::make('Categories')
+                            ->schema([
+                                Forms\Components\Select::make('categories')
+                                    ->hiddenLabel()
+                                    ->relationship('categories', 'name')
+                                    ->options(
+                                        BlogCategory::active()
+                                            ->orderBy('sort_order')
+                                            ->get()
+                                            ->mapWithKeys(fn (BlogCategory $cat) => [$cat->id => $cat->full_name])
+                                    )
+                                    ->multiple()
+                                    ->searchable()
+                                    ->preload(),
+                            ])
+                            ->compact(),
+
+                        Forms\Components\Section::make('Tags')
+                            ->schema([
+                                Forms\Components\Select::make('tags')
+                                    ->hiddenLabel()
+                                    ->relationship('tags', 'name')
+                                    ->options(BlogTag::active()->orderBy('sort_order')->pluck('name', 'id'))
+                                    ->multiple()
+                                    ->searchable()
+                                    ->preload(),
+                            ])
+                            ->compact(),
+
+                        Forms\Components\Section::make('Social Sharing')
+                            ->schema([
+                                Forms\Components\Select::make('socialLinks')
+                                    ->hiddenLabel()
+                                    ->relationship('socialLinks', 'name')
+                                    ->options(
+                                        SocialLink::active()
+                                            ->orderBy('sort_order')
+                                            ->pluck('name', 'id')
+                                    )
+                                    ->multiple()
+                                    ->searchable()
+                                    ->preload()
+                                    ->helperText('Manage platforms under Blog > Social Links.'),
+                            ])
+                            ->compact()
+                            ->collapsed(),
+                    ])->columnSpan(1),
                 ]),
-
-            Forms\Components\Section::make('Taxonomy')
-                ->schema([
-                    Forms\Components\Select::make('categories')
-                        ->label('Categories')
-                        ->relationship('categories', 'name')
-                        ->options(
-                            BlogCategory::active()
-                                ->orderBy('sort_order')
-                                ->get()
-                                ->mapWithKeys(fn (BlogCategory $cat) => [$cat->id => $cat->full_name])
-                        )
-                        ->multiple()
-                        ->searchable()
-                        ->preload(),
-
-                    Forms\Components\Select::make('tags')
-                        ->label('Tags')
-                        ->relationship('tags', 'name')
-                        ->options(BlogTag::active()->orderBy('sort_order')->pluck('name', 'id'))
-                        ->multiple()
-                        ->searchable()
-                        ->preload(),
-                ])
-                ->columns(2),
-
-            Forms\Components\Section::make('Author & Publishing')
-                ->schema([
-                    Forms\Components\Select::make('author_id')
-                        ->label('Author')
-                        ->options(
-                            Staff::query()
-                                ->orderBy('first_name')
-                                ->get()
-                                ->mapWithKeys(fn (Staff $staff) => [$staff->id => $staff->full_name.' ('.$staff->email.')'])
-                        )
-                        ->searchable()
-                        ->preload(),
-
-                    Forms\Components\DatePicker::make('published_at')
-                        ->label('Publish Date'),
-
-                    Forms\Components\Toggle::make('is_published')
-                        ->label('Published')
-                        ->default(false),
-
-                    Forms\Components\Toggle::make('is_featured')
-                        ->label('Featured')
-                        ->default(false),
-
-                    Forms\Components\Toggle::make('is_nav_featured')
-                        ->label('Show in Nav Dropdown')
-                        ->helperText('Appears in the BLOG nav hover dropdown (max 5).')
-                        ->default(false),
-
-                    Forms\Components\Toggle::make('is_pinned')
-                        ->label('Pin at Top of Blog List')
-                        ->helperText('Pinned posts appear in the featured strip at the top of /blogs.')
-                        ->default(false),
-                ])
-                ->columns(2),
-
-            Forms\Components\Section::make('SEO')
-                ->schema([
-                    Forms\Components\TextInput::make('meta_title')
-                        ->maxLength(255),
-
-                    Forms\Components\Textarea::make('meta_description')
-                        ->maxLength(500)
-                        ->rows(3),
-                ])
-                ->columns(2)
-                ->collapsed(),
         ]);
     }
 

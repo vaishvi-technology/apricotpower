@@ -69,11 +69,20 @@
             .blog-tag:hover, .blog-tag.active { background: #7cbf3d; color: #fff; }
 
             /* Pinned strip */
-            .pinned-strip { margin-bottom: 25px; }
-            .pinned-strip-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-weight: 700; font-size: 15px; color: #333; }
-            .pinned-strip-header .pin-icon { color: #7cbf3d; }
-            .pinned-cards { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 8px; }
-            .pinned-cards .blog-card { min-width: 280px; flex-shrink: 0; }
+            .pinned-strip { margin-bottom: 25px; background: #f8faf5; border: 1px solid #e0e0e0; border-radius: 8px; padding: 14px 16px; }
+            .pinned-strip-header { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; font-weight: 700; font-size: 13px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
+            .pinned-strip-header .pin-icon { color: #7cbf3d; font-size: 14px; }
+            .pinned-cards { display: flex; flex-direction: column; gap: 0; }
+            .pinned-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #e8e8e8; text-decoration: none; color: #333; transition: background 0.15s; border-radius: 4px; }
+            .pinned-item:last-child { border-bottom: none; }
+            .pinned-item:hover { background: #edf5e4; }
+            .pinned-item-thumb { width: 56px; height: 40px; border-radius: 5px; overflow: hidden; flex-shrink: 0; background: #e8e8e8; }
+            .pinned-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+            .pinned-item-thumb-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #e8f5e9; }
+            .pinned-item-info { flex: 1; min-width: 0; }
+            .pinned-item-title { font-size: 13px; font-weight: 600; color: #222; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .pinned-item:hover .pinned-item-title { color: #7cbf3d; }
+            .pinned-item-meta { display: flex; align-items: center; gap: 8px; margin-top: 2px; font-size: 11px; color: #888; }
 
             /* Empty state */
             .no-posts { text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 10px; grid-column: 1 / -1; }
@@ -194,45 +203,29 @@
                     </div>
                     <div class="pinned-cards">
                         @foreach($this->pinnedPosts as $pinned)
-                            <div class="blog-card">
-                                <div class="blog-card-image">
+                            <a href="{{ route('blog.detail', $pinned->slug) }}" wire:navigate class="pinned-item">
+                                <div class="pinned-item-thumb">
                                     @if($pinned->featured_image)
                                         <img src="{{ asset('storage/' . $pinned->featured_image) }}"
                                              alt="{{ $pinned->title }}" loading="lazy">
                                     @else
-                                        <div class="no-image">
-                                            <i class="bi bi-journal-text"></i>
+                                        <div class="pinned-item-thumb-placeholder">
+                                            <i class="bi bi-journal-text" style="color: #7cbf3d; font-size: 16px;"></i>
                                         </div>
                                     @endif
                                 </div>
-                                <div class="blog-card-title">
-                                    <a href="{{ route('blog.detail', $pinned->slug) }}" wire:navigate>
-                                        {{ Str::limit($pinned->title, 70) }}
-                                    </a>
-                                </div>
-                                @if($pinned->categories->count())
-                                    <div class="blog-card-categories">
-                                        @foreach($pinned->categories as $cat)
-                                            <a href="{{ route('blogs', ['category' => $cat->id]) }}"
-                                               wire:navigate
-                                               class="blog-category-badge"
-                                               style="background-color: {{ $cat->accent_color ?? '#7cbf3d' }};">
-                                                {{ $cat->name }}
-                                            </a>
+                                <div class="pinned-item-info">
+                                    <div class="pinned-item-title">{{ $pinned->title }}</div>
+                                    <div class="pinned-item-meta">
+                                        @foreach($pinned->categories->take(2) as $cat)
+                                            <span style="background: {{ $cat->accent_color ?? '#7cbf3d' }}; color: #fff; padding: 0 6px; border-radius: 8px; font-size: 10px; font-weight: 600;">{{ $cat->name }}</span>
                                         @endforeach
-                                    </div>
-                                @endif
-                                <div class="blog-card-body">
-                                    <div class="blog-card-meta">
-                                        @if($pinned->author)
-                                            <span><i class="bi bi-person"></i> {{ $pinned->author->full_name }}</span>
-                                        @endif
                                         @if($pinned->published_at)
-                                            <span><i class="bi bi-calendar3"></i> {{ $pinned->published_at->format('M j, Y') }}</span>
+                                            <span>{{ $pinned->published_at->format('M j, Y') }}</span>
                                         @endif
                                     </div>
                                 </div>
-                            </div>
+                            </a>
                         @endforeach
                     </div>
                 </div>

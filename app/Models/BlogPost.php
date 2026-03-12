@@ -22,7 +22,6 @@ class BlogPost extends Model
         'meta_title',
         'meta_description',
         'is_published',
-        'is_featured',
         'is_nav_featured',
         'is_pinned',
         'allow_comments',
@@ -34,7 +33,6 @@ class BlogPost extends Model
     {
         return [
             'is_published' => 'boolean',
-            'is_featured' => 'boolean',
             'is_nav_featured' => 'boolean',
             'is_pinned' => 'boolean',
             'allow_comments' => 'boolean',
@@ -57,6 +55,13 @@ class BlogPost extends Model
         return $this->belongsToMany(BlogTag::class, 'blog_post_tag');
     }
 
+    public function socialLinks(): BelongsToMany
+    {
+        return $this->belongsToMany(SocialLink::class, 'blog_post_social_link')
+            ->withPivot('custom_url')
+            ->orderBy('sort_order');
+    }
+
     public function scopePublished($query)
     {
         return $query->where('is_published', true)
@@ -64,11 +69,6 @@ class BlogPost extends Model
                 $q->whereNull('published_at')
                     ->orWhere('published_at', '<=', now());
             });
-    }
-
-    public function scopeFeatured($query)
-    {
-        return $query->where('is_featured', true);
     }
 
     public function scopeNavFeatured($query)
