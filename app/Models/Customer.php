@@ -21,7 +21,7 @@ use App\Notifications\CustomerResetPasswordNotification;
  * and direct authentication support via Sanctum.
  *
  * Lunar base fields: id, title, first_name, last_name, company_name, vat_no, meta, timestamps
- * Added fields: email, password, phone, is_tax_exempt, net_terms_approved, credit_limit,
+ * Added fields: email, password, phone, net_terms_approved, credit_limit,
  *               account_locked, is_online_wholesaler, notes, etc.
  *
  * Lunar's default architecture: User (auth) -> customer_user pivot -> Customer (data)
@@ -47,7 +47,6 @@ class Customer extends LunarCustomer implements AuthenticatableContract, CanRese
         'updated_at' => 'datetime',
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
-        'is_tax_exempt' => 'boolean',
         'net_terms_approved' => 'boolean',
         'credit_limit' => 'decimal:2',
         'account_locked' => 'boolean',
