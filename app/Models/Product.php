@@ -72,13 +72,13 @@ class Product extends LunarProduct
      */
     public function translateAttribute(string $attribute, ?string $locale = null): mixed
     {
-        // If this attribute is stored as a direct column, return it
+        // If this attribute is stored as a direct column and has a value, return it
         // (direct columns don't support translations, so locale is ignored)
-        if (in_array($attribute, self::COLUMN_ATTRIBUTES)) {
+        if (in_array($attribute, self::COLUMN_ATTRIBUTES) && !empty($this->{$attribute})) {
             return $this->{$attribute};
         }
 
-        // Fall back to Lunar's attribute_data JSON for other attributes
+        // Fall back to Lunar's attribute_data JSON for other attributes or empty columns
         return parent::translateAttribute($attribute, $locale);
     }
 

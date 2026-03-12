@@ -18,11 +18,14 @@
                 <div class="swiper our-products-swiper">
                     <div class="swiper-wrapper">
                         @foreach($products as $product)
-                            @php $thumbnail = $product->getFirstMedia('images'); @endphp
+                            @php
+                                $thumbnail = $product->getFirstMedia('images');
+                                $productUrl = $product->defaultUrl?->slug ? route('product.view', $product->defaultUrl->slug) : '#';
+                            @endphp
                             <div class="swiper-slide">
                                 <div class="our-products-item">
                                     <div class="our-products-item-img cursor-pointer">
-                                        <a href="{{ route('product.view', $product->defaultUrl->slug) }}">
+                                        <a href="{{ $productUrl }}">
                                             @if($thumbnail)
                                                 <img width="300" height="400" src="{{ $thumbnail->getUrl('medium') }}" alt="{{ $product->translateAttribute('name') }}">
                                             @endif
@@ -30,7 +33,7 @@
                                     </div>
                                     <div class="our-products-item-content cursor">
                                         <h4 class="text-black res-border">
-                                            <a href="{{ route('product.view', $product->defaultUrl->slug) }}" style="text-decoration: none; color: inherit;">
+                                            <a href="{{ $productUrl }}" style="text-decoration: none; color: inherit;">
                                                 {{ $product->translateAttribute('name') }}
                                             </a>
                                         </h4>
@@ -46,8 +49,8 @@
                                             @endif
                                         </div>
                                         <div class="d-flex justify-content-evenly">
-                                            <a href="{{ route('product.view', $product->defaultUrl->slug) }}" class="button-with-icon">Buy Now</a>
-                                            <a href="{{ route('product.view', $product->defaultUrl->slug) }}" class="button-with-icon">Add To Cart</a>
+                                            <a href="{{ $productUrl }}" class="button-with-icon">Buy Now</a>
+                                            <a href="{{ $productUrl }}" class="button-with-icon">Add To Cart</a>
                                         </div>
                                     </div>
                                 </div>

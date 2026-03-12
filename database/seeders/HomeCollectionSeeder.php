@@ -17,8 +17,11 @@ class HomeCollectionSeeder extends Seeder
         $collectionGroup = CollectionGroup::first();
 
         if (! $collectionGroup) {
-            $this->command->warn('No CollectionGroup found. Please run the base seeders first.');
-            return;
+            $collectionGroup = CollectionGroup::create([
+                'name' => 'Main',
+                'handle' => 'main',
+            ]);
+            $this->command->info('Created default CollectionGroup: Main');
         }
 
         $definitions = [
