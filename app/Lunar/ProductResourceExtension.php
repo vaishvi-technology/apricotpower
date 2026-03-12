@@ -3,6 +3,7 @@
 namespace App\Lunar;
 
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductGroupPricing;
+use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductIdentifiers;
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductInventoryLots;
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductNutritionFacts;
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductShipping;
@@ -22,6 +23,7 @@ class ProductResourceExtension extends ResourceExtension
     public function extendPages(array $pages): array
     {
         return array_merge($pages, [
+            'identifiers' => ManageProductIdentifiers::route('/{record}/identifiers'),
             'shipping' => ManageProductShipping::route('/{record}/shipping'),
             'nutrition-facts' => ManageProductNutritionFacts::route('/{record}/nutrition-facts'),
             'inventory-lots' => ManageProductInventoryLots::route('/{record}/inventory-lots'),
@@ -31,16 +33,18 @@ class ProductResourceExtension extends ResourceExtension
     }
 
     /**
-     * Extend the subnavigation with nutrition facts link.
+     * Extend the subnavigation with custom pages.
      */
     public function extendSubNavigation(array $pages): array
     {
-        // Filter out the default shipping page and add our custom one
+        // Filter out the default shipping and identifiers pages and add our custom ones
         $filtered = collect($pages)->filter(function ($page) {
-            return $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductShipping::class;
+            return $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductShipping::class
+                && $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductIdentifiers::class;
         })->values()->all();
 
         return array_merge($filtered, [
+            ManageProductIdentifiers::class,
             ManageProductShipping::class,
             ManageProductNutritionFacts::class,
             ManageProductInventoryLots::class,

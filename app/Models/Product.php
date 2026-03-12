@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Lunar\Base\Casts\AsAttributeData;
 use Lunar\Models\Product as LunarProduct;
 
 class Product extends LunarProduct
@@ -20,6 +21,7 @@ class Product extends LunarProduct
     protected $fillable = [
         // Original Lunar fields
         'attribute_data',
+        'product_type_id',
         'status',
         'brand_id',
         'category_id',
@@ -54,6 +56,7 @@ class Product extends LunarProduct
      * The attributes that should be cast.
      */
     protected $casts = [
+        'attribute_data' => AsAttributeData::class,
         'notify_at' => 'integer',
         'low_stock_notified_at' => 'datetime',
         'disclaimer_agreement' => 'boolean',

@@ -11,10 +11,12 @@ class ProductVariant extends LunarProductVariant
      * Additional fillable attributes.
      */
     protected $fillable = [
+        'sku',
         'free_shipping',
         'weight_lbs',
         'weight_oz',
         'handling_fee',
+        'amazon_sku',
     ];
 
     /**
