@@ -435,129 +435,14 @@ class CustomerResourceExtension extends ResourceExtension
                 $impersonateAction,
             ])
             ->filters([
-                Filter::make('email')
-                    ->form([
-                        Forms\Components\TextInput::make('email')
-                            ->label('Email/Username')
-                            ->placeholder('Search by email...'),
-                    ])
-                    ->query(fn (Builder $query, array $data): Builder => $query->when(
-                        $data['email'],
-                        fn (Builder $q, $value) => $q->where('email', 'like', "%{$value}%")
-                    )),
-
-                Filter::make('customer_id')
-                    ->form([
-                        Forms\Components\TextInput::make('customer_id')
-                            ->label('Customer ID')
-                            ->placeholder('Enter Customer ID...')
-                            ->numeric(),
-                    ])
-                    ->query(fn (Builder $query, array $data): Builder => $query->when(
-                        $data['customer_id'],
-                        fn (Builder $q, $value) => $q->where('id', $value)
-                    )),
-
-                Filter::make('name')
-                    ->form([
-                        Forms\Components\Grid::make(2)->schema([
-                            Forms\Components\TextInput::make('first_name')
-                                ->label('First Name')
-                                ->placeholder('First name...'),
-                            Forms\Components\TextInput::make('last_name')
-                                ->label('Last Name')
-                                ->placeholder('Last name...'),
-                        ]),
-                    ])
-                    ->query(fn (Builder $query, array $data): Builder => $query
-                        ->when(
-                            $data['first_name'] ?? null,
-                            fn (Builder $q, $value) => $q->where('first_name', 'like', "%{$value}%")
-                        )
-                        ->when(
-                            $data['last_name'] ?? null,
-                            fn (Builder $q, $value) => $q->where('last_name', 'like', "%{$value}%")
-                        )
-                    ),
-
-                Filter::make('phone')
-                    ->form([
-                        Forms\Components\TextInput::make('phone')
-                            ->label('Phone #')
-                            ->placeholder('Search by phone...'),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query->when($data['phone'], function (Builder $q, $value) {
-                            $digits = preg_replace('/\D/', '', $value);
-
-                            return $q->whereRaw("REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(phone, '(', ''), ')', ''), '-', ''), ' ', ''), '+', '') LIKE ?", ["%{$digits}%"]);
-                        });
-                    }),
-
-                Filter::make('wholesale_account')
-                    ->form([
-                        Forms\Components\TextInput::make('wholesale_company')
-                            ->label('Wholesale Account')
-                            ->placeholder('Search by company name...'),
-                    ])
-                    ->query(fn (Builder $query, array $data): Builder => $query->when(
-                        $data['wholesale_company'],
-                        fn (Builder $q, $value) => $q->where('is_online_wholesaler', true)
-                            ->where('company_name', 'like', "%{$value}%")
-                    )),
-
-                Filter::make('include_closed')
-                    ->form([
-                        Forms\Components\Checkbox::make('include_closed')
-                            ->label('Include Closed Accounts'),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        if (empty($data['include_closed'])) {
-                            return $query->where(function (Builder $q) {
-                                $q->where('account_locked', false)->orWhereNull('account_locked');
-                            });
-                        }
-
-                        return $query;
-                    })
-                    ->default(true),
-
-                Filter::make('last_order_before')
-                    ->form([
-                        Forms\Components\DatePicker::make('last_order_before')
-                            ->label('Last Order Was Before')
-                            ->native(),
-                    ])
-                    ->query(fn (Builder $query, array $data): Builder => $query->when(
-                        $data['last_order_before'],
-                        fn (Builder $q, $value) => $q->whereNotNull('last_order_at')
-                            ->where('last_order_at', '<', $value)
-                    )),
-
-                SelectFilter::make('customerGroups')
-                    ->label('Group')
-                    ->relationship('customerGroups', 'name')
-                    ->preload()
-                    ->searchable(),
-
-                Filter::make('retailer')
-                    ->form([
-                        Forms\Components\TextInput::make('retailer_name')
-                            ->label('Retailer')
-                            ->placeholder('Search retailer name...'),
-                    ])
-                    ->query(fn (Builder $query, array $data): Builder => $query->when(
-                        $data['retailer_name'],
-                        fn (Builder $q, $value) => $q->whereHas('retailerProfile', function (Builder $rq) use ($value) {
-                            $rq->where('name', 'like', "%{$value}%");
-                        })
-                    )),
-
+                // ── Row 1: Global keyword search (full width) ──
                 Filter::make('keyword')
+                    ->columnSpanFull()
                     ->form([
                         Forms\Components\TextInput::make('keyword')
-                            ->label('Keyword')
-                            ->placeholder('Search across all fields...'),
+                            ->label('Quick Search')
+                            ->placeholder('Search name, email, phone, company, notes...')
+                            ->prefixIcon('heroicon-o-magnifying-glass'),
                     ])
                     ->query(fn (Builder $query, array $data): Builder => $query->when(
                         $data['keyword'],
@@ -571,8 +456,131 @@ class CustomerResourceExtension extends ResourceExtension
                                 ->orWhere('admin_notes', 'like', "%{$value}%");
                         })
                     )),
+
+                // ── Row 2: Identity fields ──
+                Filter::make('customer_id')
+                    ->form([
+                        Forms\Components\TextInput::make('customer_id')
+                            ->label('ID')
+                            ->placeholder('Customer ID')
+                            ->numeric(),
+                    ])
+                    ->query(fn (Builder $query, array $data): Builder => $query->when(
+                        $data['customer_id'],
+                        fn (Builder $q, $value) => $q->where('id', $value)
+                    )),
+
+                Filter::make('email')
+                    ->form([
+                        Forms\Components\TextInput::make('email')
+                            ->label('Email')
+                            ->placeholder('Email address...'),
+                    ])
+                    ->query(fn (Builder $query, array $data): Builder => $query->when(
+                        $data['email'],
+                        fn (Builder $q, $value) => $q->where('email', 'like', "%{$value}%")
+                    )),
+
+                Filter::make('first_name')
+                    ->form([
+                        Forms\Components\TextInput::make('first_name')
+                            ->label('First Name')
+                            ->placeholder('First name...'),
+                    ])
+                    ->query(fn (Builder $query, array $data): Builder => $query->when(
+                        $data['first_name'],
+                        fn (Builder $q, $value) => $q->where('first_name', 'like', "%{$value}%")
+                    )),
+
+                Filter::make('last_name')
+                    ->form([
+                        Forms\Components\TextInput::make('last_name')
+                            ->label('Last Name')
+                            ->placeholder('Last name...'),
+                    ])
+                    ->query(fn (Builder $query, array $data): Builder => $query->when(
+                        $data['last_name'],
+                        fn (Builder $q, $value) => $q->where('last_name', 'like', "%{$value}%")
+                    )),
+
+                // ── Row 3: Contact & Account ──
+                Filter::make('phone')
+                    ->form([
+                        Forms\Components\TextInput::make('phone')
+                            ->label('Phone')
+                            ->placeholder('Phone number...'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query->when($data['phone'], function (Builder $q, $value) {
+                            $digits = preg_replace('/\D/', '', $value);
+
+                            return $q->whereRaw("REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(phone, '(', ''), ')', ''), '-', ''), ' ', ''), '+', '') LIKE ?", ["%{$digits}%"]);
+                        });
+                    }),
+
+                SelectFilter::make('customerGroups')
+                    ->label('Group')
+                    ->relationship('customerGroups', 'name')
+                    ->preload()
+                    ->searchable(),
+
+                Filter::make('wholesale_account')
+                    ->form([
+                        Forms\Components\TextInput::make('wholesale_company')
+                            ->label('Wholesale Account')
+                            ->placeholder('Company name...'),
+                    ])
+                    ->query(fn (Builder $query, array $data): Builder => $query->when(
+                        $data['wholesale_company'],
+                        fn (Builder $q, $value) => $q->where('is_online_wholesaler', true)
+                            ->where('company_name', 'like', "%{$value}%")
+                    )),
+
+                // ── Row 4: Advanced ──
+                Filter::make('last_order_before')
+                    ->form([
+                        Forms\Components\DatePicker::make('last_order_before')
+                            ->label('Last Order Before')
+                            ->native(),
+                    ])
+                    ->query(fn (Builder $query, array $data): Builder => $query->when(
+                        $data['last_order_before'],
+                        fn (Builder $q, $value) => $q->whereNotNull('last_order_at')
+                            ->where('last_order_at', '<', $value)
+                    )),
+
+                Filter::make('retailer')
+                    ->form([
+                        Forms\Components\TextInput::make('retailer_name')
+                            ->label('Retailer')
+                            ->placeholder('Retailer name...'),
+                    ])
+                    ->query(fn (Builder $query, array $data): Builder => $query->when(
+                        $data['retailer_name'],
+                        fn (Builder $q, $value) => $q->whereHas('retailerProfile', function (Builder $rq) use ($value) {
+                            $rq->where('name', 'like', "%{$value}%");
+                        })
+                    )),
+
+                Filter::make('include_closed')
+                    ->form([
+                        Forms\Components\Toggle::make('include_closed')
+                            ->label('Include Closed Accounts')
+                            ->onColor('danger')
+                            ->inline(false),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (empty($data['include_closed'])) {
+                            return $query->where(function (Builder $q) {
+                                $q->where('account_locked', false)->orWhereNull('account_locked');
+                            });
+                        }
+
+                        return $query;
+                    })
+                    ->default(true),
             ])
-            ->filtersFormColumns(2)
+            ->filtersFormColumns(4)
             ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
             ->deferFilters();
     }
