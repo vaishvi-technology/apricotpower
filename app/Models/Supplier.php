@@ -43,14 +43,6 @@ class Supplier extends Model
     }
 
     /**
-     * Get all incoming shipments from this supplier.
-     */
-    public function incomingShipments(): HasMany
-    {
-        return $this->hasMany(IncomingShipment::class);
-    }
-
-    /**
      * Scope to only include active suppliers.
      */
     public function scopeActive($query)

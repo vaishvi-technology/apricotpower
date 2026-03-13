@@ -6,6 +6,7 @@ use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductGroupPricing
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductIdentifiers;
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductInventoryLots;
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductNutritionFacts;
+use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductPricing;
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductShipping;
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductSupplier;
 use App\Models\Supplier;
@@ -14,6 +15,7 @@ use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Lunar\Admin\Support\Extending\ResourceExtension;
+use Lunar\Admin\Support\Forms\Components\Attributes;
 
 class ProductResourceExtension extends ResourceExtension
 {
@@ -23,6 +25,7 @@ class ProductResourceExtension extends ResourceExtension
     public function extendPages(array $pages): array
     {
         return array_merge($pages, [
+            'pricing' => ManageProductPricing::route('/{record}/pricing'),
             'identifiers' => ManageProductIdentifiers::route('/{record}/identifiers'),
             'shipping' => ManageProductShipping::route('/{record}/shipping'),
             'nutrition-facts' => ManageProductNutritionFacts::route('/{record}/nutrition-facts'),
@@ -37,13 +40,21 @@ class ProductResourceExtension extends ResourceExtension
      */
     public function extendSubNavigation(array $pages): array
     {
-        // Filter out the default shipping and identifiers pages and add our custom ones
+        // Filter out Lunar default pages we don't need and pages we're replacing
         $filtered = collect($pages)->filter(function ($page) {
             return $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductShipping::class
-                && $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductIdentifiers::class;
+                && $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductIdentifiers::class
+                && $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductPricing::class
+                // Hide unused sidebar pages
+                && $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductInventory::class
+                && $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductVariants::class
+                && $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductUrls::class
+                && $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductCollections::class
+                && $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductAssociations::class;
         })->values()->all();
 
         return array_merge($filtered, [
+            ManageProductPricing::class,
             ManageProductIdentifiers::class,
             ManageProductShipping::class,
             ManageProductNutritionFacts::class,
@@ -57,8 +68,11 @@ class ProductResourceExtension extends ResourceExtension
     {
         $existing = $form->getComponents(withHidden: true);
 
-        // Filter out the brand_id field from existing components
-        $filtered = collect($existing)->map(function ($component) {
+        // Filter out Attributes components (key-value sections) and customize form fields
+        $filtered = collect($existing)->filter(function ($component) {
+            // Remove Attributes key-value pair sections (we use direct database columns instead)
+            return !($component instanceof Attributes);
+        })->map(function ($component) {
             if ($component instanceof Forms\Components\Section) {
                 $schema = $component->getChildComponents();
                 $filteredSchema = collect($schema)->filter(function ($child) {
@@ -71,7 +85,28 @@ class ProductResourceExtension extends ResourceExtension
                     return true;
                 })->values()->all();
 
-                // Add categories multi-select at the beginning of the section
+                // Add product name field (load from translateAttribute if direct column is empty)
+                $nameField = Forms\Components\TextInput::make('name')
+                    ->label('Product Name')
+                    ->required()
+                    ->maxLength(255)
+                    ->afterStateHydrated(function ($component, $state, $record) {
+                        if (empty($state) && $record) {
+                            $component->state($record->translateAttribute('name'));
+                        }
+                    });
+
+                // Add product description field (load from translateAttribute if direct column is empty)
+                $descriptionField = Forms\Components\RichEditor::make('description')
+                    ->label('Description')
+                    ->columnSpanFull()
+                    ->afterStateHydrated(function ($component, $state, $record) {
+                        if (empty($state) && $record) {
+                            $component->state($record->translateAttribute('description'));
+                        }
+                    });
+
+                // Add categories multi-select
                 $categorySelect = Forms\Components\Select::make('categories')
                     ->label('Categories')
                     ->relationship('categories', 'name')
@@ -79,35 +114,20 @@ class ProductResourceExtension extends ResourceExtension
                     ->searchable()
                     ->preload();
 
-                return $component->schema([$categorySelect, ...$filteredSchema]);
+                // Add quantity_size field
+                $quantitySizeField = Forms\Components\TextInput::make('quantity_size')
+                    ->label('Quantity/Size')
+                    ->placeholder('e.g., 8 oz, 16 oz, 100 tablets')
+                    ->maxLength(255)
+                    ->helperText('Product size displayed on the product page.');
+
+                return $component->schema([$nameField, $descriptionField, $categorySelect, ...$filteredSchema, $quantitySizeField]);
             }
             return $component;
         })->all();
 
         return $form->schema([
             ...$filtered,
-
-            Forms\Components\Section::make('Product Details')
-                ->description('Basic product information displayed on the storefront.')
-                ->schema([
-                    Forms\Components\TextInput::make('name')
-                        ->label('Product Name')
-                        ->required()
-                        ->maxLength(255)
-                        ->columnSpanFull(),
-
-                    Forms\Components\Textarea::make('description')
-                        ->label('Description')
-                        ->rows(4)
-                        ->helperText('Full product description displayed on the product page.')
-                        ->columnSpanFull(),
-
-                    Forms\Components\TextInput::make('quantity_size')
-                        ->label('Quantity/Size')
-                        ->placeholder('e.g., 8 oz, 16 oz, 100 tablets')
-                        ->maxLength(255)
-                        ->helperText('Product size or quantity displayed on the product page.'),
-                ]),
 
             Forms\Components\Section::make('SEO Meta Fields')
                 ->description('Search engine optimization settings for this product.')
@@ -211,21 +231,6 @@ class ProductResourceExtension extends ResourceExtension
                         ->columnSpanFull(),
                 ]),
 
-            Forms\Components\Section::make('Miscellaneous')
-                ->description('Cart message and disclaimer settings.')
-                ->collapsible()
-                ->schema([
-                    Forms\Components\Textarea::make('disclaimer')
-                        ->label('Item Disclaimer / Cart Message')
-                        ->rows(4)
-                        ->helperText('Message displayed in shopping cart for this product. Leave empty for no message.')
-                        ->columnSpanFull(),
-
-                    Forms\Components\Toggle::make('disclaimer_agreement')
-                        ->label('Require Customer Agreement')
-                        ->helperText('Customer must check a box to acknowledge before checkout.')
-                        ->default(false),
-                ]),
         ]);
     }
 

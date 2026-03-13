@@ -12,6 +12,7 @@ class ProductVariant extends LunarProductVariant
      */
     protected $fillable = [
         'sku',
+        'tax_class_id',
         'free_shipping',
         'weight_lbs',
         'weight_oz',

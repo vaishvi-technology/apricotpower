@@ -42,7 +42,9 @@ class InventoryLotResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('product_id')
                             ->label('Product')
-                            ->options(fn () => Product::pluck('name', 'id'))
+                            ->options(fn () => Product::all()->mapWithKeys(fn ($product) => [
+                                $product->id => $product->translateAttribute('name') ?? 'Product #' . $product->id
+                            ]))
                             ->searchable()
                             ->preload()
                             ->required()
@@ -53,7 +55,10 @@ class InventoryLotResource extends Resource
                             ->label('Variant (Optional)')
                             ->options(fn (Forms\Get $get) =>
                                 ProductVariant::where('product_id', $get('product_id'))
-                                    ->pluck('sku', 'id')
+                                    ->get()
+                                    ->mapWithKeys(fn ($variant) => [
+                                        $variant->id => $variant->sku ?? 'Variant #' . $variant->id
+                                    ])
                             )
                             ->searchable()
                             ->placeholder('Default (No Variant)')
@@ -124,12 +129,17 @@ class InventoryLotResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                Tables\Columns\TextColumn::make('product.name')
+                Tables\Columns\TextColumn::make('product_name')
                     ->label('Product')
-                    ->searchable()
-                    ->sortable()
+                    ->getStateUsing(fn ($record) => $record->product?->name ?? $record->product?->translateAttribute('name') ?? 'Unknown')
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereHas('product', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%")
+                              ->orWhereRaw("JSON_EXTRACT(attribute_data, '$.name.value') LIKE ?", ["%{$search}%"]);
+                        });
+                    })
                     ->limit(30)
-                    ->tooltip(fn ($record) => $record->product?->name),
+                    ->tooltip(fn ($record) => $record->product?->name ?? $record->product?->translateAttribute('name')),
 
                 Tables\Columns\TextColumn::make('variant.sku')
                     ->label('SKU')
@@ -223,7 +233,9 @@ class InventoryLotResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('product_id')
                     ->label('Product')
-                    ->relationship('product', 'name')
+                    ->options(fn () => Product::all()->mapWithKeys(fn ($product) => [
+                        $product->id => $product->translateAttribute('name') ?? 'Product #' . $product->id
+                    ]))
                     ->searchable()
                     ->preload(),
 

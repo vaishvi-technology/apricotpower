@@ -36,17 +36,19 @@ class CreateInventoryLot extends CreateRecord
             'quantity_after' => $this->record->quantity,
             'reason' => 'Initial lot creation',
             'user_id' => $this->getCurrentUserId(),
+            'staff_id' => $this->getCurrentStaffId(),
         ]);
     }
 
-    /**
-     * Get the current user ID for tracking.
-     * Returns null for staff users since their IDs reference a different table.
-     */
     protected function getCurrentUserId(): ?int
     {
         $user = Auth::guard('web')->user();
         return $user instanceof User ? $user->id : null;
+    }
+
+    protected function getCurrentStaffId(): ?int
+    {
+        return Auth::guard('staff')->user()?->id;
     }
 
     protected function getRedirectUrl(): string

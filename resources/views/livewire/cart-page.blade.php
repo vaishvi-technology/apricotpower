@@ -22,11 +22,6 @@
                                         <p class="fw-bold">{{ $line->subTotal->formatted() }}</p>
                                     </div>
                                 </div>
-                                @if($line->purchasable->product->hasDisclaimer())
-                                    <div class="alert alert-warning mb-0 mx-3 mb-3" role="alert">
-                                        <strong>Important Notice:</strong> {{ $line->purchasable->product->disclaimer }}
-                                    </div>
-                                @endif
                             </div>
                         @endforeach
                     </div>

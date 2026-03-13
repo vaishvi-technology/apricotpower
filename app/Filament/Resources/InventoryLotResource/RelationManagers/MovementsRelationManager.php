@@ -62,9 +62,9 @@ class MovementsRelationManager extends RelationManager
                     ->limit(40)
                     ->tooltip(fn ($record) => $record->reason),
 
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('User')
-                    ->placeholder('System'),
+                Tables\Columns\TextColumn::make('performed_by')
+                    ->label('Performed By')
+                    ->state(fn ($record) => $record->user?->name ?? $record->staff?->fullName ?? 'System'),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([

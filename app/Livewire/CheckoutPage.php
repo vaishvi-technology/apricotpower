@@ -71,16 +71,6 @@ class CheckoutPage extends Component
 
     public $payment_intent_client_secret = null;
 
-    /**
-     * Whether disclaimers have been agreed to.
-     */
-    public bool $disclaimersAgreed = false;
-
-    /**
-     * Products in cart that require disclaimer agreement.
-     */
-    public array $productsRequiringAgreement = [];
-
     protected $queryString = [
         'payment_intent',
         'payment_intent_client_secret',
@@ -91,7 +81,7 @@ class CheckoutPage extends Component
      */
     public function rules(): array
     {
-        $rules = array_merge(
+        return array_merge(
             $this->getAddressValidation('shipping'),
             $this->getAddressValidation('billing'),
             [
@@ -99,12 +89,6 @@ class CheckoutPage extends Component
                 'chosenShipping' => 'required',
             ]
         );
-
-        if ($this->hasDisclaimerRequirements) {
-            $rules['disclaimersAgreed'] = 'accepted';
-        }
-
-        return $rules;
     }
 
     public function mount(): void
@@ -132,8 +116,6 @@ class CheckoutPage extends Component
         $this->shipping = $this->cart->shippingAddress ?: new CartAddress;
 
         $this->billing = $this->cart->billingAddress ?: new CartAddress;
-
-        $this->loadProductsRequiringAgreement();
 
         $this->determineCheckoutStep();
     }
@@ -264,12 +246,6 @@ class CheckoutPage extends Component
 
     public function checkout()
     {
-        // Validate disclaimers if required
-        if ($this->hasDisclaimerRequirements && !$this->disclaimersAgreed) {
-            $this->addError('disclaimersAgreed', 'You must acknowledge the product disclaimers.');
-            return;
-        }
-
         $payment = Payments::cart($this->cart)->withData([
             'payment_intent_client_secret' => $this->payment_intent_client_secret,
             'payment_intent' => $this->payment_intent,
@@ -322,29 +298,6 @@ class CheckoutPage extends Component
             "{$type}.contact_email" => 'required|email',
             "{$type}.contact_phone" => 'nullable',
         ];
-    }
-
-    /**
-     * Load products that require disclaimer agreement.
-     */
-    protected function loadProductsRequiringAgreement(): void
-    {
-        $this->productsRequiringAgreement = $this->cart->lines
-            ->filter(fn ($line) => $line->purchasable->product->requiresDisclaimerAgreement())
-            ->map(fn ($line) => [
-                'name' => $line->purchasable->getDescription(),
-                'disclaimer' => $line->purchasable->product->disclaimer,
-            ])
-            ->values()
-            ->toArray();
-    }
-
-    /**
-     * Check if cart has products requiring disclaimer agreement.
-     */
-    public function getHasDisclaimerRequirementsProperty(): bool
-    {
-        return count($this->productsRequiringAgreement) > 0;
     }
 
     public function render(): View

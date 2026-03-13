@@ -80,8 +80,9 @@ class InventoryMovementResource extends Resource
 
                 Infolists\Components\Section::make('Product Information')
                     ->schema([
-                        Infolists\Components\TextEntry::make('product.name')
-                            ->label('Product'),
+                        Infolists\Components\TextEntry::make('product_name')
+                            ->label('Product')
+                            ->state(fn ($record) => $record->product?->name ?? $record->product?->translateAttribute('name') ?? 'Unknown'),
 
                         Infolists\Components\TextEntry::make('variant.sku')
                             ->label('Variant SKU')
@@ -98,9 +99,9 @@ class InventoryMovementResource extends Resource
                             ->label('Reason')
                             ->placeholder('No reason provided'),
 
-                        Infolists\Components\TextEntry::make('user.name')
-                            ->label('User')
-                            ->placeholder('System'),
+                        Infolists\Components\TextEntry::make('performed_by')
+                            ->label('Performed By')
+                            ->state(fn ($record) => $record->user?->name ?? $record->staff?->fullName ?? 'System'),
 
                         Infolists\Components\TextEntry::make('reference_type')
                             ->label('Reference Type')
@@ -128,12 +129,17 @@ class InventoryMovementResource extends Resource
                     ->dateTime()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('product.name')
+                Tables\Columns\TextColumn::make('product_name')
                     ->label('Product')
-                    ->searchable()
-                    ->sortable()
+                    ->getStateUsing(fn ($record) => $record->product?->name ?? $record->product?->translateAttribute('name') ?? 'Unknown')
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereHas('product', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%")
+                              ->orWhereRaw("JSON_EXTRACT(attribute_data, '$.name.value') LIKE ?", ["%{$search}%"]);
+                        });
+                    })
                     ->limit(25)
-                    ->tooltip(fn ($record) => $record->product?->name),
+                    ->tooltip(fn ($record) => $record->product?->name ?? $record->product?->translateAttribute('name')),
 
                 Tables\Columns\TextColumn::make('inventoryLot.lot_number')
                     ->label('Lot #')
@@ -181,9 +187,9 @@ class InventoryMovementResource extends Resource
                     ->tooltip(fn ($record) => $record->reason)
                     ->toggleable(),
 
-                Tables\Columns\TextColumn::make('user.name')
-                    ->label('User')
-                    ->placeholder('System')
+                Tables\Columns\TextColumn::make('performed_by')
+                    ->label('Performed By')
+                    ->state(fn ($record) => $record->user?->name ?? $record->staff?->fullName ?? 'System')
                     ->toggleable(),
             ])
             ->defaultSort('created_at', 'desc')
@@ -201,7 +207,9 @@ class InventoryMovementResource extends Resource
 
                 Tables\Filters\SelectFilter::make('product_id')
                     ->label('Product')
-                    ->relationship('product', 'name')
+                    ->options(fn () => \App\Models\Product::all()->mapWithKeys(fn ($product) => [
+                        $product->id => $product->translateAttribute('name') ?? 'Product #' . $product->id
+                    ]))
                     ->searchable()
                     ->preload(),
 

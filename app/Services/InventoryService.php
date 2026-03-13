@@ -2,37 +2,32 @@
 
 namespace App\Services;
 
-use App\Models\IncomingShipment;
 use App\Models\InventoryLot;
 use App\Models\InventoryMovement;
 use App\Models\Product;
 use App\Models\ProductBundle;
 use App\Models\User;
-use App\Notifications\LowStockNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Notification;
-use Lunar\Admin\Models\Staff;
 
 class InventoryService
 {
     /**
-     * Get the current user ID for tracking, or null if not a regular user.
-     * The inventory_movements.user_id references the users table, but in the
-     * Lunar admin panel, we're logged in as Staff (from lunar_staff table).
-     * We return null for staff users since their IDs don't exist in users table.
+     * Get the current user ID for tracking (regular users from users table).
      */
     protected function getCurrentUserId(): ?int
     {
-        // Try to get user from 'web' guard (regular users)
         $user = Auth::guard('web')->user();
-        if ($user instanceof User) {
-            return $user->id;
-        }
+        return $user instanceof User ? $user->id : null;
+    }
 
-        // For staff/admin users, we can't use their ID since it references a different table
-        // Return null - the movement will still be tracked, just without a user reference
-        return null;
+    /**
+     * Get the current staff ID for tracking (admin users from staff table).
+     */
+    protected function getCurrentStaffId(): ?int
+    {
+        $staff = Auth::guard('staff')->user();
+        return $staff?->id;
     }
 
     /**
@@ -62,14 +57,9 @@ class InventoryService
                 'quantity_after' => max(0, $quantityAfter),
                 'reason' => $data['reason'] ?? null,
                 'user_id' => $this->getCurrentUserId(),
+                'staff_id' => $this->getCurrentStaffId(),
             ]);
         });
-
-        // Check for low stock notification after adjustment
-        $product = Product::find($lot->product_id);
-        if ($product) {
-            $this->checkAndSendLowStockNotification($product);
-        }
 
         return $movement;
     }
@@ -104,35 +94,7 @@ class InventoryService
                 'quantity_after' => $data['quantity'],
                 'reason' => $data['reason'] ?? 'Initial receipt',
                 'user_id' => $this->getCurrentUserId(),
-            ]);
-
-            return $lot;
-        });
-    }
-
-    /**
-     * Receive inventory from an incoming shipment.
-     * Creates an inventory lot and marks the shipment as received.
-     */
-    public function receiveFromShipment(IncomingShipment $shipment): InventoryLot
-    {
-        return DB::transaction(function () use ($shipment) {
-            $product = Product::find($shipment->product_id);
-
-            $lot = $this->receiveInventory($product, [
-                'product_variant_id' => $shipment->product_variant_id,
-                'quantity' => $shipment->quantity,
-                'supplier_id' => $shipment->supplier_id ?? $product->supplier_id,
-                'received_at' => now(),
-                'notes' => $shipment->notes
-                    ? "Received from shipment #{$shipment->id}: {$shipment->notes}"
-                    : "Received from shipment #{$shipment->id}",
-            ]);
-
-            // Update shipment status and link to lot
-            $shipment->update([
-                'status' => IncomingShipment::STATUS_RECEIVED,
-                'inventory_lot_id' => $lot->id,
+                'staff_id' => $this->getCurrentStaffId(),
             ]);
 
             return $lot;
@@ -181,14 +143,12 @@ class InventoryService
                     'reference_id' => $reference?->id,
                     'reason' => 'Sale',
                     'user_id' => $this->getCurrentUserId(),
+                    'staff_id' => $this->getCurrentStaffId(),
                 ]);
 
                 $remainingToDeduct -= $deductFromLot;
             }
         });
-
-        // Check for low stock notification after sale
-        $this->checkAndSendLowStockNotification($product);
     }
 
     /**
@@ -269,53 +229,4 @@ class InventoryService
         ];
     }
 
-    /**
-     * Check if low stock notification should be sent and send it.
-     */
-    public function checkAndSendLowStockNotification(Product $product): void
-    {
-        // Refresh product to get latest stock levels
-        $product->refresh();
-
-        // Check if notification should be sent
-        if (!$product->shouldSendLowStockNotification()) {
-            // If stock is replenished, reset the notification flag
-            $product->resetLowStockNotification();
-            return;
-        }
-
-        // Get all admin staff members to notify
-        $adminStaff = Staff::where('admin', true)->get();
-
-        if ($adminStaff->isEmpty()) {
-            return;
-        }
-
-        // Send notification to all admin staff
-        Notification::send($adminStaff, new LowStockNotification($product));
-
-        // Mark notification as sent
-        $product->markLowStockNotified();
-    }
-
-    /**
-     * Check all products for low stock and send notifications.
-     * This method is intended to be called from a scheduled command.
-     */
-    public function checkAllProductsForLowStock(): array
-    {
-        $notifiedProducts = [];
-
-        // Get all products with notify_at > 0
-        $products = Product::where('notify_at', '>', 0)->get();
-
-        foreach ($products as $product) {
-            if ($product->shouldSendLowStockNotification()) {
-                $this->checkAndSendLowStockNotification($product);
-                $notifiedProducts[] = $product->id;
-            }
-        }
-
-        return $notifiedProducts;
-    }
 }
