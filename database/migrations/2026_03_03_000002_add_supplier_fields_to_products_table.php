@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::table('products', function (Blueprint $table) {
             $table->foreignId('supplier_id')
                 ->nullable()
-                ->after('low_stock_notified_at')
                 ->constrained('suppliers')
                 ->nullOnDelete();
             $table->text('inventory_notes')->nullable()->after('supplier_id');

@@ -15,12 +15,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedInteger('legacy_id')->nullable()->index();
             $table->string('name');
-            $table->string('display_title');
-            $table->string('display_class')->nullable();
-            $table->integer('rank')->default(0);
-            $table->text('description')->nullable();
-            $table->boolean('is_funky')->default(false);
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
