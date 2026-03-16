@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Account;
 
+use App\Events\Klaviyo\SubscriptionChanged;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -45,6 +46,8 @@ class EmailPreferencesPage extends Component
 
         $this->is_subscribed = true;
 
+        SubscriptionChanged::dispatch($customer, true);
+
         session()->flash('success', 'You have been subscribed to the Apricot Power email list!');
     }
 
@@ -55,6 +58,8 @@ class EmailPreferencesPage extends Component
         $customer->save();
 
         $this->is_subscribed = false;
+
+        SubscriptionChanged::dispatch($customer, false);
 
         session()->flash('success', 'You have been unsubscribed from the Apricot Power email list.');
     }

@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Events\Klaviyo\OrderPlaced;
 use App\Models\Customer;
 use Lunar\Models\Order;
 
@@ -16,6 +17,8 @@ class OrderObserver
         if ($order->customer_id) {
             Customer::where('id', $order->customer_id)
                 ->update(['last_order_at' => now()]);
+
+            OrderPlaced::dispatch($order);
         }
     }
 }

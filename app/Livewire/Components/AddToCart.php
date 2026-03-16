@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Components;
 
+use App\Events\Klaviyo\AddedToCart as KlaviyoAddedToCart;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 use Lunar\Base\Purchasable;
@@ -50,6 +52,18 @@ class AddToCart extends Component
 
         CartSession::manager()->add($this->purchasable, $this->quantity);
         $this->dispatch('add-to-cart');
+
+        $customer = Auth::guard('customer')->user();
+        if ($customer?->email) {
+            $price = $this->purchasable->basePrices->first()?->price?->value;
+            KlaviyoAddedToCart::dispatch(
+                $customer->email,
+                $this->purchasable->product?->translateAttribute('name') ?? $this->purchasable->getDescription(),
+                $this->quantity,
+                $price ? $price / 100 : null,
+                $this->purchasable->id,
+            );
+        }
     }
 
     public function buyNow(): void

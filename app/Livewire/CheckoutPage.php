@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Events\Klaviyo\StartedCheckout;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -118,6 +119,13 @@ class CheckoutPage extends Component
         $this->billing = $this->cart->billingAddress ?: new CartAddress;
 
         $this->determineCheckoutStep();
+
+        // Track Started Checkout event in Klaviyo
+        $contactEmail = $this->cart->shippingAddress?->contact_email
+            ?? $this->cart->billingAddress?->contact_email;
+        if ($contactEmail) {
+            StartedCheckout::dispatch($this->cart, $contactEmail);
+        }
     }
 
     public function hydrate(): void

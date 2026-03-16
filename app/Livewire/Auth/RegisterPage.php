@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Auth;
 
+use App\Events\Klaviyo\CustomerRegistered;
 use App\Models\Customer;
 use App\Notifications\CustomerWelcomeNotification;
 use Illuminate\Support\Facades\Auth;
@@ -67,6 +68,8 @@ class RegisterPage extends Component
         Auth::guard('customer')->login($customer);
 
         $customer->notify(new CustomerWelcomeNotification());
+
+        CustomerRegistered::dispatch($customer, $this->subscribe_to_list);
 
         session()->regenerate();
 
