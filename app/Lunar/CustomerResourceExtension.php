@@ -582,6 +582,9 @@ class CustomerResourceExtension extends ResourceExtension
             ])
             ->filtersFormColumns(4)
             ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
-            ->deferFilters();
+            ->deferFilters()
+            ->filtersApplyAction(
+                fn (Tables\Actions\Action $action) => $action->label('Search')
+            );
     }
 }
