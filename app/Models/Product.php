@@ -3,19 +3,31 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Lunar\Base\Casts\AsAttributeData;
 use Lunar\Models\Product as LunarProduct;
 
 class Product extends LunarProduct
 {
+    /**
+     * Product detail fields stored as direct database columns.
+     * These override Lunar's attribute_data JSON storage for better performance and queryability.
+     */
+    protected const COLUMN_ATTRIBUTES = ['name', 'description'];
+
     protected $fillable = [
         // Original Lunar fields
         'attribute_data',
+        'product_type_id',
         'status',
         'brand_id',
         'category_id',
+        // Product detail fields (direct columns instead of attribute_data JSON)
+        'name',
+        'description',
         // SEO meta fields
         'meta_title',
         'meta_keywords',
@@ -27,11 +39,55 @@ class Product extends LunarProduct
         // Content tabs
         'intro_content',
         'learn_more',
+        // Product details
+        'quantity_size',
+        // Supplier information
+        'supplier_id',
+        'inventory_notes',
     ];
 
+    /**
+     * The attributes that should be cast.
+     */
+    protected $casts = [
+        'attribute_data' => AsAttributeData::class,
+    ];
+
+    /**
+     * Override translateAttribute to read from direct database columns.
+     * Falls back to parent's attribute_data JSON for other attributes.
+     *
+     * @param string $attribute
+     * @param string|null $locale
+     * @return mixed
+     */
+    public function translateAttribute(string $attribute, ?string $locale = null): mixed
+    {
+        // If this attribute is stored as a direct column and has a value, return it
+        // (direct columns don't support translations, so locale is ignored)
+        if (in_array($attribute, self::COLUMN_ATTRIBUTES) && !empty($this->{$attribute})) {
+            return $this->{$attribute};
+        }
+
+        // Fall back to Lunar's attribute_data JSON for other attributes or empty columns
+        return parent::translateAttribute($attribute, $locale);
+    }
+
+    /**
+     * Get the single category (backwards compatibility).
+     * @deprecated Use categories() relationship instead.
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Get all categories for this product (many-to-many).
+     */
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, 'category_product');
     }
 
     public function productBadges(): HasMany
@@ -63,4 +119,67 @@ class Product extends LunarProduct
             ->where('collection_name', 'images')
             ->orderBy('order_column');
     }
+
+    /**
+     * Get all inventory lots for this product.
+     */
+    public function inventoryLots(): HasMany
+    {
+        return $this->hasMany(InventoryLot::class);
+    }
+
+    /**
+     * Get all inventory movements for this product.
+     */
+    public function inventoryMovements(): HasMany
+    {
+        return $this->hasMany(InventoryMovement::class);
+    }
+
+    /**
+     * Get the supplier for this product.
+     */
+    public function supplier(): BelongsTo
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+
+    /**
+     * Get all customer group prices for this product.
+     */
+    public function customerGroupPrices(): HasMany
+    {
+        return $this->hasMany(CustomerGroupPrice::class);
+    }
+
+    /**
+     * Get active (non-expired) customer group prices for this product.
+     */
+    public function activeCustomerGroupPrices(): HasMany
+    {
+        return $this->customerGroupPrices()->active();
+    }
+
+    /**
+     * Get total stock (including expired) for this product.
+     */
+    public function getTotalStockAttribute(): int
+    {
+        return $this->inventoryLots()->sum('quantity');
+    }
+
+    /**
+     * Get available (non-expired, in-stock) quantity for this product.
+     */
+    public function getAvailableStockAttribute(): int
+    {
+        return $this->inventoryLots()
+            ->inStock()
+            ->where(function ($query) {
+                $query->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now());
+            })
+            ->sum('quantity');
+    }
+
 }

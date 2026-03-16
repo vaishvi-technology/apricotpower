@@ -23,6 +23,7 @@ class InventoryMovement extends Model
         'reference_id',
         'reason',
         'user_id',
+        'staff_id',
     ];
 
     public const TYPE_RECEIVED = 'received';
@@ -50,6 +51,11 @@ class InventoryMovement extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function staff(): BelongsTo
+    {
+        return $this->belongsTo(\Lunar\Admin\Models\Staff::class);
     }
 
     public function reference(): MorphTo

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Lunar\Models\AttributeGroup;
+use Lunar\Models\Channel;
 use Lunar\Models\Currency;
 use Lunar\Models\Language;
 use Lunar\Models\ProductType;
@@ -35,6 +36,15 @@ class LunarSetupSeeder extends Seeder
                 'decimal_places' => 2,
                 'default' => true,
                 'enabled' => true,
+            ]
+        );
+
+        // Create default Channel
+        Channel::firstOrCreate(
+            ['handle' => 'webstore'],
+            [
+                'name' => 'Webstore',
+                'default' => true,
             ]
         );
 
