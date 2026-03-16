@@ -103,7 +103,7 @@ services:
             - '${PHPMYADMIN_PORT:-8085}:80'
         environment:
             PMA_HOST: mysql
-            PMA_USER: '${DB_USERNAME:-sail}'
+            PMA_USER: root
             PMA_PASSWORD: '${DB_PASSWORD:-password}'
         networks:
             - sail
