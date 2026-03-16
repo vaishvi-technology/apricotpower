@@ -169,7 +169,9 @@ class BlogPostResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap()
+                    ->words(12),
 
                 Tables\Columns\TextColumn::make('categories.name')
                     ->label('Categories')

@@ -28,11 +28,6 @@
             .filter-label { font-size: 14px; color: #333; flex: 1; }
             .filter-count { font-size: 12px; color: #888; margin-left: 5px; }
 
-            .search-box { position: relative; margin-bottom: 20px; }
-            .search-box input { width: 100%; padding: 12px 40px 12px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; transition: border-color 0.2s ease; }
-            .search-box input:focus { border-color: #7cbf3d; outline: none; }
-            .search-box .search-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #888; }
-
             .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e0e0e0; }
             .results-count { font-size: 14px; color: #666; }
             .results-count strong { color: #333; }
@@ -50,8 +45,8 @@
             .blog-card-image { position: relative; height: 200px; overflow: hidden; background: #f0f0f0; }
             .blog-card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
             .blog-card:hover .blog-card-image img { transform: scale(1.05); }
-            .blog-card-image .no-image { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-            .blog-card-image .no-image i { font-size: 48px; color: #ccc; }
+            .blog-card-image .no-image { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); }
+            .blog-card-image .no-image i { font-size: 48px; color: #7cbf3d; }
 
             .blog-card-title { padding: 12px 15px 6px; font-weight: 700; font-size: 15px; line-height: 1.3; }
             .blog-card-title a { color: #333; text-decoration: none; }
@@ -67,22 +62,6 @@
             .blog-card-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
             .blog-tag { font-size: 11px; padding: 2px 8px; background: #e8f5e9; color: #2e7d32; border-radius: 10px; text-decoration: none; }
             .blog-tag:hover, .blog-tag.active { background: #7cbf3d; color: #fff; }
-
-            /* Pinned strip */
-            .pinned-strip { margin-bottom: 25px; background: #f8faf5; border: 1px solid #e0e0e0; border-radius: 8px; padding: 14px 16px; }
-            .pinned-strip-header { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; font-weight: 700; font-size: 13px; color: #555; text-transform: uppercase; letter-spacing: 0.5px; }
-            .pinned-strip-header .pin-icon { color: #7cbf3d; font-size: 14px; }
-            .pinned-cards { display: flex; flex-direction: column; gap: 0; }
-            .pinned-item { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #e8e8e8; text-decoration: none; color: #333; transition: background 0.15s; border-radius: 4px; }
-            .pinned-item:last-child { border-bottom: none; }
-            .pinned-item:hover { background: #edf5e4; }
-            .pinned-item-thumb { width: 56px; height: 40px; border-radius: 5px; overflow: hidden; flex-shrink: 0; background: #e8e8e8; }
-            .pinned-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
-            .pinned-item-thumb-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #e8f5e9; }
-            .pinned-item-info { flex: 1; min-width: 0; }
-            .pinned-item-title { font-size: 13px; font-weight: 600; color: #222; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-            .pinned-item:hover .pinned-item-title { color: #7cbf3d; }
-            .pinned-item-meta { display: flex; align-items: center; gap: 8px; margin-top: 2px; font-size: 11px; color: #888; }
 
             /* Empty state */
             .no-posts { text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 10px; grid-column: 1 / -1; }
@@ -122,15 +101,6 @@
 
         {{-- Sidebar --}}
         <aside class="store-sidebar">
-            {{-- Search --}}
-            <div class="search-box">
-                <input type="text"
-                       wire:model.live.debounce.400ms="searchQuery"
-                       placeholder="Search articles..."
-                       aria-label="Search blog posts">
-                <i class="bi bi-search search-icon"></i>
-            </div>
-
             {{-- Categories --}}
             @if($this->categories->count())
                 <div class="filter-card">
@@ -185,7 +155,7 @@
             @endif
 
             {{-- Clear All --}}
-            @if($searchQuery || $selectedCategory || $selectedTag)
+            @if($selectedCategory || $selectedTag)
                 <button class="btn btn-outline-secondary btn-sm w-100" wire:click="clearFilters">
                     Clear All Filters
                 </button>
@@ -194,51 +164,11 @@
 
         {{-- Main --}}
         <main class="store-main">
-            {{-- Pinned Posts Strip --}}
-            @if($this->pinnedPosts->count() && !$searchQuery && !$selectedCategory && !$selectedTag)
-                <div class="pinned-strip">
-                    <div class="pinned-strip-header">
-                        <i class="bi bi-pin-angle-fill pin-icon"></i>
-                        Featured Posts
-                    </div>
-                    <div class="pinned-cards">
-                        @foreach($this->pinnedPosts as $pinned)
-                            <a href="{{ route('blog.detail', $pinned->slug) }}" wire:navigate class="pinned-item">
-                                <div class="pinned-item-thumb">
-                                    @if($pinned->featured_image)
-                                        <img src="{{ asset('storage/' . $pinned->featured_image) }}"
-                                             alt="{{ $pinned->title }}" loading="lazy">
-                                    @else
-                                        <div class="pinned-item-thumb-placeholder">
-                                            <i class="bi bi-journal-text" style="color: #7cbf3d; font-size: 16px;"></i>
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="pinned-item-info">
-                                    <div class="pinned-item-title">{{ $pinned->title }}</div>
-                                    <div class="pinned-item-meta">
-                                        @foreach($pinned->categories->take(2) as $cat)
-                                            <span style="background: {{ $cat->accent_color ?? '#7cbf3d' }}; color: #fff; padding: 0 6px; border-radius: 8px; font-size: 10px; font-weight: 600;">{{ $cat->name }}</span>
-                                        @endforeach
-                                        @if($pinned->published_at)
-                                            <span>{{ $pinned->published_at->format('M j, Y') }}</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-            @endif
-
             {{-- Results Header --}}
             <div class="results-header">
                 <div class="results-count">
-                    Showing <strong>{{ $this->posts->firstItem() ?? 0 }}–{{ $this->posts->lastItem() ?? 0 }}</strong>
-                    of <strong>{{ $this->posts->total() }}</strong> articles
-                    @if($searchQuery)
-                        for "<strong>{{ $searchQuery }}</strong>"
-                    @endif
+                    Showing <strong>{{ $this->posts->count() }}</strong>
+                    of <strong>{{ $this->totalPosts }}</strong> articles
                 </div>
                 <div class="sort-dropdown">
                     <label for="sortBy">Sort by:</label>
@@ -311,25 +241,26 @@
                         <i class="bi bi-journal-x"></i>
                         <h4>No articles found</h4>
                         <p class="text-muted">
-                            @if($searchQuery)
-                                No articles match "{{ $searchQuery }}".
-                            @elseif($selectedCategory)
+                            @if($selectedCategory)
                                 No articles in this category yet.
                             @else
                                 Check back soon for new content.
                             @endif
                         </p>
-                        @if($searchQuery || $selectedCategory)
+                        @if($selectedCategory)
                             <button class="btn btn-outline-secondary btn-sm" wire:click="clearFilters">Clear Filters</button>
                         @endif
                     </div>
                 @endforelse
             </div>
 
-            {{-- Pagination --}}
-            @if($this->posts->hasPages())
-                <div class="d-flex justify-content-center mt-4">
-                    {{ $this->posts->links() }}
+            {{-- Infinite Scroll Sentinel --}}
+            @if($this->hasMore)
+                <div x-data x-intersect="$wire.loadMore()" class="d-flex justify-content-center mt-4 mb-4">
+                    <div wire:loading wire:target="loadMore" class="text-center">
+                        <div class="spinner-border text-success spinner-border-sm" role="status"></div>
+                        <span class="text-muted ms-2" style="font-size: 14px;">Loading more articles...</span>
+                    </div>
                 </div>
             @endif
         </main>

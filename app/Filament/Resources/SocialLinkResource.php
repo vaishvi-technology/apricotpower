@@ -16,7 +16,7 @@ class SocialLinkResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-share';
 
-    protected static ?string $navigationGroup = 'Blog';
+    protected static ?string $navigationGroup = 'Settings';
 
     protected static ?int $navigationSort = 5;
 
