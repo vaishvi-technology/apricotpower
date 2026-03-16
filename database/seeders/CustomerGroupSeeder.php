@@ -7,72 +7,112 @@ use Illuminate\Database\Seeder;
 
 class CustomerGroupSeeder extends Seeder
 {
+    /**
+     * Seed the customer groups based on legacy Apricot Power system.
+     */
     public function run(): void
     {
-        CustomerGroup::updateOrCreate(
-            ['handle' => 'consumer'],
+        $groups = [
             [
                 'name' => 'Consumer',
-                'is_wholesale' => false,
-                'net_terms_eligible' => false,
-                'is_active' => true,
+                'handle' => 'consumer',
                 'default' => true,
-            ]
-        );
-
-        CustomerGroup::updateOrCreate(
-            ['handle' => 'wholesale'],
+                'is_wholesale' => false,
+                'description' => 'Default retail customers',
+                'discount_percentage' => 0,
+                'net_terms_eligible' => false,
+                'net_terms_days' => 0,
+                'minimum_order_amount' => null,
+                'products_minimum' => 1,
+                'requires_approval' => false,
+                'is_active' => true,
+                'sort_order' => 1,
+            ],
             [
                 'name' => 'Wholesale',
-                'is_wholesale' => true,
-                'net_terms_eligible' => true,
-                'is_active' => true,
+                'handle' => 'wholesale',
                 'default' => false,
-            ]
-        );
-
-        CustomerGroup::updateOrCreate(
-            ['handle' => 'distributor'],
+                'is_wholesale' => true,
+                'description' => 'Wholesale accounts with volume pricing',
+                'discount_percentage' => 0,
+                'net_terms_eligible' => true,
+                'net_terms_days' => 30,
+                'minimum_order_amount' => 300.00,
+                'products_minimum' => 1,
+                'requires_approval' => true,
+                'is_active' => true,
+                'sort_order' => 2,
+            ],
             [
                 'name' => 'Distributor',
-                'is_wholesale' => false,
-                'net_terms_eligible' => false,
-                'is_active' => true,
+                'handle' => 'distributor',
                 'default' => false,
-            ]
-        );
-
-        CustomerGroup::updateOrCreate(
-            ['handle' => 'friends-family'],
+                'is_wholesale' => true,
+                'description' => 'Distributor accounts with deeper discounts',
+                'discount_percentage' => 0,
+                'net_terms_eligible' => true,
+                'net_terms_days' => 30,
+                'minimum_order_amount' => 500.00,
+                'products_minimum' => 1,
+                'requires_approval' => true,
+                'is_active' => true,
+                'sort_order' => 3,
+            ],
             [
                 'name' => 'Friends & Family',
-                'is_wholesale' => false,
-                'net_terms_eligible' => false,
-                'is_active' => true,
+                'handle' => 'friends-family',
                 'default' => false,
-            ]
-        );
-
-        CustomerGroup::updateOrCreate(
-            ['handle' => 'third-party-marketplaces'],
+                'is_wholesale' => false,
+                'description' => 'Employee and affiliate discounts',
+                'discount_percentage' => 0,
+                'net_terms_eligible' => false,
+                'net_terms_days' => 0,
+                'minimum_order_amount' => null,
+                'products_minimum' => 1,
+                'requires_approval' => false,
+                'is_active' => true,
+                'sort_order' => 7,
+            ],
             [
                 'name' => 'Third-Party Marketplaces',
-                'is_wholesale' => true,
-                'net_terms_eligible' => true,
-                'is_active' => true,
+                'handle' => 'marketplaces',
                 'default' => false,
-            ]
-        );
-
-        CustomerGroup::updateOrCreate(
-            ['handle' => 'admin'],
+                'is_wholesale' => false,
+                'description' => 'Amazon, eBay, and other marketplace orders',
+                'discount_percentage' => 0,
+                'net_terms_eligible' => false,
+                'net_terms_days' => 0,
+                'minimum_order_amount' => null,
+                'products_minimum' => 1,
+                'requires_approval' => false,
+                'is_active' => true,
+                'sort_order' => 8,
+            ],
             [
                 'name' => 'Admin',
-                'is_wholesale' => false,
-                'net_terms_eligible' => false,
-                'is_active' => true,
+                'handle' => 'admin',
                 'default' => false,
-            ]
-        );
+                'is_wholesale' => false,
+                'description' => 'Admin orders',
+                'discount_percentage' => 0,
+                'net_terms_eligible' => false,
+                'net_terms_days' => 0,
+                'minimum_order_amount' => null,
+                'products_minimum' => 1,
+                'requires_approval' => false,
+                'is_active' => true,
+                'sort_order' => 9,
+            ],
+
+        ];
+
+        foreach ($groups as $groupData) {
+            CustomerGroup::updateOrCreate(
+                ['handle' => $groupData['handle']],
+                $groupData
+            );
+        }
+
+        $this->command->info('Customer groups seeded successfully!');
     }
 }

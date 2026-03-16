@@ -26,11 +26,12 @@
                                 $variant = $product->variants->first();
                                 $basePrice = $variant?->basePrices->first();
                                 $thumbnail = $product->getFirstMedia('images');
+                                $productUrl = $product->defaultUrl?->slug ? route('product.view', $product->defaultUrl->slug) : '#';
                             @endphp
                             <div class="swiper-slide">
                                 <div class="hot-buys-item left-border">
                                     <div class="cursor-pointer">
-                                        <a href="{{ route('product.view', $product->defaultUrl->slug) }}">
+                                        <a href="{{ $productUrl }}">
                                             @if($thumbnail)
                                                 <img width="300" height="400" src="{{ $thumbnail->getUrl('medium') }}" alt="{{ $product->translateAttribute('name') }}">
                                             @endif
@@ -38,7 +39,7 @@
                                     </div>
                                     <div class="hot-buys-item-content cursor">
                                         <h4 class="text-theme">
-                                            <a href="{{ route('product.view', $product->defaultUrl->slug) }}" style="text-decoration: none; color: inherit;">
+                                            <a href="{{ $productUrl }}" style="text-decoration: none; color: inherit;">
                                                 {{ $product->translateAttribute('name') }}
                                             </a>
                                         </h4>
@@ -64,8 +65,8 @@
                                             <div class="feefo-product-stars-widget" data-product-sku="{{ $variant->sku }}"></div>
                                         @endif
                                         <div class="d-flex justify-content-between">
-                                            <a href="{{ route('product.view', $product->defaultUrl->slug) }}" class="add-to-cart-btn" style="text-decoration: none; text-align: center;">Buy Now</a>
-                                            <a href="{{ route('product.view', $product->defaultUrl->slug) }}" class="add-to-cart-btn" style="text-decoration: none; text-align: center;">Add To Cart</a>
+                                            <a href="{{ $productUrl }}" class="add-to-cart-btn" style="text-decoration: none; text-align: center;">Buy Now</a>
+                                            <a href="{{ $productUrl }}" class="add-to-cart-btn" style="text-decoration: none; text-align: center;">Add To Cart</a>
                                         </div>
                                     </div>
                                 </div>

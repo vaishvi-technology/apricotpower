@@ -856,12 +856,10 @@
 
                     @if ($this->product->translateAttribute('description'))
                         <p class="product-description">{{ Str::limit(strip_tags($this->product->translateAttribute('description')), 200) }}</p>
-                    @elseif ($this->product->translateAttribute('product_descriptor'))
-                        <p class="product-description">{{ $this->product->translateAttribute('product_descriptor') }}</p>
                     @endif
 
-                    @if ($this->product->translateAttribute('quantity_size'))
-                        <p class="product-size"><strong>Size:</strong> {{ $this->product->translateAttribute('quantity_size') }}</p>
+                    @if ($this->product->quantity_size)
+                        <p class="product-size"><strong>Size:</strong> {{ $this->product->quantity_size }}</p>
                     @endif
 
                     {{-- Rating --}}

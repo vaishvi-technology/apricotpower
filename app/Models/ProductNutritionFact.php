@@ -45,6 +45,6 @@ class ProductNutritionFact extends Model
         return $this->productNutrients()
             ->with('nutrient')
             ->get()
-            ->sortBy(fn($pn) => $pn->nutrient->rank ?? 0);
+            ->sortBy(fn($pn) => $pn->nutrient->name);
     }
 }

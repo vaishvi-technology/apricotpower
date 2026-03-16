@@ -21,7 +21,7 @@
 
     <link
         rel="icon"
-        href="{{ asset('favicon.svg') }}"
+        href="{{ asset('images/home/favicon.png') }}"
     >
     <!-- Google Translate -->
     <script type="text/javascript">

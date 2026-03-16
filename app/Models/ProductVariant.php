@@ -8,6 +8,19 @@ use Lunar\Models\ProductVariant as LunarProductVariant;
 class ProductVariant extends LunarProductVariant
 {
     /**
+     * Additional fillable attributes.
+     */
+    protected $fillable = [
+        'sku',
+        'tax_class_id',
+        'free_shipping',
+        'weight_lbs',
+        'weight_oz',
+        'handling_fee',
+        'amazon_sku',
+    ];
+
+    /**
      * Custom relationships to standalone models.
      */
     public function inventoryLots(): HasMany
