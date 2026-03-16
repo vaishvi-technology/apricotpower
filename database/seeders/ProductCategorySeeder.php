@@ -7,9 +7,6 @@ use App\Models\Product;
 use App\Models\Tag;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Lunar\FieldTypes\Text;
-use Lunar\FieldTypes\TranslatedText;
-use Lunar\Models\Attribute;
 use Lunar\Models\Brand;
 use Lunar\Models\Currency;
 use Lunar\Models\Language;
@@ -33,15 +30,14 @@ class ProductCategorySeeder extends AbstractSeeder
     {
         $products = $this->getSeedData('products-with-categories');
 
-        $attributes = Attribute::get();
         $productType = ProductType::first();
         $taxClass = TaxClass::whereDefault(true)->first();
         $currency = Currency::whereDefault(true)->first();
         $tags = Tag::all();
 
-        DB::transaction(function () use ($products, $attributes, $productType, $taxClass, $currency, $tags) {
+        DB::transaction(function () use ($products, $productType, $taxClass, $currency, $tags) {
             foreach ($products as $product) {
-                $this->createProduct($product, $attributes, $productType, $taxClass, $currency, $tags);
+                $this->createProduct($product, $productType, $taxClass, $currency, $tags);
             }
         });
     }
@@ -51,7 +47,6 @@ class ProductCategorySeeder extends AbstractSeeder
      */
     protected function createProduct(
         object $product,
-        $attributes,
         ProductType $productType,
         TaxClass $taxClass,
         Currency $currency,
@@ -63,34 +58,33 @@ class ProductCategorySeeder extends AbstractSeeder
             return $existingVariant->product;
         }
 
-        // Build attribute data - always set name and description as TranslatedText
-        $attributeData = [];
-        foreach ($product->attributes as $attributeHandle => $value) {
-            // Always create TranslatedText for name and description
-            $attributeData[$attributeHandle] = new TranslatedText([
-                'en' => new Text($value),
-            ]);
-        }
-
         // Find or create brand
         $brand = Brand::firstOrCreate([
             'name' => $product->brand,
         ]);
 
-        // Find category by slug
-        $category = null;
-        if (!empty($product->category_slug)) {
-            $category = Category::where('slug', $product->category_slug)->first();
-        }
-
-        // Create the product
+        // Create the product with direct column fields
         $productModel = Product::create([
-            'attribute_data' => $attributeData,
+            'name' => $product->attributes->name ?? null,
+            'description' => $product->attributes->description ?? null,
+            'attribute_data' => [], // Required by Lunar, but we use direct columns
             'product_type_id' => $productType->id,
             'status' => 'published',
             'brand_id' => $brand->id,
-            'category_id' => $category?->id,
         ]);
+
+        // Sync categories (many-to-many)
+        if (!empty($product->category_slugs)) {
+            $categorySlugs = is_array($product->category_slugs) ? $product->category_slugs : [$product->category_slugs];
+            $categoryIds = Category::whereIn('slug', $categorySlugs)->pluck('id');
+            $productModel->categories()->sync($categoryIds);
+        } elseif (!empty($product->category_slug)) {
+            // Backwards compatibility with single category_slug
+            $category = Category::where('slug', $product->category_slug)->first();
+            if ($category) {
+                $productModel->categories()->sync([$category->id]);
+            }
+        }
 
         // Create URL for the product
         $language = Language::whereDefault(true)->first();

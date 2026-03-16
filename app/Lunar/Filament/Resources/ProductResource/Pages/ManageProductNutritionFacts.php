@@ -83,7 +83,7 @@ class ManageProductNutritionFacts extends BaseEditRecord
                 ->map(fn($pn) => [
                     'id' => $pn->id,
                     'nutrient_id' => $pn->nutrient_id,
-                    'nutrient_name' => $pn->nutrient->display_title ?? $pn->nutrient->name,
+                    'nutrient_name' => $pn->nutrient->name,
                     'amount_per_serving' => $pn->amount_per_serving,
                     'percent_daily_value' => $pn->percent_daily_value,
                     'not_established' => $pn->not_established,
@@ -121,13 +121,17 @@ class ManageProductNutritionFacts extends BaseEditRecord
                     $existingIds[] = $productNutrient->id;
                 }
             } else {
-                $productNutrient = ProductNutrient::create([
-                    'nutrition_fact_id' => $nutritionFact->id,
-                    'nutrient_id' => $nutrientData['nutrient_id'],
-                    'amount_per_serving' => $nutrientData['amount_per_serving'] ?? null,
-                    'percent_daily_value' => $nutrientData['percent_daily_value'] ?? null,
-                    'not_established' => $nutrientData['not_established'] ?? false,
-                ]);
+                $productNutrient = ProductNutrient::updateOrCreate(
+                    [
+                        'nutrition_fact_id' => $nutritionFact->id,
+                        'nutrient_id' => $nutrientData['nutrient_id'],
+                    ],
+                    [
+                        'amount_per_serving' => $nutrientData['amount_per_serving'] ?? null,
+                        'percent_daily_value' => $nutrientData['percent_daily_value'] ?? null,
+                        'not_established' => $nutrientData['not_established'] ?? false,
+                    ]
+                );
                 $existingIds[] = $productNutrient->id;
             }
         }
@@ -178,7 +182,7 @@ class ManageProductNutritionFacts extends BaseEditRecord
                                 ->label('Serving Size')
                                 ->placeholder('e.g., 3 seeds'),
                             Forms\Components\TextInput::make('servings_per_container')
-                                ->label('Servings Per Size')
+                                ->label('Servings per Container')
                                 ->placeholder('e.g., apx. 125'),
                         ]),
                         Forms\Components\Grid::make(2)->schema([
@@ -204,7 +208,7 @@ class ManageProductNutritionFacts extends BaseEditRecord
                         Forms\Components\Grid::make(4)->schema([
                             Forms\Components\Select::make('selected_nutrient_id')
                                 ->label('Select Nutrient')
-                                ->options(fn () => Nutrient::active()->ordered()->pluck('display_title', 'id'))
+                                ->options(fn () => Nutrient::orderBy('name')->pluck('name', 'id'))
                                 ->searchable()
                                 ->preload()
                                 ->columnSpan(3),
@@ -220,7 +224,7 @@ class ManageProductNutritionFacts extends BaseEditRecord
                                                 $nutrient = Nutrient::find($this->selected_nutrient_id);
                                                 $this->nutrients[] = [
                                                     'nutrient_id' => $nutrient->id,
-                                                    'nutrient_name' => $nutrient->display_title ?? $nutrient->name,
+                                                    'nutrient_name' => $nutrient->name,
                                                     'amount_per_serving' => '',
                                                     'percent_daily_value' => null,
                                                     'not_established' => false,
@@ -261,7 +265,7 @@ class ManageProductNutritionFacts extends BaseEditRecord
                 Forms\Components\Section::make('Ingredients')
                     ->schema([
                         Forms\Components\Textarea::make('ingredients')
-                            ->label('Ingredients List')
+                            ->label('')
                             ->rows(4)
                             ->placeholder('Enter ingredients separated by commas'),
                     ]),

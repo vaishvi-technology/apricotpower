@@ -2,12 +2,20 @@
 
 namespace App\Lunar;
 
+use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductGroupPricing;
+use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductIdentifiers;
+use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductInventoryLots;
 use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductNutritionFacts;
+use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductPricing;
+use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductShipping;
+use App\Lunar\Filament\Resources\ProductResource\Pages\ManageProductSupplier;
+use App\Models\Supplier;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Lunar\Admin\Support\Extending\ResourceExtension;
+use Lunar\Admin\Support\Forms\Components\Attributes;
 
 class ProductResourceExtension extends ResourceExtension
 {
@@ -17,17 +25,42 @@ class ProductResourceExtension extends ResourceExtension
     public function extendPages(array $pages): array
     {
         return array_merge($pages, [
+            'pricing' => ManageProductPricing::route('/{record}/pricing'),
+            'identifiers' => ManageProductIdentifiers::route('/{record}/identifiers'),
+            'shipping' => ManageProductShipping::route('/{record}/shipping'),
             'nutrition-facts' => ManageProductNutritionFacts::route('/{record}/nutrition-facts'),
+            'inventory-lots' => ManageProductInventoryLots::route('/{record}/inventory-lots'),
+            'supplier' => ManageProductSupplier::route('/{record}/supplier'),
+            'group-pricing' => ManageProductGroupPricing::route('/{record}/group-pricing'),
         ]);
     }
 
     /**
-     * Extend the subnavigation with nutrition facts link.
+     * Extend the subnavigation with custom pages.
      */
     public function extendSubNavigation(array $pages): array
     {
-        return array_merge($pages, [
+        // Filter out Lunar default pages we don't need and pages we're replacing
+        $filtered = collect($pages)->filter(function ($page) {
+            return $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductShipping::class
+                && $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductIdentifiers::class
+                && $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductPricing::class
+                // Hide unused sidebar pages
+                && $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductInventory::class
+                && $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductVariants::class
+                && $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductUrls::class
+                && $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductCollections::class
+                && $page !== \Lunar\Admin\Filament\Resources\ProductResource\Pages\ManageProductAssociations::class;
+        })->values()->all();
+
+        return array_merge($filtered, [
+            ManageProductPricing::class,
+            ManageProductIdentifiers::class,
+            ManageProductShipping::class,
             ManageProductNutritionFacts::class,
+            ManageProductInventoryLots::class,
+            ManageProductSupplier::class,
+            ManageProductGroupPricing::class,
         ]);
     }
 
@@ -35,8 +68,11 @@ class ProductResourceExtension extends ResourceExtension
     {
         $existing = $form->getComponents(withHidden: true);
 
-        // Filter out the brand_id field from existing components
-        $filtered = collect($existing)->map(function ($component) {
+        // Filter out Attributes components (key-value sections) and customize form fields
+        $filtered = collect($existing)->filter(function ($component) {
+            // Remove Attributes key-value pair sections (we use direct database columns instead)
+            return !($component instanceof Attributes);
+        })->map(function ($component) {
             if ($component instanceof Forms\Components\Section) {
                 $schema = $component->getChildComponents();
                 $filteredSchema = collect($schema)->filter(function ($child) {
@@ -49,14 +85,43 @@ class ProductResourceExtension extends ResourceExtension
                     return true;
                 })->values()->all();
 
-                // Add category select at the beginning of the section
-                $categorySelect = Forms\Components\Select::make('category_id')
-                    ->label('Category')
-                    ->options(fn () => \App\Models\Category::pluck('name', 'id'))
+                // Add product name field (load from translateAttribute if direct column is empty)
+                $nameField = Forms\Components\TextInput::make('name')
+                    ->label('Product Name')
+                    ->required()
+                    ->maxLength(255)
+                    ->afterStateHydrated(function ($component, $state, $record) {
+                        if (empty($state) && $record) {
+                            $component->state($record->translateAttribute('name'));
+                        }
+                    });
+
+                // Add product description field (load from translateAttribute if direct column is empty)
+                $descriptionField = Forms\Components\RichEditor::make('description')
+                    ->label('Description')
+                    ->columnSpanFull()
+                    ->afterStateHydrated(function ($component, $state, $record) {
+                        if (empty($state) && $record) {
+                            $component->state($record->translateAttribute('description'));
+                        }
+                    });
+
+                // Add categories multi-select
+                $categorySelect = Forms\Components\Select::make('categories')
+                    ->label('Categories')
+                    ->relationship('categories', 'name')
+                    ->multiple()
                     ->searchable()
                     ->preload();
 
-                return $component->schema([$categorySelect, ...$filteredSchema]);
+                // Add quantity_size field
+                $quantitySizeField = Forms\Components\TextInput::make('quantity_size')
+                    ->label('Quantity/Size')
+                    ->placeholder('e.g., 8 oz, 16 oz, 100 tablets')
+                    ->maxLength(255)
+                    ->helperText('Product size displayed on the product page.');
+
+                return $component->schema([$nameField, $descriptionField, $categorySelect, ...$filteredSchema, $quantitySizeField]);
             }
             return $component;
         })->all();
@@ -120,7 +185,7 @@ class ProductResourceExtension extends ResourceExtension
                 ->collapsible()
                 ->schema([
                     Forms\Components\RichEditor::make('intro_content')
-                        ->label('Intro Content')
+                        ->label('Item Description')
                         ->helperText('Content displayed in the Intro tab on the product page.')
                         ->columnSpanFull(),
                     Forms\Components\RichEditor::make('learn_more')
@@ -128,6 +193,44 @@ class ProductResourceExtension extends ResourceExtension
                         ->helperText('Content displayed in the Learn More tab on the product page.')
                         ->columnSpanFull(),
                 ]),
+
+            Forms\Components\Section::make('Supplier Information')
+                ->description('Primary supplier and inventory notes for this product.')
+                ->collapsible()
+                ->schema([
+                    Forms\Components\Select::make('supplier_id')
+                        ->label('Primary Supplier')
+                        ->relationship('supplier', 'company_name')
+                        ->searchable()
+                        ->preload()
+                        ->createOptionForm([
+                            Forms\Components\TextInput::make('company_name')
+                                ->required()
+                                ->maxLength(100),
+                            Forms\Components\TextInput::make('contact_name')
+                                ->maxLength(100),
+                            Forms\Components\TextInput::make('phone')
+                                ->tel(),
+                            Forms\Components\TextInput::make('email')
+                                ->email(),
+                            Forms\Components\TextInput::make('supplier_terms')
+                                ->label('Supplier Terms')
+                                ->placeholder('e.g., Net 30'),
+                            Forms\Components\TextInput::make('lead_time')
+                                ->label('Lead Time (Days)')
+                                ->numeric(),
+                        ])
+                        ->createOptionUsing(function (array $data) {
+                            return Supplier::create($data)->id;
+                        }),
+
+                    Forms\Components\Textarea::make('inventory_notes')
+                        ->label('Inventory Notes')
+                        ->rows(3)
+                        ->helperText('Internal notes about inventory management for this product.')
+                        ->columnSpanFull(),
+                ]),
+
         ]);
     }
 
@@ -146,8 +249,8 @@ class ProductResourceExtension extends ResourceExtension
         return $table
             ->columns([
                 ...$columns,
-                Tables\Columns\TextColumn::make('category.name')
-                    ->label('Category')
+                Tables\Columns\TextColumn::make('categories.name')
+                    ->label('Categories')
                     ->badge()
                     ->toggleable()
                     ->searchable(),
@@ -155,12 +258,18 @@ class ProductResourceExtension extends ResourceExtension
                     ->label('Meta Title')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('supplier.company_name')
+                    ->label('Supplier')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 ...$filters,
-                Tables\Filters\SelectFilter::make('category_id')
+                Tables\Filters\SelectFilter::make('categories')
                     ->label('Category')
-                    ->options(fn () => \App\Models\Category::pluck('name', 'id')),
+                    ->relationship('categories', 'name')
+                    ->multiple()
+                    ->preload(),
             ]);
     }
 }
