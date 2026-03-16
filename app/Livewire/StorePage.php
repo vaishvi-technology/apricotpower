@@ -67,7 +67,7 @@ class StorePage extends Component
             'defaultUrl',
             'media',
             'variants.basePrices.currency',
-            'category',
+            'categories',
             'tags',
         ]);
 
@@ -78,17 +78,19 @@ class StorePage extends Component
             $query->where('status', 'draft');
         }
 
-        // Filter by search query
+        // Filter by search query (using direct database columns)
         if (!empty($this->searchQuery)) {
             $query->where(function ($q) {
-                $q->where('attribute_data->name->value', 'like', '%' . $this->searchQuery . '%')
-                    ->orWhere('attribute_data->description->value', 'like', '%' . $this->searchQuery . '%');
+                $q->where('name', 'like', '%' . $this->searchQuery . '%')
+                    ->orWhere('description', 'like', '%' . $this->searchQuery . '%');
             });
         }
 
-        // Filter by selected categories
+        // Filter by selected categories (many-to-many)
         if (!empty($this->selectedCategories)) {
-            $query->whereIn('category_id', $this->selectedCategories);
+            $query->whereHas('categories', function ($q) {
+                $q->whereIn('categories.id', $this->selectedCategories);
+            });
         }
 
         // Filter by selected tags
@@ -119,11 +121,11 @@ class StorePage extends Component
                 break;
 
             case 'name_asc':
-                $query->orderBy('attribute_data->name->value');
+                $query->orderBy('name');
                 break;
 
             case 'name_desc':
-                $query->orderByDesc('attribute_data->name->value');
+                $query->orderByDesc('name');
                 break;
 
             case 'newest':
@@ -220,6 +222,9 @@ class StorePage extends Component
      */
     public function addToCart(int $variantId, int $quantity = 1): void
     {
+        // Ensure Lunar defaults exist before any cart operations
+        $this->ensureLunarDefaults();
+
         $cart = CartSession::current();
 
         if (!$cart) {
@@ -234,6 +239,31 @@ class StorePage extends Component
 
         $this->dispatch('cart-updated');
         $this->dispatch('notify', message: 'Product added to cart!', type: 'success');
+    }
+
+    /**
+     * Ensure Lunar default Currency and Channel exist.
+     */
+    protected function ensureLunarDefaults(): void
+    {
+        if (!Currency::getDefault()) {
+            Currency::create([
+                'code' => 'USD',
+                'name' => 'US Dollar',
+                'exchange_rate' => 1,
+                'decimal_places' => 2,
+                'default' => true,
+                'enabled' => true,
+            ]);
+        }
+
+        if (!Channel::getDefault()) {
+            Channel::create([
+                'handle' => 'webstore',
+                'name' => 'Webstore',
+                'default' => true,
+            ]);
+        }
     }
 
     /**

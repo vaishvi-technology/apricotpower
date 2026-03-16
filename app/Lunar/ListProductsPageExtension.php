@@ -61,7 +61,10 @@ class ListProductsPageExtension extends ListPageExtension
             'enabled' => true,
         ]);
         $productType = ProductType::first() ?? ProductType::create(['name' => 'Default']);
-        $taxClass = TaxClass::getDefault() ?? TaxClass::create(['name' => 'Default', 'default' => true]);
+        $taxClass = TaxClass::getDefault() ?? TaxClass::first();
+        if (!$taxClass) {
+            $taxClass = TaxClass::create(['name' => 'Default', 'default' => true]);
+        }
 
         $nameAttribute = Attribute::whereAttributeType($model::morphName())
             ->whereHandle('name')
@@ -79,8 +82,8 @@ class ListProductsPageExtension extends ListPageExtension
         ]);
 
         $variant = $product->variants()->create([
-            'tax_class_id' => $taxClass->id,
             'sku' => $data['sku'],
+            'tax_class_id' => $taxClass->id,
         ]);
 
         $variant->prices()->create([

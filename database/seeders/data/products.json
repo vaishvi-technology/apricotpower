@@ -8,7 +8,8 @@
         "price": "2495",
         "image": "california-bitter-raw-apricot-seeds-8oz.png",
         "brand": "Apricot Power",
-        "category_slug": "apricot-seeds"
+        "category_slug": "apricot-seeds",
+        "collections": []
     },
     {
         "attributes": {
@@ -19,7 +20,8 @@
         "price": "3995",
         "image": "california-bitter-raw-apricot-seeds-16oz.png",
         "brand": "Apricot Power",
-        "category_slug": "apricot-seeds"
+        "category_slug": "apricot-seeds",
+        "collections": []
     },
     {
         "attributes": {
@@ -30,7 +32,8 @@
         "price": "6995",
         "image": "california-bitter-raw-apricot-seeds-32oz.png",
         "brand": "Apricot Power",
-        "category_slug": "apricot-seeds"
+        "category_slug": "apricot-seeds",
+        "collections": []
     },
     {
         "attributes": {
@@ -41,7 +44,8 @@
         "price": "2795",
         "image": "turkish-organic-bitter-raw-apricot-seeds-8oz.png",
         "brand": "Apricot Power",
-        "category_slug": "apricot-seeds"
+        "category_slug": "apricot-seeds",
+        "collections": []
     },
     {
         "attributes": {
@@ -52,7 +56,8 @@
         "price": "4495",
         "image": "turkish-organic-bitter-raw-apricot-seeds-16oz.png",
         "brand": "Apricot Power",
-        "category_slug": "apricot-seeds"
+        "category_slug": "apricot-seeds",
+        "collections": []
     },
     {
         "attributes": {
@@ -63,7 +68,8 @@
         "price": "7495",
         "image": "turkish-organic-bitter-raw-apricot-seeds-32oz.png",
         "brand": "Apricot Power",
-        "category_slug": "apricot-seeds"
+        "category_slug": "apricot-seeds",
+        "collections": []
     },
     {
         "attributes": {
@@ -74,7 +80,8 @@
         "price": "3995",
         "image": "apricot-power-b17-amygdalin-100mg-tablets.png",
         "brand": "Apricot Power",
-        "category_slug": "b17-apricot-seed-extract"
+        "category_slug": "b17-apricot-seed-extract",
+        "collections": []
     },
     {
         "attributes": {
@@ -85,7 +92,8 @@
         "price": "7995",
         "image": "apricot-power-b17-amygdalin-500mg-tablets.png",
         "brand": "Apricot Power",
-        "category_slug": "b17-apricot-seed-extract"
+        "category_slug": "b17-apricot-seed-extract",
+        "collections": []
     },
     {
         "attributes": {
@@ -96,7 +104,8 @@
         "price": "4295",
         "image": "apricot-power-b17-amygdalin-100mg-capsules.png",
         "brand": "Apricot Power",
-        "category_slug": "b17-apricot-seed-extract"
+        "category_slug": "b17-apricot-seed-extract",
+        "collections": []
     },
     {
         "attributes": {
@@ -105,9 +114,10 @@
         },
         "sku": "AP-B17-500MG-CAP",
         "price": "8495",
-        "image": "apricot-power-b17-amygdalin-500mg-capsules.png",
+        "image": null,
         "brand": "Apricot Power",
-        "category_slug": "b17-apricot-seed-extract"
+        "category_slug": "b17-apricot-seed-extract",
+        "collections": []
     },
     {
         "attributes": {
@@ -116,9 +126,10 @@
         },
         "sku": "NOV-B17-500MG-TAB",
         "price": "8995",
-        "image": "novodalin-b17-amygdalin-500mg-tablets.png",
+        "image": null,
         "brand": "NOVODALIN",
-        "category_slug": "b17-apricot-seed-extract"
+        "category_slug": "b17-apricot-seed-extract",
+        "collections": []
     },
     {
         "attributes": {
@@ -129,6 +140,7 @@
         "price": "4495",
         "image": null,
         "brand": "NOVODALIN",
-        "category_slug": "b17-apricot-seed-extract"
+        "category_slug": "b17-apricot-seed-extract",
+        "collections": []
     }
 ]

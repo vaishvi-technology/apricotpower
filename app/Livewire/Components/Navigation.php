@@ -48,13 +48,18 @@ class Navigation extends Component
      */
     public function getCartCountProperty()
     {
-        $cart = CartSession::current();
+        try {
+            $cart = CartSession::current();
 
-        if (!$cart) {
+            if (!$cart || !$cart->lines) {
+                return 0;
+            }
+
+            return $cart->lines->sum('quantity');
+        } catch (\Exception $e) {
+            // Handle case where Lunar defaults (Channel/Currency) don't exist
             return 0;
         }
-
-        return $cart->lines->sum('quantity');
     }
 
     public function render(): View

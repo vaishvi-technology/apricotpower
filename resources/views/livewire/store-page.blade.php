@@ -805,13 +805,6 @@
                                 @endif
                             </h3>
 
-                            {{-- Subtitle --}}
-                            @if($product->translateAttribute('product_descriptor'))
-                                <p class="product-card-subtitle">
-                                    {{ Str::limit($product->translateAttribute('product_descriptor'), 80) }}
-                                </p>
-                            @endif
-
                             {{-- Rating --}}
                             <div class="product-rating">
                                 <div class="stars">

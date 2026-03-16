@@ -53,16 +53,13 @@
 
     <div class="daily-value-header">% Daily Value*</div>
 
-    @foreach($nutrients->sortBy(fn($pn) => $pn->nutrient->rank ?? 999) as $productNutrient)
+    @foreach($nutrients->sortBy(fn($pn) => $pn->nutrient->name) as $productNutrient)
         @php
             $nutrient = $productNutrient->nutrient;
-            $displayClass = $nutrient->display_class ?? '';
-            $isBold = $displayClass === 'bold';
-            $isIndented = str_contains($displayClass, 'indent') || str_contains($nutrient->display_title ?? '', '&nbsp;');
         @endphp
-        <div class="nutrient-row {{ $isBold ? 'bold' : '' }} {{ $isIndented ? 'indented' : '' }}">
+        <div class="nutrient-row">
             <span class="nutrient-name">
-                {{ trim(html_entity_decode($nutrient->display_title ?? $nutrient->name)) }}
+                {{ $nutrient->name }}
                 @if($productNutrient->amount_per_serving)
                     {{ $productNutrient->amount_per_serving }}
                 @endif
