@@ -39,14 +39,11 @@ class AccountDetailsPage extends Component
     // Account Settings fields
     public ?int $customer_group_id = null;
     public ?int $sales_rep_id = null;
-    public bool $is_tax_exempt = false;
     public ?string $last_login_at = null;
     public ?string $last_order_at = null;
 
     // Wholesale / Billing fields
     public bool $is_online_wholesaler = false;
-    public string $store_date = '';
-    public int $store_count = 1;
     public bool $net_terms_approved = false;
     public string $credit_limit_option = '';
     public string $credit_limit = '';
@@ -84,13 +81,11 @@ class AccountDetailsPage extends Component
             // Account Settings
             $this->customer_group_id = $customer->customerGroups()->first()?->id;
             $this->sales_rep_id = $customer->sales_rep_id;
-            $this->is_tax_exempt = (bool) $customer->is_tax_exempt;
             $this->last_login_at = $customer->last_login_at?->format('M d, Y h:i A');
             $this->last_order_at = $customer->last_order_at?->format('M d, Y h:i A');
 
             // Wholesale / Billing
             $this->is_online_wholesaler = (bool) $customer->is_online_wholesaler;
-            $this->store_count = (int) ($customer->store_count ?? 1);
             $this->net_terms_approved = (bool) $customer->net_terms_approved;
             $this->credit_limit = $customer->credit_limit ?? '';
             $presetLimits = ['', '500', '1000', '3000', '4000', '5000', '7000', '10000'];
@@ -347,7 +342,6 @@ class AccountDetailsPage extends Component
 
         $customer->update([
             'sales_rep_id' => $this->sales_rep_id,
-            'is_tax_exempt' => $this->is_tax_exempt,
         ]);
 
         if ($this->customer_group_id) {
@@ -367,8 +361,6 @@ class AccountDetailsPage extends Component
 
         $this->validate([
             'credit_limit' => 'nullable|numeric|min:0',
-            'store_date' => 'nullable|date',
-            'store_count' => 'nullable|integer|min:1|max:100',
             'accounts_payable_email' => 'nullable|email|max:255',
             'retailer_name' => 'nullable|string|max:255',
             'retailer_street' => 'nullable|string|max:255',
@@ -386,7 +378,6 @@ class AccountDetailsPage extends Component
 
         $customer->update([
             'is_online_wholesaler' => $this->is_online_wholesaler,
-            'store_count' => $this->store_count,
             'net_terms_approved' => $this->net_terms_approved,
             'credit_limit' => $this->credit_limit !== '' ? $this->credit_limit : null,
             'accounts_payable_email' => $this->accounts_payable_email ?: null,

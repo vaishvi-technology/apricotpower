@@ -148,20 +148,13 @@ class CustomerResourceExtension extends ResourceExtension
                                             ->inline(false),
                                     ]),
 
-                                    Forms\Components\Grid::make(2)->schema([
-                                        Forms\Components\Select::make('sales_rep_id')
-                                            ->label('Sales Rep.')
-                                            ->relationship('salesRep', 'first_name')
-                                            ->getOptionLabelFromRecordUsing(fn ($record) => trim("{$record->first_name} {$record->last_name}"))
-                                            ->searchable()
-                                            ->preload()
-                                            ->placeholder('None Assigned'),
-
-                                        Forms\Components\Toggle::make('is_tax_exempt')
-                                            ->label('Tax Exempt')
-                                            ->onColor('success')
-                                            ->inline(false),
-                                    ]),
+                                    Forms\Components\Select::make('sales_rep_id')
+                                        ->label('Sales Rep.')
+                                        ->relationship('salesRep', 'first_name')
+                                        ->getOptionLabelFromRecordUsing(fn ($record) => trim("{$record->first_name} {$record->last_name}"))
+                                        ->searchable()
+                                        ->preload()
+                                        ->placeholder('None Assigned'),
 
                                     Forms\Components\Grid::make(2)->schema([
                                         Forms\Components\Placeholder::make('last_login_at_display')
@@ -198,22 +191,6 @@ class CustomerResourceExtension extends ResourceExtension
                                         ->label('Is Online Wholesaler?')
                                         ->onColor('success')
                                         ->inline(false),
-
-                                    Forms\Components\Fieldset::make('Add Store Record')
-                                        ->schema([
-                                            Forms\Components\Grid::make(2)->schema([
-                                                Forms\Components\DatePicker::make('store_date')
-                                                    ->label('Date')
-                                                    ->native(),
-
-                                                Forms\Components\TextInput::make('store_count')
-                                                    ->label('# of Stores')
-                                                    ->numeric()
-                                                    ->default(1)
-                                                    ->minValue(1)
-                                                    ->maxValue(100),
-                                            ]),
-                                        ]),
 
                                     Forms\Components\TextInput::make('accounts_payable_email')
                                         ->label('Accounts Payable Email')
