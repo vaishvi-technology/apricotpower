@@ -8,24 +8,28 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('blog_categories', function (Blueprint $table) {
+        Schema::create('blog_tags', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('parent_id')->nullable()->constrained('blog_categories')->nullOnDelete();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->integer('sort_order')->default(0);
             $table->timestamps();
 
-            $table->index('parent_id');
             $table->index('slug');
             $table->index('is_active');
+        });
+
+        Schema::create('blog_post_tag', function (Blueprint $table) {
+            $table->foreignId('blog_post_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('blog_tag_id')->constrained()->cascadeOnDelete();
+            $table->primary(['blog_post_id', 'blog_tag_id']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('blog_categories');
+        Schema::dropIfExists('blog_post_tag');
+        Schema::dropIfExists('blog_tags');
     }
 };
