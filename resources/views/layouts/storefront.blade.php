@@ -18,6 +18,7 @@
     >
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link href="{{ asset('css/home.css') }}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 
     <link
         rel="icon"
@@ -110,6 +111,7 @@
             border-radius: 0;
             padding: 0;
             min-width: 200px;
+            z-index: 1050;
         }
         .main-header .dropdown-item {
             padding: 10px 20px;
@@ -125,27 +127,53 @@
             margin-left: 5px;
         }
 
-        /* User Section */
+        /* User Section - Shared */
+        .user-section,
+        .user-section2 {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            white-space: nowrap;
+        }
+        .user-section .header-link,
         .user-section2 .header-link {
             display: flex;
             align-items: center;
             text-decoration: none;
-            gap: 5px;
+            margin-left: 18px;
+            gap: 0;
         }
+        .user-section .icon-text,
         .user-section2 .icon-text {
             font-size: 12px;
             font-weight: 600;
+            margin-left: 6px;
+            color: #212529;
         }
-        .user-section2 .login-icon,
-        .user-section2 img {
+        .user-section .icon-img,
+        .user-section2 .icon-img,
+        .user-section2 .login-icon {
             width: 20px;
             height: 20px;
+            object-fit: contain;
+        }
+        .user-section .dropdown .btn-link {
+            text-decoration: none;
+            color: #212529;
+            gap: 0;
+        }
+        .user-section .dropdown .btn-link .icon-text {
+            margin-left: 4px;
+        }
+        .user-section .dropdown .btn-link svg {
+            flex-shrink: 0;
         }
 
         /* Icon Wrapper & Cart Badge */
         .icon-wrapper {
             position: relative;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
         }
         .cart-badge {
             position: absolute;
@@ -161,6 +189,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            line-height: 1;
         }
 
         /* Mobile Cart Link */
@@ -198,9 +227,29 @@
     <x-footer />
 
     @livewireScripts
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <x-app-dialog />
     @stack('scripts')
+    <script>
+        (function () {
+            var nav = document.querySelector('.sticky-nav-wrapper');
+            if (!nav) return;
+            function onScroll() {
+                nav.classList.toggle('scrolled', window.scrollY > 10);
+            }
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+        })();
+
+        // Re-initialize Bootstrap dropdowns after Livewire SPA navigation
+        function initDropdowns() {
+            document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(function (el) {
+                if (!bootstrap.Dropdown.getInstance(el)) {
+                    new bootstrap.Dropdown(el);
+                }
+            });
+        }
+        document.addEventListener('livewire:navigated', initDropdowns);
+    </script>
 </body>
 
 </html>

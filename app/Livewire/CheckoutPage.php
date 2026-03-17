@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+use App\Models\Promo;
+use App\Services\PromoService;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -252,12 +254,54 @@ class CheckoutPage extends Component
         ])->authorize();
 
         if ($payment->success) {
+            // Record promo usage if a promo was applied
+            $this->recordPromoUsage();
+
             redirect()->route('checkout-success.view');
 
             return;
         }
 
+        // Record promo usage if a promo was applied
+        $this->recordPromoUsage();
+
         return redirect()->route('checkout-success.view');
+    }
+
+    /**
+     * Record promo usage when order is placed.
+     */
+    protected function recordPromoUsage(): void
+    {
+        if (!$this->cart || !$this->cart->promo_id) {
+            return;
+        }
+
+        $promo = Promo::find($this->cart->promo_id);
+        if (!$promo) {
+            return;
+        }
+
+        $customerId = $this->cart->customer_id;
+        $customerEmail = null;
+
+        if ($customerId) {
+            $customer = \App\Models\Customer::find($customerId);
+            $customerEmail = $customer?->email;
+        }
+
+        // Get order ID from the cart's latest order
+        $orderId = $this->cart->orders()->latest()->value('id');
+
+        $promoService = app(PromoService::class);
+        $promoService->recordUsage(
+            $promo,
+            $customerId,
+            $customerEmail,
+            $orderId,
+            (float) $this->cart->promo_discount,
+            (bool) $this->cart->promo_free_shipping,
+        );
     }
 
     /**
@@ -276,6 +320,34 @@ class CheckoutPage extends Component
         return ShippingManifest::getOptions(
             $this->cart
         );
+    }
+
+    /**
+     * Get the applied promo for the cart.
+     */
+    public function getAppliedPromoProperty(): ?Promo
+    {
+        if (!$this->cart || !$this->cart->promo_id) {
+            return null;
+        }
+
+        return Promo::find($this->cart->promo_id);
+    }
+
+    /**
+     * Get the promo discount amount.
+     */
+    public function getPromoDiscountProperty(): float
+    {
+        return $this->cart?->promo_discount ?? 0;
+    }
+
+    /**
+     * Get whether promo grants free shipping.
+     */
+    public function getPromoFreeShippingProperty(): bool
+    {
+        return (bool) ($this->cart?->promo_free_shipping ?? false);
     }
 
     /**

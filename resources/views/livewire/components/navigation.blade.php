@@ -1,4 +1,4 @@
-<div>
+<div class="sticky-nav-wrapper">
     <!-- Top Header -->
     <div class="text-white py-1 topheader">
         <div class="container d-flex justify-content-between align-items-center flex-wrap">
@@ -110,42 +110,45 @@
                 </form>
 
                 <!-- User Section -->
-                <div class="ms-3 navbar-icons navbar-nav d-flex align-items-center">
+                <div class="navbar-icons navbar-nav d-flex align-items-center ms-auto">
                     @guest('customer')
                         <!-- Not Logged In -->
-                        <div class="user-section2 user-left d-flex align-items-center gap-3">
-                            <a href="{{ route('login') }}" class="header-link" wire:navigate>
-                                <img src="{{ asset('images/home/user-icon.png') }}" alt="User" class="login-icon">
-                                <span class="icon-text text-login text-dark">LOG IN</span>
-                            </a>
-
-                            <a href="{{ route('cart.view') }}" class="header-link cart-link d-none d-xl-flex" wire:navigate>
+                        <div class="user-section2 d-flex align-items-center">
+                            <a href="{{ route('cart.view') }}" class="header-link cart-link d-none d-xl-flex align-items-center text-decoration-none" wire:navigate>
                                 <div class="icon-wrapper">
-                                    <img src="{{ asset('images/home/cart-icon.png') }}" alt="Cart">
+                                    <img src="{{ asset('images/home/cart-icon.png') }}" alt="Cart" class="icon-img">
                                     @if($this->cartCount > 0)
                                         <span class="cart-badge">{{ $this->cartCount }}</span>
                                     @endif
                                 </div>
-                                <span class="icon-text text-dark">CART</span>
+                                <span class="icon-text">CART</span>
+                            </a>
+
+                            <a href="{{ route('login') }}" class="header-link d-flex align-items-center text-decoration-none" wire:navigate>
+                                <img src="{{ asset('images/home/user-icon.png') }}" alt="User" class="icon-img">
+                                <span class="icon-text">LOG IN</span>
                             </a>
                         </div>
                     @else
                         <!-- Logged In -->
-                        <div class="user-section d-flex align-items-center gap-2">
-                            <a href="{{ route('cart.view') }}" class="header-link d-none d-xl-flex" wire:navigate>
-                                <img src="{{ asset('images/home/cart-icon.png') }}" alt="Cart">
-                                @if($this->cartCount > 0)
-                                    <span class="cart-count">{{ $this->cartCount }}</span>
-                                @endif
+                        <div class="user-section d-flex align-items-center">
+                            <a href="{{ route('cart.view') }}" class="header-link d-none d-xl-flex align-items-center text-decoration-none" wire:navigate>
+                                <div class="icon-wrapper">
+                                    <img src="{{ asset('images/home/cart-icon.png') }}" alt="Cart" class="icon-img">
+                                    @if($this->cartCount > 0)
+                                        <span class="cart-badge">{{ $this->cartCount }}</span>
+                                    @endif
+                                </div>
+                                <span class="icon-text">CART</span>
                             </a>
 
-                            <div class="dropdown">
-                                <button class="btn btn-link dropdown-toggle p-0 text-dark" type="button"
+                            <div class="dropdown header-link">
+                                <button class="btn btn-link dropdown-toggle p-0 d-flex align-items-center text-decoration-none" type="button"
                                         id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
                                         <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
                                     </svg>
-                                    <span class="user-name ms-1">{{ auth('customer')->user()->first_name ?? 'Account' }}</span>
+                                    <span class="icon-text user-name">{{ auth('customer')->user()->first_name ?? 'Account' }}</span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                     <li>

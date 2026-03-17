@@ -4,6 +4,7 @@ namespace App\Livewire\Components;
 
 use App\Models\Category;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Lunar\Facades\CartSession;
 use Lunar\Models\Collection;
@@ -41,6 +42,16 @@ class Navigation extends Component
             ->where('show_in_menu', true)
             ->orderBy('sort_order')
             ->get();
+    }
+
+    /**
+     * Refresh the component when an item is added to cart.
+     */
+    #[On('add-to-cart')]
+    #[On('cart-updated')]
+    public function refreshCart(): void
+    {
+        // Re-renders the component, which recalculates cartCount
     }
 
     /**

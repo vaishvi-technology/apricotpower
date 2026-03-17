@@ -65,6 +65,9 @@ Route::get('/cart', CartPage::class)->name('cart.view');
 Route::get('/checkout', CheckoutPage::class)->name('checkout.view');
 Route::get('/checkout/success', CheckoutSuccessPage::class)->name('checkout-success.view');
 
+// Promo Code Redeem (mirrors .NET /redeem-promo.asp?promo=CODE)
+Route::get('/redeem-promo', [App\Http\Controllers\PromoRedeemController::class, 'redeem'])->name('promo.redeem');
+
 // Retail Locations
 Route::get('/retailer-locations', RetailerLocationsPage::class)->name('retailer-locations');
 
