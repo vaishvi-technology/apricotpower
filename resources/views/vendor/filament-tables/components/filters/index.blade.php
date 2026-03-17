@@ -29,21 +29,15 @@
         <div class="flex items-center gap-3">
             {{ $applyAction }}
 
-            <x-filament::link
-                :attributes="
-                    \Filament\Support\prepare_inherited_attributes(
-                        new \Illuminate\View\ComponentAttributeBag([
-                            'color' => 'danger',
-                            'tag' => 'button',
-                            'wire:click' => 'resetTableFiltersForm',
-                            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                            'wire:target' => 'resetTableFiltersForm',
-                        ])
-                    )
-                "
+            <x-filament::button
+                color="gray"
+                tag="button"
+                wire:click="resetTableFiltersForm"
+                wire:loading.remove.delay="{{ config('filament.livewire_loading_delay', 'default') }}"
+                wire:target="resetTableFiltersForm"
             >
                 Clear
-            </x-filament::link>
+            </x-filament::button>
         </div>
     @endif
 </div>
