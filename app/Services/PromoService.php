@@ -261,7 +261,7 @@ class PromoService
      */
     public function evaluateRuleConditions(PromoRule $rule, Cart $cart): array
     {
-        $cart = $cart->calculate();
+        $cart = $cart->recalculate();
 
         // Check items condition
         if ($rule->cond_is_items) {
@@ -439,7 +439,7 @@ class PromoService
         $discount = 0;
         $freeShipping = false;
 
-        $cart = $cart->calculate();
+        $cart = $cart->recalculate();
 
         // Discount action (mirrors PromoRule_AssignDiscount)
         if ($rule->act_is_discount) {

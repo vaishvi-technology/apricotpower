@@ -17,7 +17,7 @@ class CartPage extends Component
 
     public function mount(): void
     {
-        $cart = CartSession::current();
+        $cart = CartSession::current(calculate: false);
         if (!$cart) {
             return;
         }
@@ -46,14 +46,30 @@ class CartPage extends Component
 
     public function getCartProperty()
     {
-        $cart = CartSession::current();
+        $cart = CartSession::current(calculate: false);
 
-        return $cart?->calculate();
+        if (!$cart) {
+            return null;
+        }
+
+        // Force fresh lines from DB to avoid stale Blink-cached properties
+        $cart->load(
+            'lines.purchasable.taxClass',
+            'lines.purchasable.values',
+            'lines.purchasable.product.thumbnail',
+            'lines.purchasable.prices.currency',
+            'lines.purchasable.prices.priceable',
+            'lines.purchasable.product',
+            'lines.cart.currency',
+            'currency',
+        );
+
+        return $cart->recalculate();
     }
 
     public function applyPromoCode(): void
     {
-        $cart = CartSession::current();
+        $cart = CartSession::current(calculate: false);
 
         if (!$cart) {
             $this->promoMessage = 'Your cart is empty.';
@@ -77,13 +93,16 @@ class CartPage extends Component
         if ($result['success']) {
             $this->promoCode = '';
             $this->denyAutoPromo = false;
-            $this->dispatch('cart-updated');
         }
+
+        // Clear cached computed property so re-render gets fresh calculated cart
+        unset($this->cart);
+        $this->dispatch('cart-updated');
     }
 
     public function removePromoCode(): void
     {
-        $cart = CartSession::current();
+        $cart = CartSession::current(calculate: false);
 
         if (!$cart) {
             return;
@@ -103,12 +122,15 @@ class CartPage extends Component
         $this->promoMessage = 'Promo code removed.';
         $this->promoMessageType = 'success';
         $this->promoCode = '';
+
+        // Clear cached computed property so re-render gets fresh calculated cart
+        unset($this->cart);
         $this->dispatch('cart-updated');
     }
 
     public function getAppliedPromoProperty(): ?Promo
     {
-        $cart = CartSession::current();
+        $cart = CartSession::current(calculate: false);
 
         if (!$cart || !$cart->promo_id) {
             return null;
@@ -119,14 +141,14 @@ class CartPage extends Component
 
     public function getPromoDiscountProperty(): float
     {
-        $cart = CartSession::current();
+        $cart = CartSession::current(calculate: false);
 
         return (float) ($cart?->promo_discount ?? 0);
     }
 
     public function getPromoFreeShippingProperty(): bool
     {
-        $cart = CartSession::current();
+        $cart = CartSession::current(calculate: false);
 
         return (bool) ($cart?->promo_free_shipping ?? false);
     }
@@ -141,7 +163,7 @@ class CartPage extends Component
 
     public function incrementQuantity(int $lineId): void
     {
-        $cart = $this->cart;
+        $cart = CartSession::current(calculate: false);
         if (!$cart) return;
 
         $line = $cart->lines->first(fn ($l) => $l->id === $lineId);
@@ -150,13 +172,16 @@ class CartPage extends Component
                 ['id' => $lineId, 'quantity' => $line->quantity + 1],
             ]));
             $this->reverifyPromo();
+
+            // Clear cached computed property so re-render gets fresh calculated cart
+            unset($this->cart);
             $this->dispatch('cart-updated');
         }
     }
 
     public function decrementQuantity(int $lineId): void
     {
-        $cart = $this->cart;
+        $cart = CartSession::current(calculate: false);
         if (!$cart) return;
 
         $line = $cart->lines->first(fn ($l) => $l->id === $lineId);
@@ -165,6 +190,9 @@ class CartPage extends Component
                 ['id' => $lineId, 'quantity' => $line->quantity - 1],
             ]));
             $this->reverifyPromo();
+
+            // Clear cached computed property so re-render gets fresh calculated cart
+            unset($this->cart);
             $this->dispatch('cart-updated');
         }
     }
@@ -177,6 +205,9 @@ class CartPage extends Component
             ['id' => $lineId, 'quantity' => $quantity],
         ]));
         $this->reverifyPromo();
+
+        // Clear cached computed property so re-render gets fresh calculated cart
+        unset($this->cart);
         $this->dispatch('cart-updated');
     }
 
@@ -184,6 +215,9 @@ class CartPage extends Component
     {
         CartSession::remove($lineId);
         $this->reverifyPromo();
+
+        // Clear cached computed property so re-render gets fresh calculated cart
+        unset($this->cart);
         $this->dispatch('cart-updated');
     }
 
@@ -192,7 +226,7 @@ class CartPage extends Component
      */
     protected function reverifyPromo(): void
     {
-        $cart = CartSession::current();
+        $cart = CartSession::current(calculate: false);
 
         if ($cart && $cart->promo_id) {
             $promoService = app(PromoService::class);
