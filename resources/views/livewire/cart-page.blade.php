@@ -40,8 +40,8 @@
                                 <strong>Total</strong>
                                 <strong>{{ $this->cart->total->formatted() }}</strong>
                             </div>
-                            <a href="{{ route('checkout.view') }}" class="btn btn-warning w-100">
-                                Proceed to Checkout
+                            <a href="{{ route('payment.view') }}" class="btn btn-warning w-100">
+                                Proceed to Payment
                             </a>
                         </div>
                     </div>

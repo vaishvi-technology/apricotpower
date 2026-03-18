@@ -2,6 +2,7 @@
 
 use App\Livewire\CheckoutPage;
 use App\Livewire\CheckoutSuccessPage;
+use App\Livewire\PaymentPage;
 use App\Livewire\CollectionPage;
 use App\Livewire\Home;
 use App\Livewire\ProductPage;
@@ -62,6 +63,7 @@ Route::get('/search', SearchPage::class)->name('search.view');
 
 // Cart & Checkout
 Route::get('/cart', CartPage::class)->name('cart.view');
+Route::get('/payment', PaymentPage::class)->name('payment.view');
 Route::get('/checkout', CheckoutPage::class)->name('checkout.view');
 Route::get('/checkout/success', CheckoutSuccessPage::class)->name('checkout-success.view');
 
