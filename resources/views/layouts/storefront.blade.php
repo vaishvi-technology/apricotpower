@@ -116,6 +116,12 @@
             padding: 0;
             min-width: 200px;
             z-index: 1050;
+            top: 100% !important;
+            left: 0;
+        }
+        .main-header .dropdown-menu.dropdown-menu-end {
+            left: auto;
+            right: 0;
         }
         .main-header .dropdown-item {
             padding: 10px 20px;

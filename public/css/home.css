@@ -6623,7 +6623,7 @@ body .user-section2 {
 
 nav .user-section .dropdown,
 .navbar-icons.navbar-nav .dropdown {
-  position: static !important;
+  position: relative !important;
   left: unset !important;
   bottom: unset !important;
   top: unset !important;
