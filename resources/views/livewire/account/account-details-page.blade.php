@@ -311,13 +311,6 @@
                                     </select>
                                 </div>
 
-                                <div class="mb-3">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="is_tax_exempt" wire:model="is_tax_exempt">
-                                        <label class="form-check-label fw-bold" for="is_tax_exempt">Tax Exempt</label>
-                                    </div>
-                                </div>
-
                                 <div class="row mb-3">
                                     <div class="col-sm-6 mb-3">
                                         <label class="form-label">Last Login</label>
@@ -355,20 +348,6 @@
                                             <label class="form-check-label fw-bold" for="is_online_wholesaler">Is Online Wholesaler?</label>
                                         </div>
                                     </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Add Store Record</label>
-                                        <div class="row">
-                                            <div class="col-sm-6 mb-2">
-                                                <input type="date" class="form-control" id="store_date" wire:model="store_date">
-                                            </div>
-                                            <div class="col-sm-6 mb-2">
-                                                <input type="number" class="form-control" id="store_count" wire:model="store_count" min="1" max="100" placeholder="# of Stores">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <hr class="my-3">
 
                                     <div class="mb-3">
                                         <label for="accounts_payable_email" class="form-label">Accounts Payable Email</label>

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Components;
 
+use App\Models\BlogPost;
 use App\Models\Category;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
@@ -71,6 +72,14 @@ class Navigation extends Component
             // Handle case where Lunar defaults (Channel/Currency) don't exist
             return 0;
         }
+    }
+
+    /**
+     * Return nav-featured blog posts for the nav dropdown.
+     */
+    public function getNavFeaturedBlogsProperty()
+    {
+        return BlogPost::published()->navFeatured()->with('categories')->orderByDesc('published_at')->limit(5)->get();
     }
 
     public function render(): View

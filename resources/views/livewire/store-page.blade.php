@@ -1,18 +1,11 @@
 <div class="store-page home-page">
     @push('styles')
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap-grid.min.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap-utilities.min.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-        <link href="{{ asset('css/home.css') }}" rel="stylesheet">
         <style>
             /* Store Header Banner */
             .store-header-banner {
                 background: linear-gradient(135deg, #2d5a27 0%, #3d7a34 100%);
                 padding: 140px 0 50px;
                 margin-bottom: 0;
-                position: relative;
-                z-index: 1;
             }
 
             .store-header-banner h1 {
@@ -925,7 +918,6 @@
     </div>
 
     @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script type="text/javascript" src="https://api.feefo.com/api/javascript/apricot-power" async></script>
         <script>
             // Initialize Bootstrap tooltips
