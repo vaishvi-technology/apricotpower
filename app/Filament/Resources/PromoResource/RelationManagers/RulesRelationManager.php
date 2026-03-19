@@ -217,12 +217,23 @@ class RulesRelationManager extends RelationManager
                                     ->dehydrateStateUsing(fn ($state) => is_array($state) && count($state) ? implode(',', $state) : null)
                                     ->visible(fn (Forms\Get $get) => $get('act_is_discount') && $get('act_discount_is_for_items') === 'specific')
                                     ->columnSpanFull(),
-                                Forms\Components\TextInput::make('act_discount_limit')
-                                    ->label('Limit to')
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->default(0)
-                                    ->suffix('eligible items (leave at 0 for unlimited).')
+                                Forms\Components\Grid::make(5)
+                                    ->schema([
+                                        Forms\Components\Placeholder::make('discount_label_limit')
+                                            ->hiddenLabel()
+                                            ->content('Limit to')
+                                            ->columnSpan(1),
+                                        Forms\Components\TextInput::make('act_discount_limit')
+                                            ->hiddenLabel()
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->default(0)
+                                            ->columnSpan(1),
+                                        Forms\Components\Placeholder::make('discount_label_limit_end')
+                                            ->hiddenLabel()
+                                            ->content('eligible items (leave at 0 for unlimited).')
+                                            ->columnSpan(3),
+                                    ])
                                     ->visible(fn (Forms\Get $get) => $get('act_is_discount'))
                                     ->columnSpanFull(),
                             ])->columns(3),
