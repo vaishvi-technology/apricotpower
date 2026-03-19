@@ -30,98 +30,102 @@ class PromoResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Promo Details')
+                Forms\Components\Section::make(fn ($record) => $record
+                        ? 'Promo Details — Total Uses: ' . $record->used_count . ($record->limit_total > 0 ? " / {$record->limit_total}" : '')
+                        : 'Promo Details')
                     ->schema([
                         Forms\Components\TextInput::make('name')
+                            ->label('Promo Name')
                             ->required()
                             ->maxLength(255)
-                            ->helperText('Internal name for this promo.'),
-                        Forms\Components\TextInput::make('title')
-                            ->maxLength(255)
-                            ->helperText('Customer-facing title.'),
-                        Forms\Components\TextInput::make('coupon_code')
-                            ->maxLength(50)
-                            ->unique(ignoreRecord: true)
-                            ->helperText('Leave blank for auto-apply promos.'),
-                        Forms\Components\Textarea::make('description')
-                            ->rows(2)
                             ->columnSpanFull(),
-                    ])->columns(3),
-
-                Forms\Components\Section::make('Activation')
-                    ->schema([
-                        Forms\Components\Toggle::make('is_active')
-                            ->label('Active')
-                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'When enabled, this promo can be used by customers. Disable to temporarily deactivate without deleting.')
-                            ->default(true),
-                        Forms\Components\Toggle::make('is_auto')
-                            ->label('Auto-Apply')
-                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Automatically apply this promo when cart conditions are met — no coupon code needed. The system checks all auto-apply promos on every cart update.')
-                            ->helperText('Automatically apply when conditions are met (no code needed).'),
-                        Forms\Components\Toggle::make('is_hidden')
-                            ->label('Hidden/Archived')
-                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Hidden promos are excluded from public listings but can still be redeemed if the customer has the code.')
-                            ->default(false),
+                        Forms\Components\TextInput::make('title')
+                            ->label('Friendly Name')
+                            ->maxLength(255)
+                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'This is the title of the Promo that will be visible to customers. If left blank, it will use the above name.')
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('coupon_code')
+                            ->label('Coupon Code')
+                            ->maxLength(50)
+                            ->unique(ignoreRecord: true),
+                        Forms\Components\Textarea::make('description')
+                            ->rows(2),
+                        Forms\Components\Grid::make(3)
+                            ->schema([
+                                Forms\Components\Toggle::make('is_hidden')
+                                    ->label('Hidden?')
+                                    ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Since promos that have been used cannot be deleted, this option hides the promo from the admin page. Used to keep old inactive promos out of the way. Does not disable the promo if this is on while the promo is still Active (below).')
+                                    ->default(false),
+                                Forms\Components\Toggle::make('is_active')
+                                    ->label('Active?')
+                                    ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'If set to Active and a Start Date is set, the promo will NOT be valid until the Start Date. If left Inactive, promo will be disabled regardless of Start Date / End Date values.')
+                                    ->default(true),
+                                Forms\Components\Toggle::make('is_auto')
+                                    ->label('Auto Apply?')
+                                    ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'If the box is checked, this promo will attempt to apply to every cart, without the customer having to enter a coupon or clicking a link. The user will NOT be notified or prevented from checking out if the promo does not apply, however!'),
+                            ])->columnSpanFull(),
+                        Forms\Components\TextInput::make('landing_url')
+                            ->label('Promo Landing URL')
+                            ->url()
+                            ->placeholder('https://...')
+                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'After using the Promo Link, the user will be redirected to this page as opposed to the default landing page. Leave blank to redirect to the default cart page.')
+                            ->columnSpanFull(),
+                        Forms\Components\Placeholder::make('redeem_link')
+                            ->label('Promo Links')
+                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Copy this link to give to customers. If there is a coupon for this promo, two links will be provided. Please note that both links function exactly the same, but the coupon link is easier for customers to type in manually, if used for print ads.')
+                            ->content(fn ($record) => $record?->coupon_code
+                                ? url('/redeem-promo?promo=' . urlencode($record->coupon_code))
+                                : 'Save the promo with a coupon code to generate a link.')
+                            ->visibleOn('edit')
+                            ->columnSpanFull(),
                         Forms\Components\DateTimePicker::make('valid_start')
-                            ->label('Valid From'),
+                            ->label('Start Date'),
                         Forms\Components\DateTimePicker::make('valid_end')
-                            ->label('Valid Until'),
-                    ])->columns(3),
-
-                Forms\Components\Section::make('Usage Limits')
-                    ->schema([
+                            ->label('End Date'),
                         Forms\Components\TextInput::make('limit_per_customer')
+                            ->label('Limit Per Customer')
                             ->numeric()
                             ->default(0)
-                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Leave `0` for unlimited uses.')
-                            ->helperText('0 = unlimited'),
+                            ->minValue(0)
+                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Leave 0 for unlimited uses.'),
                         Forms\Components\TextInput::make('limit_total')
+                            ->label('Total Limit')
                             ->numeric()
                             ->default(0)
-                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Leave `0` for unlimited uses. This number is the total number of carts that are allowed to use this promo.')
-                            ->helperText('0 = unlimited'),
-                    ])->columns(2),
-
-                Forms\Components\Section::make('Restrictions')
-                    ->schema([
+                            ->minValue(0)
+                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Leave 0 for unlimited uses. This number is the total number of carts that are allowed to use this promo.'),
                         Forms\Components\Select::make('account_groups')
                             ->label('Account Groups')
                             ->multiple()
                             ->options(fn () => CustomerGroup::pluck('name', 'id')->toArray())
-                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Restrict this promo to specific customer groups (e.g. Consumer, Wholesale). Leave empty to allow all account types.')
-                            ->helperText('Select account groups. Leave empty for all.')
+                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'If any account groups are checked, only those groups will be eligible to use the promo. Must choose at least one.')
                             ->afterStateHydrated(function (Forms\Components\Select $component, $state) {
                                 if (is_string($state) && $state !== '') {
                                     $component->state(array_map('intval', array_filter(explode(',', $state))));
                                 }
                             })
                             ->dehydrateStateUsing(fn ($state) => is_array($state) && count($state) ? implode(',', $state) : null)
-                            ->searchable(),
+                            ->searchable()
+                            ->required(),
                         Forms\Components\Select::make('countries')
                             ->label('Countries')
                             ->multiple()
                             ->options(fn () => Country::orderBy('name')->pluck('name', 'iso2')->toArray())
-                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Restrict this promo to orders shipping to specific countries. Leave empty to allow all countries.')
-                            ->helperText('Select countries. Leave empty for all.')
+                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'If any countries are checked, only orders in those countries will be eligible to use the promo. Must choose at least one.')
                             ->afterStateHydrated(function (Forms\Components\Select $component, $state) {
                                 if (is_string($state) && $state !== '') {
                                     $component->state(array_filter(array_map('trim', explode(',', $state))));
                                 }
                             })
                             ->dehydrateStateUsing(fn ($state) => is_array($state) && count($state) ? implode(',', $state) : null)
-                            ->searchable(),
+                            ->searchable()
+                            ->required(),
                         Forms\Components\Toggle::make('disable_volume_discounts')
-                            ->label('Disable Volume Discounts')
-                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'When enabled, any volume/tier pricing discounts will be ignored while this promo is active on the cart. Useful to prevent stacking promo discounts with volume discounts.')
-                            ->helperText('Prevent volume discounts when this promo is active.'),
-                    ])->columns(2),
-
-                Forms\Components\Section::make('Auto-Cart Items')
-                    ->description('Items automatically added to the cart when this promo is applied.')
-                    ->schema([
+                            ->label('Disable Volume Discounts?')
+                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'This option will stop volume discounts from applying to the cart.'),
                         Forms\Components\Repeater::make('autocart_items_repeater')
-                            ->label('')
-                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Items listed here are automatically added to the cart when this promo is applied. If the item is already in the cart with fewer quantity, it will be increased to the specified amount.')
+                            ->label('Autocart Items')
+                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'These items will be added to the users cart if they do not already have them. The cart cannot have less than the quantity shown. Estimated total based on default Retail pricing NOTE: Autocart Items WILL NOT be added with the \'Auto Apply\' option.')
                             ->schema([
                                 Forms\Components\Select::make('variant_id')
                                     ->label('Product')
@@ -182,32 +186,8 @@ class PromoResource extends Resource
                                 }
                                 return !empty($parts) ? '|' . implode('|', $parts) . '|' : null;
                             }),
-                    ])->collapsed(),
+                    ])->columns(2),
 
-                Forms\Components\Section::make('Landing Page')
-                    ->schema([
-                        Forms\Components\TextInput::make('landing_url')
-                            ->url()
-                            ->placeholder('https://...')
-                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'After clicking the promo link, the customer will be redirected to this URL instead of the default cart page. Leave empty to redirect to the cart page.')
-                            ->columnSpanFull(),
-                    ])->collapsed(),
-
-                Forms\Components\Section::make('Promo Links')
-                    ->schema([
-                        Forms\Components\Placeholder::make('redeem_link')
-                            ->label('Redeem URL')
-                            ->content(fn ($record) => $record?->coupon_code
-                                ? url('/redeem-promo?promo=' . urlencode($record->coupon_code))
-                                : 'Save the promo with a coupon code to generate a link.'),
-                        Forms\Components\Placeholder::make('usage_stats')
-                            ->label('Total Uses')
-                            ->content(fn ($record) => $record
-                                ? ($record->used_count . ($record->limit_total > 0 ? " / {$record->limit_total}" : ' (unlimited)'))
-                                : '0'),
-                    ])
-                    ->columns(2)
-                    ->visibleOn('edit'),
             ]);
     }
 

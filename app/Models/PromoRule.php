@@ -48,6 +48,9 @@ class PromoRule extends Model
         'act_bogo_get_count',
         'act_bogo_discount',
         'act_bogo_limit',
+        // Action: LoyaltyLion Points
+        'act_is_ll_points',
+        'act_ll_points_amount',
     ];
 
     protected function casts(): array
@@ -76,6 +79,8 @@ class PromoRule extends Model
             'act_bogo_get_count' => 'integer',
             'act_bogo_discount' => 'decimal:2',
             'act_bogo_limit' => 'integer',
+            'act_is_ll_points' => 'boolean',
+            'act_ll_points_amount' => 'integer',
         ];
     }
 
