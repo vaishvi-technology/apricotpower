@@ -130,3 +130,8 @@ Route::middleware(['auth:staff'])->group(function () {
 
 Route::post('/impersonate/stop', [ImpersonationController::class, 'stop'])
     ->name('impersonate.stop');
+
+// Webhooks (CSRF exempt - see VerifyCsrfToken middleware)
+Route::post('/webhooks/shipstation', [App\Http\Controllers\Webhooks\ShipStationWebhookController::class, 'handle'])
+    ->name('webhooks.shipstation')
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);

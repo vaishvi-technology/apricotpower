@@ -15,6 +15,7 @@ use App\Models\RetailerProfile;
 use App\Modifiers\ShippingModifier;
 use App\Observers\OrderObserver;
 use App\Observers\RetailerProfileObserver;
+use App\Shipping\ShipStationService;
 use Illuminate\Support\ServiceProvider;
 use Lunar\Admin\Filament\Resources\CustomerResource;
 use Lunar\Admin\Filament\Resources\ProductResource;
@@ -37,6 +38,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Register ShipStation service as singleton
+        $this->app->singleton(ShipStationService::class, function ($app) {
+            return new ShipStationService();
+        });
+
         LunarPanel::extensions([
             ProductResource::class => ProductResourceExtension::class,
             ProductTypeResource::class => ProductTypeResourceExtension::class,

@@ -4,7 +4,10 @@ namespace App\Livewire;
 
 use App\Models\Promo;
 use App\Services\PromoService;
+use App\Shipping\Exceptions\ShipStationException;
+use App\Shipping\ShipStationService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Livewire\Component;
 use Lunar\Facades\CartSession;
@@ -241,6 +244,14 @@ class CheckoutPage extends Component
 
         CartSession::setShippingOption($option);
 
+        // Store ShipStation carrier/service codes in cart meta for later order creation
+        if ($option && $option->meta) {
+            $meta = $this->cart->meta ?? [];
+            $meta['shipstation_carrier_code'] = $option->meta['carrier_code'] ?? null;
+            $meta['shipstation_service_code'] = $option->meta['service_code'] ?? null;
+            $this->cart->update(['meta' => $meta]);
+        }
+
         $this->refreshCart();
 
         $this->determineCheckoutStep();
@@ -257,6 +268,9 @@ class CheckoutPage extends Component
             // Record promo usage if a promo was applied
             $this->recordPromoUsage();
 
+            // Submit order to ShipStation
+            $this->submitOrderToShipStation();
+
             redirect()->route('checkout-success.view');
 
             return;
@@ -265,7 +279,63 @@ class CheckoutPage extends Component
         // Record promo usage if a promo was applied
         $this->recordPromoUsage();
 
+        // Submit order to ShipStation even if payment status is pending
+        $this->submitOrderToShipStation();
+
         return redirect()->route('checkout-success.view');
+    }
+
+    /**
+     * Submit the order to ShipStation after successful checkout.
+     */
+    protected function submitOrderToShipStation(): void
+    {
+        if (config('shipping.provider') !== 'shipstation') {
+            return;
+        }
+
+        try {
+            // Get the latest order from the cart
+            $order = $this->cart->orders()->latest()->first();
+
+            if (! $order) {
+                Log::warning('No order found to submit to ShipStation', [
+                    'cart_id' => $this->cart->id,
+                ]);
+
+                return;
+            }
+
+            // Transfer ShipStation meta from cart to order
+            $cartMeta = $this->cart->meta ?? [];
+            $orderMeta = $order->meta ?? [];
+            $orderMeta['shipstation_carrier_code'] = $cartMeta['shipstation_carrier_code'] ?? null;
+            $orderMeta['shipstation_service_code'] = $cartMeta['shipstation_service_code'] ?? null;
+            $order->update(['meta' => $orderMeta]);
+
+            // Create order in ShipStation
+            $shipStation = app(ShipStationService::class);
+            $ssOrderId = $shipStation->createOrder($order);
+
+            // Update order with ShipStation order ID
+            $order->update([
+                'shipstation_order_id' => $ssOrderId,
+                'shipstation_carrier_code' => $orderMeta['shipstation_carrier_code'],
+                'shipstation_service_code' => $orderMeta['shipstation_service_code'],
+                'shipping_status' => 'processing',
+            ]);
+
+            Log::info('Order submitted to ShipStation', [
+                'order_id' => $order->id,
+                'shipstation_order_id' => $ssOrderId,
+            ]);
+        } catch (ShipStationException $e) {
+            // Log the error but don't fail the checkout
+            Log::error('Failed to submit order to ShipStation', [
+                'error' => $e->getMessage(),
+                'cart_id' => $this->cart->id,
+            ]);
+        }
     }
 
     /**
