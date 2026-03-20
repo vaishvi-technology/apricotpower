@@ -331,16 +331,14 @@ class RulesRelationManager extends RelationManager
                                     ->columnSpanFull(),
                                 Forms\Components\Grid::make(12)
                                     ->schema([
-                                        Forms\Components\Placeholder::make('free_items_label_limit')
-                                            ->hiddenLabel()
-                                            ->content('Limit to')
-                                            ->columnSpan(1),
                                         Forms\Components\TextInput::make('act_item_limit')
-                                            ->hiddenLabel()
+                                            ->label('Limit to')
+                                            ->inlineLabel()
+                                            ->extraFieldWrapperAttributes(['style' => 'white-space: nowrap;'])
                                             ->numeric()
                                             ->minValue(0)
                                             ->default(0)
-                                            ->columnSpan(2),
+                                            ->columnSpan(3),
                                         Forms\Components\Placeholder::make('free_items_label_limit_end')
                                             ->hiddenLabel()
                                             ->content('items (Leave at 0 for unlimited; repeats each time they meet the minimum rule conditions).')
