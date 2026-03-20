@@ -289,7 +289,7 @@ class RulesRelationManager extends RelationManager
                                     ->label('Enable')
                                     ->live()
                                     ->columnSpanFull(),
-                                Forms\Components\Grid::make(5)
+                                Forms\Components\Grid::make(12)
                                     ->schema([
                                         Forms\Components\Placeholder::make('free_items_label_add')
                                             ->hiddenLabel()
@@ -306,11 +306,11 @@ class RulesRelationManager extends RelationManager
                                                 $component->state($state ? '1' : '0');
                                             })
                                             ->dehydrateStateUsing(fn ($state) => $state === '1')
-                                            ->columnSpan(1),
+                                            ->columnSpan(2),
                                         Forms\Components\Placeholder::make('free_items_label_end')
                                             ->hiddenLabel()
                                             ->content('of the following items to the cart:')
-                                            ->columnSpan(3),
+                                            ->columnSpan(9),
                                     ])
                                     ->visible(fn (Forms\Get $get) => $get('act_is_free_items'))
                                     ->columnSpanFull(),
@@ -329,7 +329,7 @@ class RulesRelationManager extends RelationManager
                                     ->dehydrateStateUsing(fn ($state) => is_array($state) && count($state) ? implode(',', $state) : null)
                                     ->visible(fn (Forms\Get $get) => $get('act_is_free_items'))
                                     ->columnSpanFull(),
-                                Forms\Components\Grid::make(5)
+                                Forms\Components\Grid::make(12)
                                     ->schema([
                                         Forms\Components\Placeholder::make('free_items_label_limit')
                                             ->hiddenLabel()
@@ -340,11 +340,11 @@ class RulesRelationManager extends RelationManager
                                             ->numeric()
                                             ->minValue(0)
                                             ->default(0)
-                                            ->columnSpan(1),
+                                            ->columnSpan(2),
                                         Forms\Components\Placeholder::make('free_items_label_limit_end')
                                             ->hiddenLabel()
                                             ->content('items (Leave at 0 for unlimited; repeats each time they meet the minimum rule conditions).')
-                                            ->columnSpan(3),
+                                            ->columnSpan(9),
                                     ])
                                     ->visible(fn (Forms\Get $get) => $get('act_is_free_items'))
                                     ->columnSpanFull(),
