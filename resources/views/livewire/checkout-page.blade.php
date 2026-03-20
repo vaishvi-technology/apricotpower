@@ -36,7 +36,11 @@
                             </dt>
 
                             <dd class="w-1/2 text-right">
-                                {{ $cart->subTotal->formatted() }}
+                                @if($this->promoDiscount > 0)
+                                    ${{ number_format($this->nonPromoSubtotal / 100, 2) }}
+                                @else
+                                    {{ $cart->subTotal->formatted() }}
+                                @endif
                             </dd>
                         </div>
 
@@ -99,9 +103,9 @@
                             <dd class="w-1/2 text-right">
                                 @if($this->promoDiscount > 0)
                                     @php
-                                        $totalInCents = $cart->total->value;
+                                        $nonPromoTotalCents = $this->nonPromoTotal;
                                         $discountInCents = (int) round($this->promoDiscount * 100);
-                                        $adjustedTotal = max(0, $totalInCents - $discountInCents);
+                                        $adjustedTotal = max(0, $nonPromoTotalCents - $discountInCents);
                                     @endphp
                                     ${{ number_format($adjustedTotal / 100, 2) }}
                                 @else

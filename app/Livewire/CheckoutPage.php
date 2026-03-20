@@ -335,6 +335,54 @@ class CheckoutPage extends Component
     }
 
     /**
+     * Get the subtotal (in cents) excluding promo/free items, so the displayed
+     * subtotal matches the base used for percentage discount calculations.
+     */
+    public function getNonPromoSubtotalProperty(): float
+    {
+        $cart = $this->cart;
+        if (!$cart) {
+            return 0;
+        }
+
+        $subtotal = 0;
+        foreach ($cart->lines as $line) {
+            $meta = $line->meta ?? [];
+            if (!empty($meta['is_promo_item'])) {
+                continue;
+            }
+            $subtotal += $line->subTotal->value ?? 0;
+        }
+
+        return $subtotal;
+    }
+
+    /**
+     * Get the total (in cents, including tax) excluding promo/free items.
+     */
+    public function getNonPromoTotalProperty(): float
+    {
+        $cart = $this->cart;
+        if (!$cart) {
+            return 0;
+        }
+
+        $total = 0;
+        foreach ($cart->lines as $line) {
+            $meta = $line->meta ?? [];
+            if (!empty($meta['is_promo_item'])) {
+                continue;
+            }
+            $total += $line->total->value ?? 0;
+        }
+
+        // Include shipping if present
+        $total += $cart->shippingTotal->value ?? 0;
+
+        return $total;
+    }
+
+    /**
      * Get the promo discount amount.
      */
     public function getPromoDiscountProperty(): float
