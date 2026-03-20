@@ -39,39 +39,47 @@ class RulesRelationManager extends RelationManager
                                     ->label('Enable')
                                     ->live()
                                     ->columnSpanFull(),
-                                Forms\Components\Select::make('cond_weight_greater_than')
-                                    ->label('Cart weight is')
-                                    ->options([
-                                        '0' => 'Less Than',
-                                        '1' => 'Greater Than',
+                                Forms\Components\Grid::make(10)
+                                    ->schema([
+                                        Forms\Components\Select::make('cond_weight_greater_than')
+                                            ->label('Cart weight is')
+                                            ->inlineLabel()
+                                            ->extraFieldWrapperAttributes(['class' => '!justify-start !gap-2'])
+                                            ->options([
+                                                '0' => 'Less Than',
+                                                '1' => 'Greater Than',
+                                            ])
+                                            ->default('0')
+                                            ->afterStateHydrated(function (Forms\Components\Select $component, $state) {
+                                                $component->state($state ? '1' : '0');
+                                            })
+                                            ->dehydrateStateUsing(fn ($state) => $state === '1')
+                                            ->columnSpan(6),
+                                        Forms\Components\TextInput::make('cond_weight_lbs')
+                                            ->hiddenLabel()
+                                            ->suffix('lbs.')
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->default(0)
+                                            ->dehydrated(false)
+                                            ->afterStateHydrated(function (Forms\Components\TextInput $component, $record) {
+                                                $totalOz = $record?->cond_weight_amount ?? 0;
+                                                $component->state(intdiv((int) $totalOz, 16));
+                                            })
+                                            ->columnSpan(2),
+                                        Forms\Components\TextInput::make('cond_weight_oz')
+                                            ->hiddenLabel()
+                                            ->suffix('oz.')
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->default(0)
+                                            ->dehydrated(false)
+                                            ->afterStateHydrated(function (Forms\Components\TextInput $component, $record) {
+                                                $totalOz = $record?->cond_weight_amount ?? 0;
+                                                $component->state(((int) $totalOz) % 16);
+                                            })
+                                            ->columnSpan(2),
                                     ])
-                                    ->default('0')
-                                    ->afterStateHydrated(function (Forms\Components\Select $component, $state) {
-                                        $component->state($state ? '1' : '0');
-                                    })
-                                    ->dehydrateStateUsing(fn ($state) => $state === '1')
-                                    ->visible(fn (Forms\Get $get) => $get('cond_is_weight')),
-                                Forms\Components\TextInput::make('cond_weight_lbs')
-                                    ->label('lbs.')
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->default(0)
-                                    ->dehydrated(false)
-                                    ->afterStateHydrated(function (Forms\Components\TextInput $component, $record) {
-                                        $totalOz = $record?->cond_weight_amount ?? 0;
-                                        $component->state(intdiv((int) $totalOz, 16));
-                                    })
-                                    ->visible(fn (Forms\Get $get) => $get('cond_is_weight')),
-                                Forms\Components\TextInput::make('cond_weight_oz')
-                                    ->label('oz.')
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->default(0)
-                                    ->dehydrated(false)
-                                    ->afterStateHydrated(function (Forms\Components\TextInput $component, $record) {
-                                        $totalOz = $record?->cond_weight_amount ?? 0;
-                                        $component->state(((int) $totalOz) % 16);
-                                    })
                                     ->visible(fn (Forms\Get $get) => $get('cond_is_weight')),
                                 Forms\Components\Hidden::make('cond_weight_amount')
                                     ->dehydrateStateUsing(function (Forms\Get $get) {
@@ -79,7 +87,7 @@ class RulesRelationManager extends RelationManager
                                         $oz = (int) ($get('cond_weight_oz') ?? 0);
                                         return ($lbs * 16) + $oz;
                                     }),
-                            ])->columns(3),
+                            ])->columns(1),
 
                         // Subtotal Condition
                         Forms\Components\Fieldset::make('Subtotal')
@@ -89,22 +97,28 @@ class RulesRelationManager extends RelationManager
                                     ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Leave the Less Than field blank or at 0 if there is no maximum cart total.')
                                     ->live()
                                     ->columnSpanFull(),
-                                Forms\Components\TextInput::make('cond_subtotal_min')
-                                    ->label('Cart subtotal is equal to or greater than')
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->prefix('$')
-                                    ->default(0)
+                                Forms\Components\Grid::make(2)
+                                    ->schema([
+                                        Forms\Components\TextInput::make('cond_subtotal_min')
+                                            ->label('Cart subtotal is equal to or greater than')
+                                            ->inlineLabel()
+                                            ->extraFieldWrapperAttributes(['class' => '!justify-start !gap-3'])
+                                            ->prefix('$')
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->default(0),
+                                        Forms\Components\TextInput::make('cond_subtotal_max')
+                                            ->label('but equal to or less than')
+                                            ->inlineLabel()
+                                            ->extraFieldWrapperAttributes(['class' => '!justify-start !gap-3'])
+                                            ->prefix('$')
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->default(0)
+                                            ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Leave the Less Than field blank or at 0 if there is no maximum cart total.'),
+                                    ])
                                     ->visible(fn (Forms\Get $get) => $get('cond_is_subtotal')),
-                                Forms\Components\TextInput::make('cond_subtotal_max')
-                                    ->label('but equal to or less than')
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->prefix('$')
-                                    ->default(0)
-                                    ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Leave the Less Than field blank or at 0 if there is no maximum cart total.')
-                                    ->visible(fn (Forms\Get $get) => $get('cond_is_subtotal')),
-                            ])->columns(2),
+                            ])->columns(1),
 
                         // Items Condition
                         Forms\Components\Fieldset::make('Items')
