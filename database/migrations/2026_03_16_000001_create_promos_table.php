@@ -27,6 +27,7 @@ return new class extends Migration
             $table->text('autocart_items')->nullable();
             $table->boolean('disable_volume_discounts')->default(false);
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index('coupon_code');
             $table->index('is_active');

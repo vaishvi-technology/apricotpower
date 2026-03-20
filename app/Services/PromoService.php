@@ -405,8 +405,8 @@ class PromoService
             if (!empty($meta['is_promo_item'])) {
                 continue;
             }
-            $unitPrice = $line->unitPrice->value ?? 0;
-            $subtotal += ($unitPrice / 100) * $line->quantity;
+            $lineSubtotal = $line->subTotal->value ?? (($line->unitPrice->value ?? 0) * $line->quantity);
+            $subtotal += $lineSubtotal / 100;
         }
         return $subtotal;
     }

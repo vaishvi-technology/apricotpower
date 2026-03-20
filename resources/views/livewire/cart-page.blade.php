@@ -530,7 +530,11 @@
                             <h5>Order Summary</h5>
                             <div class="cart-summary-row">
                                 <span>Subtotal</span>
-                                <span>{{ $this->cart->subTotal->formatted() }}</span>
+                                @if($this->promoDiscount > 0)
+                                    <span>${{ number_format($this->nonPromoSubtotal / 100, 2) }}</span>
+                                @else
+                                    <span>{{ $this->cart->subTotal->formatted() }}</span>
+                                @endif
                             </div>
 
                             {{-- Promo Discount --}}
@@ -553,9 +557,9 @@
                                 <span>Total</span>
                                 @if($this->promoDiscount > 0)
                                     @php
-                                        $totalInCents = $this->cart->total->value;
+                                        $nonPromoTotalCents = $this->nonPromoTotal;
                                         $discountInCents = (int) round($this->promoDiscount * 100);
-                                        $adjustedTotal = max(0, $totalInCents - $discountInCents);
+                                        $adjustedTotal = max(0, $nonPromoTotalCents - $discountInCents);
                                     @endphp
                                     <span>${{ number_format($adjustedTotal / 100, 2) }}</span>
                                 @else

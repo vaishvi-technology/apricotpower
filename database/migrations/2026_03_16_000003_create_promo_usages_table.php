@@ -17,6 +17,7 @@ return new class extends Migration
             $table->decimal('discount_amount', 10, 2)->default(0);
             $table->boolean('free_shipping')->default(false);
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index('promo_id');
             $table->index('customer_id');

@@ -209,26 +209,18 @@ class PromoResource extends Resource
                     ->searchable()
                     ->limit(25)
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\IconColumn::make('is_active')
-                    ->label('Active')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('is_auto')
-                    ->label('Auto')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('active_code')
+                Tables\Columns\TextColumn::make('active_status')
                     ->label('Status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn ($record): string => match ($record->active_code) {
                         'ACTIVE' => 'success',
-                        'ACTIVE_UNTIL' => 'info',
+                        'ACTIVE_UNTIL' => 'success',
                         'PENDING' => 'warning',
                         'EXPIRED' => 'danger',
-                        'INACTIVE' => 'gray',
+                        'INACTIVE' => 'danger',
+                        'ARCHIVED' => 'gray',
                         default => 'gray',
                     }),
-                Tables\Columns\TextColumn::make('rules_count')
-                    ->counts('rules')
-                    ->label('Rules'),
                 Tables\Columns\TextColumn::make('usages_count')
                     ->counts('usages')
                     ->label('Used'),
