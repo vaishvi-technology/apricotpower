@@ -358,7 +358,7 @@ class RulesRelationManager extends RelationManager
                                     ->live()
                                     ->columnSpanFull(),
                                 // Every [buy] item(s) that get added, add another [get] of the same item at [discount] % off.
-                                Forms\Components\Grid::make(7)
+                                Forms\Components\Grid::make(18)
                                     ->schema([
                                         Forms\Components\Placeholder::make('bogo_label_every')
                                             ->hiddenLabel()
@@ -369,36 +369,31 @@ class RulesRelationManager extends RelationManager
                                             ->numeric()
                                             ->minValue(0)
                                             ->default(1)
-                                            ->columnSpan(1),
+                                            ->columnSpan(2),
                                         Forms\Components\Placeholder::make('bogo_label_items')
                                             ->hiddenLabel()
                                             ->content('item(s) that get added, add another')
-                                            ->columnSpan(2),
+                                            ->columnSpan(5),
                                         Forms\Components\TextInput::make('act_bogo_get_count')
                                             ->hiddenLabel()
                                             ->numeric()
                                             ->minValue(0)
                                             ->default(1)
-                                            ->columnSpan(1),
-                                    ])
-                                    ->visible(fn (Forms\Get $get) => $get('act_is_bogo'))
-                                    ->columnSpanFull(),
-                                Forms\Components\Grid::make(5)
-                                    ->schema([
+                                            ->columnSpan(2),
                                         Forms\Components\Placeholder::make('bogo_label_same')
                                             ->hiddenLabel()
                                             ->content('of the same item at')
-                                            ->columnSpan(1),
+                                            ->columnSpan(3),
                                         Forms\Components\TextInput::make('act_bogo_discount')
                                             ->hiddenLabel()
                                             ->numeric()
                                             ->minValue(0)
                                             ->default(100)
-                                            ->columnSpan(1),
+                                            ->columnSpan(2),
                                         Forms\Components\Placeholder::make('bogo_label_off')
                                             ->hiddenLabel()
                                             ->content('% off.')
-                                            ->columnSpan(3),
+                                            ->columnSpan(2),
                                     ])
                                     ->visible(fn (Forms\Get $get) => $get('act_is_bogo'))
                                     ->columnSpanFull(),
@@ -424,22 +419,22 @@ class RulesRelationManager extends RelationManager
                                     ->visible(fn (Forms\Get $get) => $get('act_is_bogo'))
                                     ->columnSpanFull(),
                                 // Limit to [limit] items (Per item; leave at 0 for unlimited).
-                                Forms\Components\Grid::make(5)
+                                Forms\Components\Grid::make(18)
                                     ->schema([
                                         Forms\Components\Placeholder::make('bogo_label_limit')
                                             ->hiddenLabel()
                                             ->content('Limit to')
-                                            ->columnSpan(1),
+                                            ->columnSpan(2),
                                         Forms\Components\TextInput::make('act_bogo_limit')
                                             ->hiddenLabel()
                                             ->numeric()
                                             ->minValue(0)
                                             ->default(0)
-                                            ->columnSpan(1),
+                                            ->columnSpan(2),
                                         Forms\Components\Placeholder::make('bogo_label_limit_end')
                                             ->hiddenLabel()
                                             ->content('items (Per item; leave at 0 for unlimited).')
-                                            ->columnSpan(3),
+                                            ->columnSpan(7),
                                     ])
                                     ->visible(fn (Forms\Get $get) => $get('act_is_bogo'))
                                     ->columnSpanFull(),
