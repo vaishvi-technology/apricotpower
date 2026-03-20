@@ -91,25 +91,6 @@ return [
             'prefix_indexes' => true,
         ],
 
-        'dotnet' => [
-            'driver' => 'mysql',
-            'host' => env('DOTNET_DB_HOST', '127.0.0.1'),
-            'port' => env('DOTNET_DB_PORT', '3306'),
-            'database' => env('DOTNET_DB_DATABASE', 'apricot_live_dot_net'),
-            'username' => env('DOTNET_DB_USERNAME', 'forge'),
-            'password' => env('DOTNET_DB_PASSWORD', ''),
-            'unix_socket' => env('DB_SOCKET', ''),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'strict' => false,
-            'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
-        ],
-
     ],
 
     /*
