@@ -55,7 +55,12 @@ return new class extends Migration
             $table->decimal('act_bogo_discount', 5, 2)->default(100);
             $table->integer('act_bogo_limit')->default(0);
 
+            // Action: Loyalty Lion Points
+            $table->boolean('act_is_ll_points')->default(false);
+            $table->integer('act_ll_points_amount')->default(0);
+
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index('promo_id');
         });
