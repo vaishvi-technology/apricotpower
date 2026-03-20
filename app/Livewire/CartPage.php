@@ -10,7 +10,13 @@ class CartPage extends Component
 {
     public function getCartProperty()
     {
-        return CartSession::current();
+        $cart = CartSession::current();
+
+        if ($cart) {
+            $cart->calculate();
+        }
+
+        return $cart;
     }
 
     public function render(): View

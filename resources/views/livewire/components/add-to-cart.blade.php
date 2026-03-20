@@ -181,13 +181,13 @@
             </div>
         </div>
 
-        <div class="product-action-buttons">
-            <button type="button" class="btn-product-cart" wire:click="addToCart" wire:loading.attr="disabled">
+        <div class="product-action-buttons" wire:loading.class="pointer-events-none">
+            <button type="button" class="btn-product-cart" wire:click="addToCart" wire:loading.attr="disabled" wire:loading.class="opacity-50">
                 <i class="bi bi-lock-fill"></i>
                 <span wire:loading.remove wire:target="addToCart">Add to Cart</span>
                 <span wire:loading wire:target="addToCart">Adding...</span>
             </button>
-            <button type="button" class="btn-product-buy" wire:click="buyNow" wire:loading.attr="disabled">
+            <button type="button" class="btn-product-buy" wire:click="buyNow" wire:loading.attr="disabled" wire:loading.class="opacity-50">
                 <i class="bi bi-lock-fill"></i>
                 <span wire:loading.remove wire:target="buyNow">Buy Now</span>
                 <span wire:loading wire:target="buyNow">Processing...</span>

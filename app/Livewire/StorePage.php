@@ -222,6 +222,13 @@ class StorePage extends Component
      */
     public function addToCart(int $variantId, int $quantity = 1): void
     {
+        // Prevent rapid duplicate submissions
+        $cacheKey = 'store_add_to_cart_' . session()->getId() . '_' . $variantId;
+        if (cache()->has($cacheKey)) {
+            return;
+        }
+        cache()->put($cacheKey, true, 2); // 2 second cooldown
+
         // Ensure Lunar defaults exist before any cart operations
         $this->ensureLunarDefaults();
 

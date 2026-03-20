@@ -12,7 +12,6 @@ class Transaction extends Model
 
     protected $fillable = [
         'order_id',
-        'customer_id',
         'payment_method_id',
         'type',
         'status',
@@ -26,7 +25,6 @@ class Transaction extends Model
         'last_four',
         'card_brand',
         'notes',
-        'user_id',
     ];
 
     public const TYPE_CHARGE = 'charge';
@@ -56,11 +54,6 @@ class Transaction extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
-    }
-
-    public function customer(): BelongsTo
-    {
-        return $this->belongsTo(Customer::class);
     }
 
     public function paymentMethod(): BelongsTo

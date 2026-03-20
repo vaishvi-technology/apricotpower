@@ -298,6 +298,18 @@
     </div>
 
     <script>
+        // Debug: Log HTTPS detection
+        console.log('=== HTTPS Debug Info ===');
+        console.log('Protocol:', window.location.protocol);
+        console.log('Is Secure:', window.isSecureContext);
+        console.log('Location:', window.location.href);
+        console.log('Accept.js loaded:', typeof Accept !== 'undefined');
+
+        // Check if Accept.js loaded
+        if (typeof Accept === 'undefined') {
+            console.error('Accept.js failed to load! This usually means the page is not served over HTTPS.');
+        }
+
         function submitPayment() {
             const btn = document.getElementById('submit-payment');
             const btnText = document.getElementById('btn-text');
@@ -348,7 +360,20 @@
             };
 
             // Call Accept.js to tokenize card
+            console.log('=== Calling Accept.dispatchData ===');
+            console.log('Secure Data:', JSON.stringify(secureData, null, 2));
+
+            if (typeof Accept === 'undefined') {
+                @this.dispatch('acceptJsError', { error: 'Accept.js not loaded. Please access this page via HTTPS (https://localhost).' });
+                btn.disabled = false;
+                btnText.classList.remove('hidden');
+                btnLoading.classList.add('hidden');
+                btnLoading.classList.remove('flex');
+                return;
+            }
+
             Accept.dispatchData(secureData, function(response) {
+                console.log('Accept.js Response:', JSON.stringify(response, null, 2));
                 if (response.messages.resultCode === 'Error') {
                     let errors = response.messages.message.map(m => m.text).join(', ');
                     @this.dispatch('acceptJsError', { error: errors });

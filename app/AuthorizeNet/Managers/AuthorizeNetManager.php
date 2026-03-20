@@ -305,15 +305,85 @@ class AuthorizeNetManager
 
     protected function logResponse(string $method, $response): void
     {
-        if (config('lunar.authorizenet.logging.enabled')) {
-            $resultCode = $response->getMessages()->getResultCode();
-            $message = $response->getMessages()->getMessage()[0] ?? null;
+        $resultCode = $response->getMessages()->getResultCode();
+        $message = $response->getMessages()->getMessage()[0] ?? null;
+        $transactionResponse = $response->getTransactionResponse();
 
-            Log::channel(config('lunar.authorizenet.logging.channel'))->info("Authorize.net {$method}", [
-                'result_code' => $resultCode,
-                'message_code' => $message?->getCode(),
-                'message_text' => $message?->getText(),
-            ]);
+        $logData = [
+            'result_code' => $resultCode,
+            'message_code' => $message?->getCode(),
+            'message_text' => $message?->getText(),
+        ];
+
+        if ($transactionResponse) {
+            $logData['response_code'] = $transactionResponse->getResponseCode();
+            $logData['auth_code'] = $transactionResponse->getAuthCode();
+            $logData['trans_id'] = $transactionResponse->getTransId();
+            $logData['avs_result'] = $transactionResponse->getAvsResultCode();
+            $logData['cvv_result'] = $transactionResponse->getCvvResultCode();
+
+            // Get transaction errors
+            if ($transactionResponse->getErrors()) {
+                $errors = [];
+                foreach ($transactionResponse->getErrors() as $error) {
+                    $errors[] = [
+                        'code' => $error->getErrorCode(),
+                        'text' => $error->getErrorText(),
+                    ];
+                }
+                $logData['errors'] = $errors;
+            }
+
+            // Get transaction messages
+            if ($transactionResponse->getMessages()) {
+                $messages = [];
+                foreach ($transactionResponse->getMessages() as $msg) {
+                    $messages[] = [
+                        'code' => $msg->getCode(),
+                        'description' => $msg->getDescription(),
+                    ];
+                }
+                $logData['trans_messages'] = $messages;
+            }
         }
+
+        // Log at appropriate level based on result
+        $isSuccess = $resultCode === 'Ok' &&
+            $transactionResponse &&
+            (int) $transactionResponse->getResponseCode() === 1;
+
+        if ($isSuccess) {
+            Log::info("Authorize.net {$method}", $logData);
+        } else {
+            Log::error("Authorize.net {$method} FAILED", $logData);
+        }
+    }
+
+    /**
+     * Map Authorize.net error codes to user-friendly messages.
+     */
+    public static function getUserFriendlyMessage(int $errorCode, ?string $defaultMessage = null): string
+    {
+        $messages = [
+            2 => 'Your card was declined. Please check your card details or try a different card.',
+            3 => 'There was an error processing your payment. Please try again.',
+            4 => 'Your card was declined. Please contact your bank or try a different card.',
+            5 => 'Invalid transaction amount. Please try again.',
+            6 => 'Invalid credit card number. Please check your card number and try again.',
+            7 => 'Credit card has expired. Please use a different card.',
+            8 => 'Credit card has expired. Please use a different card.',
+            11 => 'This appears to be a duplicate transaction. Please wait a moment before trying again.',
+            13 => 'Invalid merchant login. Please contact support.',
+            27 => 'Transaction could not be verified. Please try again.',
+            35 => 'Payment could not be processed at this time. Please try a different card or try again later.',
+            37 => 'Invalid credit card number. Please check your card number and try again.',
+            44 => 'Your card security code (CVV) is incorrect. Please check and try again.',
+            45 => 'This transaction has been declined. Please try a different card.',
+            65 => 'Your card was declined. Please contact your bank or try a different card.',
+            127 => 'Your billing address does not match the card. Please verify your address.',
+            252 => 'Your request cannot be processed at this time. Please try again later.',
+        ];
+
+        return $messages[$errorCode] ?? $defaultMessage ?? 'An error occurred during payment processing. Please try again.';
     }
 }

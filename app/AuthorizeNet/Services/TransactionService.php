@@ -6,11 +6,8 @@ use App\AuthorizeNet\Managers\AuthorizeNetManager;
 use App\AuthorizeNet\DTOs\TransactionResponseDTO;
 use App\AuthorizeNet\Models\AuthorizeNetProfile;
 use App\AuthorizeNet\Exceptions\AuthorizeNetException;
-use App\AuthorizeNet\Exceptions\PaymentDeclinedException;
-use App\Models\Order;
 use App\Models\PaymentMethod;
 use App\Models\Transaction;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class TransactionService
@@ -26,7 +23,7 @@ class TransactionService
     public function chargeWithSavedCard(
         PaymentMethod $paymentMethod,
         float $amount,
-        Order $order
+        int|string $orderId
     ): TransactionResponseDTO {
         $profile = AuthorizeNetProfile::where('customer_id', $paymentMethod->customer_id)->firstOrFail();
 
@@ -34,12 +31,12 @@ class TransactionService
             $profile->profile_id,
             $paymentMethod->provider_payment_method_id,
             $amount,
-            (string) $order->id
+            (string) $orderId
         );
 
         $dto = TransactionResponseDTO::fromApiResponse($response);
 
-        $this->createTransactionRecord($dto, $order, $paymentMethod, 'charge', $amount);
+        $this->createTransactionRecord($dto, $orderId, $paymentMethod, 'charge', $amount);
 
         return $dto;
     }
@@ -52,7 +49,7 @@ class TransactionService
         string $opaqueDataValue,
         float $amount,
         array $billingInfo,
-        Order $order,
+        int|string $orderId,
         ?PaymentMethod $savedCard = null
     ): TransactionResponseDTO {
         $response = $this->manager->chargeWithNonce(
@@ -60,12 +57,12 @@ class TransactionService
             $opaqueDataValue,
             $amount,
             $billingInfo,
-            (string) $order->id
+            (string) $orderId
         );
 
         $dto = TransactionResponseDTO::fromApiResponse($response);
 
-        $this->createTransactionRecord($dto, $order, $savedCard, 'charge', $amount);
+        $this->createTransactionRecord($dto, $orderId, $savedCard, 'charge', $amount);
 
         return $dto;
     }
@@ -90,7 +87,6 @@ class TransactionService
         // Create refund transaction record
         Transaction::create([
             'order_id' => $transaction->order_id,
-            'customer_id' => $transaction->customer_id,
             'payment_method_id' => $transaction->payment_method_id,
             'type' => Transaction::TYPE_REFUND,
             'status' => $dto->isSuccessful() ? Transaction::STATUS_COMPLETED : Transaction::STATUS_FAILED,
@@ -120,7 +116,6 @@ class TransactionService
         // Create void transaction record
         Transaction::create([
             'order_id' => $transaction->order_id,
-            'customer_id' => $transaction->customer_id,
             'payment_method_id' => $transaction->payment_method_id,
             'type' => Transaction::TYPE_VOID,
             'status' => $dto->isSuccessful() ? Transaction::STATUS_COMPLETED : Transaction::STATUS_FAILED,
@@ -140,26 +135,30 @@ class TransactionService
      */
     protected function createTransactionRecord(
         TransactionResponseDTO $dto,
-        Order $order,
+        int|string $orderId,
         ?PaymentMethod $paymentMethod,
         string $type,
         float $amount
-    ): Transaction {
-        return Transaction::create([
-            'order_id' => $order->id,
-            'customer_id' => $order->customer_id,
-            'payment_method_id' => $paymentMethod?->id,
-            'type' => $type,
-            'status' => $dto->isSuccessful() ? Transaction::STATUS_COMPLETED : Transaction::STATUS_FAILED,
-            'amount' => $amount,
-            'currency' => 'USD',
-            'provider' => 'authorize_net',
-            'provider_transaction_id' => $dto->transactionId,
-            'provider_response_code' => (string) $dto->responseCode,
-            'provider_response_message' => $dto->responseMessage,
-            'provider_metadata' => $dto->rawResponse,
-            'last_four' => $paymentMethod?->last_four,
-            'card_brand' => $paymentMethod?->brand,
-        ]);
+    ): ?Transaction {
+        try {
+            return Transaction::create([
+                'order_id' => $orderId,
+                'payment_method_id' => $paymentMethod?->id,
+                'type' => $type,
+                'status' => $dto->isSuccessful() ? Transaction::STATUS_COMPLETED : Transaction::STATUS_FAILED,
+                'amount' => $amount,
+                'currency' => 'USD',
+                'provider' => 'authorize_net',
+                'provider_transaction_id' => $dto->transactionId,
+                'provider_response_code' => (string) $dto->responseCode,
+                'provider_response_message' => $dto->responseMessage,
+                'provider_metadata' => $dto->rawResponse,
+                'last_four' => $paymentMethod?->last_four,
+                'card_brand' => $paymentMethod?->brand,
+            ]);
+        } catch (\Exception $e) {
+            Log::warning('Failed to create transaction record: ' . $e->getMessage());
+            return null;
+        }
     }
 }

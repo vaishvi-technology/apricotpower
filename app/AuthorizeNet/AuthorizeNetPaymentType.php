@@ -5,6 +5,7 @@ namespace App\AuthorizeNet;
 use App\AuthorizeNet\Services\TransactionService;
 use App\AuthorizeNet\Services\CIMService;
 use App\AuthorizeNet\DTOs\TransactionResponseDTO;
+use App\AuthorizeNet\Managers\AuthorizeNetManager;
 use App\Models\PaymentMethod;
 use Lunar\Base\DataTransferObjects\PaymentAuthorize;
 use Lunar\Base\DataTransferObjects\PaymentCapture;
@@ -45,15 +46,26 @@ class AuthorizeNetPaymentType extends AbstractPayment
                         'status' => 'payment-received',
                         'placed_at' => now(),
                     ]);
-                } else {
-                    $this->order->update([
-                        'status' => 'payment-failed',
-                    ]);
+
+                    return new PaymentAuthorize(
+                        success: true,
+                        message: $response->getMessage(),
+                        orderId: $this->order->id,
+                        paymentType: 'authorizenet'
+                    );
                 }
 
+                $this->order->update([
+                    'status' => 'payment-failed',
+                ]);
+
+                // Get error code and use user-friendly message
+                $errorCode = !empty($response->errors) ? (int) ($response->errors[0]['code'] ?? 0) : 0;
+                $friendlyMessage = AuthorizeNetManager::getUserFriendlyMessage($errorCode, $response->getMessage());
+
                 return new PaymentAuthorize(
-                    success: $response->isSuccessful(),
-                    message: $response->getMessage(),
+                    success: false,
+                    message: $friendlyMessage,
                     orderId: $this->order->id,
                     paymentType: 'authorizenet'
                 );
@@ -78,7 +90,7 @@ class AuthorizeNetPaymentType extends AbstractPayment
         return $this->transactionService->chargeWithSavedCard(
             $paymentMethod,
             $amount,
-            $this->order
+            $this->order->id
         );
     }
 
@@ -124,7 +136,7 @@ class AuthorizeNetPaymentType extends AbstractPayment
             $this->data['opaque_data_value'],
             $amount,
             $billingInfo,
-            $this->order,
+            $this->order->id,
             $savedCard
         );
     }

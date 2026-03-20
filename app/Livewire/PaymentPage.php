@@ -6,6 +6,7 @@ use Illuminate\View\View;
 use Livewire\Component;
 use Lunar\Facades\CartSession;
 use Lunar\Facades\Payments;
+use Lunar\Facades\ShippingManifest;
 use Lunar\Models\Cart;
 
 class PaymentPage extends Component
@@ -101,7 +102,7 @@ class PaymentPage extends Component
     }
 
     /**
-     * Set default shipping address on the cart.
+     * Set default shipping address and option on the cart.
      */
     protected function setDefaultShipping(): void
     {
@@ -126,6 +127,21 @@ class PaymentPage extends Component
         // Set shipping address on cart if not already set
         if (!$cart->shippingAddress) {
             $cart->setShippingAddress($defaultShipping);
+        }
+
+        // Set shipping option if not already set
+        $cart = $cart->refresh();
+        if ($cart->shippingAddress && !$cart->shippingAddress->shipping_option) {
+            $cart->calculate();
+            $shippingOptions = ShippingManifest::getOptions($cart);
+
+            if ($shippingOptions->isNotEmpty()) {
+                $firstOption = $shippingOptions->first();
+                $cart->shippingAddress->update([
+                    'shipping_option' => $firstOption->getIdentifier(),
+                ]);
+                $cart->shippingAddress->shippingOption = $firstOption;
+            }
         }
     }
 
@@ -222,12 +238,23 @@ class PaymentPage extends Component
             $cart->setBillingAddress($billingAddress);
 
             // Also update shipping with real billing info
-            $cart->setShippingAddress(array_merge($billingAddress, [
-                'shipping_option' => 'STANDARD', // Default shipping option
-            ]));
+            $cart->setShippingAddress($billingAddress);
 
-            // Recalculate cart
+            // Recalculate cart and set shipping option
             $cart = CartSession::current();
+            $cart->calculate();
+
+            // Set shipping option from available options
+            $shippingOptions = ShippingManifest::getOptions($cart);
+            if ($shippingOptions->isNotEmpty()) {
+                $shippingOption = $shippingOptions->first();
+                $cart->shippingAddress->update([
+                    'shipping_option' => $shippingOption->getIdentifier(),
+                ]);
+                $cart->shippingAddress->shippingOption = $shippingOption;
+            }
+
+            // Recalculate with shipping
             $cart->calculate();
 
             // Prepare payment data

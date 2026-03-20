@@ -40,6 +40,13 @@ class AddToCart extends Component
 
     public function addToCart(): void
     {
+        // Prevent rapid duplicate submissions
+        $cacheKey = 'add_to_cart_' . session()->getId() . '_' . $this->purchasable->id;
+        if (cache()->has($cacheKey)) {
+            return;
+        }
+        cache()->put($cacheKey, true, 2); // 2 second cooldown
+
         $this->validate();
 
         if ($this->purchasable->stock < $this->quantity) {
@@ -54,6 +61,13 @@ class AddToCart extends Component
 
     public function buyNow(): void
     {
+        // Prevent rapid duplicate submissions
+        $cacheKey = 'buy_now_' . session()->getId() . '_' . $this->purchasable->id;
+        if (cache()->has($cacheKey)) {
+            return;
+        }
+        cache()->put($cacheKey, true, 2); // 2 second cooldown
+
         $this->validate();
 
         if ($this->purchasable->stock < $this->quantity) {

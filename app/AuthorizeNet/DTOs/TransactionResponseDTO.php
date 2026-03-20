@@ -58,11 +58,25 @@ class TransactionResponseDTO
             }
         }
 
+        // Extract response message - check errors first (for declined/failed), then messages (for success)
         $responseMessage = 'Unknown error';
-        if ($transactionResponse && $transactionResponse->getMessages()) {
+
+        // For declined/error transactions, get message from errors array
+        if (!empty($errors)) {
+            $responseMessage = $errors[0]['text'] ?? 'Transaction failed';
+        } elseif ($transactionResponse && $transactionResponse->getMessages()) {
+            // For successful transactions, get from messages
             $messages = $transactionResponse->getMessages();
             if (is_array($messages) && count($messages) > 0) {
                 $responseMessage = $messages[0]->getDescription();
+            }
+        }
+
+        // Also check top-level API messages if still unknown
+        if ($responseMessage === 'Unknown error' && $response->getMessages()) {
+            $apiMessages = $response->getMessages()->getMessage();
+            if (is_array($apiMessages) && count($apiMessages) > 0) {
+                $responseMessage = $apiMessages[0]->getText();
             }
         }
 
