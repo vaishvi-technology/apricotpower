@@ -127,26 +127,39 @@ class RulesRelationManager extends RelationManager
                                     ->label('Enable')
                                     ->live()
                                     ->columnSpanFull(),
-                                Forms\Components\TextInput::make('cond_item_quantity')
-                                    ->label('Cart contains')
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->default(1)
-                                    ->visible(fn (Forms\Get $get) => $get('cond_is_items')),
-                                Forms\Components\Select::make('cond_item_all')
-                                    ->label('of')
-                                    ->options([
-                                        '0' => 'Any',
-                                        '1' => 'All',
+                                Forms\Components\Grid::make(10)
+                                    ->schema([
+                                        Forms\Components\TextInput::make('cond_item_quantity')
+                                            ->label('Cart contains')
+                                            ->inlineLabel()
+                                            ->extraFieldWrapperAttributes(['class' => '!justify-start !gap-2'])
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->default(1)
+                                            ->columnSpan(4),
+                                        Forms\Components\Select::make('cond_item_all')
+                                            ->label('of')
+                                            ->inlineLabel()
+                                            ->extraFieldWrapperAttributes(['class' => '!justify-start !gap-2'])
+                                            ->options([
+                                                '0' => 'Any',
+                                                '1' => 'All',
+                                            ])
+                                            ->default('0')
+                                            ->afterStateHydrated(function (Forms\Components\Select $component, $state) {
+                                                $component->state($state ? '1' : '0');
+                                            })
+                                            ->dehydrateStateUsing(fn ($state) => $state === '1')
+                                            ->columnSpan(3),
+                                        Forms\Components\Placeholder::make('items_label')
+                                            ->hiddenLabel()
+                                            ->content('of the following items:')
+                                            ->extraAttributes(['style' => 'padding-top: 6px;'])
+                                            ->columnSpan(3),
                                     ])
-                                    ->default('0')
-                                    ->afterStateHydrated(function (Forms\Components\Select $component, $state) {
-                                        $component->state($state ? '1' : '0');
-                                    })
-                                    ->dehydrateStateUsing(fn ($state) => $state === '1')
                                     ->visible(fn (Forms\Get $get) => $get('cond_is_items')),
                                 Forms\Components\Select::make('cond_item_list')
-                                    ->label('of the following items:')
+                                    ->hiddenLabel()
                                     ->multiple()
                                     ->options(fn () => Product::all()->mapWithKeys(fn ($product) => [
                                         $product->id => $product->translateAttribute('name') ?? ('Product #' . $product->id),
@@ -174,47 +187,58 @@ class RulesRelationManager extends RelationManager
                                     ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'The option for \'Use Above Items\' is a function that will essentially set the Discount Action to \'Specific Items\' and check all the same items that are checked in the Items condition above.')
                                     ->live()
                                     ->columnSpanFull(),
-                                Forms\Components\Select::make('act_discount_is_percent')
-                                    ->label('Discount')
-                                    ->options([
-                                        '0' => '$',
-                                        '1' => '%',
+                                Forms\Components\Grid::make(10)
+                                    ->schema([
+                                        Forms\Components\Select::make('act_discount_is_percent')
+                                            ->label('Discount')
+                                            ->inlineLabel()
+                                            ->extraFieldWrapperAttributes(['class' => '!justify-start !gap-2'])
+                                            ->options([
+                                                '0' => '$',
+                                                '1' => '%',
+                                            ])
+                                            ->default('0')
+                                            ->afterStateHydrated(function (Forms\Components\Select $component, $state) {
+                                                $component->state($state ? '1' : '0');
+                                            })
+                                            ->dehydrateStateUsing(fn ($state) => $state === '1')
+                                            ->columnSpan(3),
+                                        Forms\Components\TextInput::make('act_discount_amount')
+                                            ->label('Amount')
+                                            ->inlineLabel()
+                                            ->extraFieldWrapperAttributes(['class' => '!justify-start !gap-2'])
+                                            ->numeric()
+                                            ->minValue(0)
+                                            ->step(0.01)
+                                            ->default(0)
+                                            ->columnSpan(3),
+                                        Forms\Components\Select::make('act_discount_is_for_items')
+                                            ->label('off of')
+                                            ->inlineLabel()
+                                            ->extraFieldWrapperAttributes(['class' => '!justify-start !gap-2'])
+                                            ->options([
+                                                'full_cart' => 'Full Cart',
+                                                'above_items' => 'Use Above Items',
+                                                'specific' => 'Specific Items',
+                                            ])
+                                            ->default('full_cart')
+                                            ->afterStateHydrated(function (Forms\Components\Select $component, $state) {
+                                                if ($state === true || $state === 1 || $state === '1') {
+                                                    $component->state('specific');
+                                                } elseif ($state === 'above_items') {
+                                                    $component->state('above_items');
+                                                } else {
+                                                    $component->state('full_cart');
+                                                }
+                                            })
+                                            ->dehydrateStateUsing(fn ($state) => match ($state) {
+                                                'specific' => true,
+                                                'above_items' => true,
+                                                default => false,
+                                            })
+                                            ->live()
+                                            ->columnSpan(4),
                                     ])
-                                    ->default('0')
-                                    ->afterStateHydrated(function (Forms\Components\Select $component, $state) {
-                                        $component->state($state ? '1' : '0');
-                                    })
-                                    ->dehydrateStateUsing(fn ($state) => $state === '1')
-                                    ->visible(fn (Forms\Get $get) => $get('act_is_discount')),
-                                Forms\Components\TextInput::make('act_discount_amount')
-                                    ->label('Amount')
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->default(0)
-                                    ->visible(fn (Forms\Get $get) => $get('act_is_discount')),
-                                Forms\Components\Select::make('act_discount_is_for_items')
-                                    ->label('off of')
-                                    ->options([
-                                        'full_cart' => 'Full Cart',
-                                        'above_items' => 'Use Above Items',
-                                        'specific' => 'Specific Items',
-                                    ])
-                                    ->default('full_cart')
-                                    ->afterStateHydrated(function (Forms\Components\Select $component, $state) {
-                                        if ($state === true || $state === 1 || $state === '1') {
-                                            $component->state('specific');
-                                        } elseif ($state === 'above_items') {
-                                            $component->state('above_items');
-                                        } else {
-                                            $component->state('full_cart');
-                                        }
-                                    })
-                                    ->dehydrateStateUsing(fn ($state) => match ($state) {
-                                        'specific' => true,
-                                        'above_items' => true,
-                                        default => false,
-                                    })
-                                    ->live()
                                     ->visible(fn (Forms\Get $get) => $get('act_is_discount')),
                                 Forms\Components\Select::make('act_discount_item_list')
                                     ->label('Specific Items')
@@ -231,22 +255,21 @@ class RulesRelationManager extends RelationManager
                                     ->dehydrateStateUsing(fn ($state) => is_array($state) && count($state) ? implode(',', $state) : null)
                                     ->visible(fn (Forms\Get $get) => $get('act_is_discount') && $get('act_discount_is_for_items') === 'specific')
                                     ->columnSpanFull(),
-                                Forms\Components\Grid::make(5)
+                                Forms\Components\Grid::make(12)
                                     ->schema([
-                                        Forms\Components\Placeholder::make('discount_label_limit')
-                                            ->hiddenLabel()
-                                            ->content('Limit to')
-                                            ->columnSpan(1),
                                         Forms\Components\TextInput::make('act_discount_limit')
-                                            ->hiddenLabel()
+                                            ->label('Limit to')
+                                            ->inlineLabel()
+                                            ->extraFieldWrapperAttributes(['class' => '!justify-start !gap-2'])
                                             ->numeric()
                                             ->minValue(0)
                                             ->default(0)
-                                            ->columnSpan(1),
+                                            ->columnSpan(4),
                                         Forms\Components\Placeholder::make('discount_label_limit_end')
                                             ->hiddenLabel()
                                             ->content('eligible items (leave at 0 for unlimited).')
-                                            ->columnSpan(3),
+                                            ->extraAttributes(['style' => 'padding-top: 6px;'])
+                                            ->columnSpan(5),
                                     ])
                                     ->visible(fn (Forms\Get $get) => $get('act_is_discount'))
                                     ->columnSpanFull(),
