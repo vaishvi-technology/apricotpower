@@ -12,7 +12,7 @@
                             <div class="flex items-center py-4"
                                  wire:key="cart_line_{{ $line->id }}">
                                 <img class="object-cover w-16 h-16 rounded"
-                                     src="{{ $line->purchasable->getThumbnail()->getUrl() }}" />
+                                     src="{{ $line->purchasable->getThumbnail()?->getUrl() }}" />
 
                                 <div class="flex-1 ml-4">
                                     <p class="text-sm font-medium max-w-[35ch]">
@@ -52,6 +52,33 @@
                             </div>
                         @endif
 
+                        @if($this->promoDiscount > 0)
+                            <div class="flex flex-wrap py-4">
+                                <dt class="w-1/2 font-medium text-green-600">
+                                    Promo Discount
+                                    @if($this->appliedPromo)
+                                        <span class="text-xs text-green-500">({{ $this->appliedPromo->coupon_code ?? $this->appliedPromo->name }})</span>
+                                    @endif
+                                </dt>
+
+                                <dd class="w-1/2 text-right text-green-600">
+                                    -${{ number_format($this->promoDiscount, 2) }}
+                                </dd>
+                            </div>
+                        @endif
+
+                        @if($this->promoFreeShipping)
+                            <div class="flex flex-wrap py-4">
+                                <dt class="w-1/2 font-medium text-green-600">
+                                    Shipping
+                                </dt>
+
+                                <dd class="w-1/2 text-right text-green-600">
+                                    FREE
+                                </dd>
+                            </div>
+                        @endif
+
                         @foreach ($cart->taxBreakdown->amounts as $tax)
                             <div class="flex flex-wrap py-4">
                                 <dt class="w-1/2 font-medium">
@@ -70,7 +97,16 @@
                             </dt>
 
                             <dd class="w-1/2 text-right">
-                                {{ $cart->total->formatted() }}
+                                @if($this->promoDiscount > 0)
+                                    @php
+                                        $totalInCents = $cart->total->value;
+                                        $discountInCents = (int) round($this->promoDiscount * 100);
+                                        $adjustedTotal = max(0, $totalInCents - $discountInCents);
+                                    @endphp
+                                    ${{ number_format($adjustedTotal / 100, 2) }}
+                                @else
+                                    {{ $cart->total->formatted() }}
+                                @endif
                             </dd>
                         </div>
                     </dl>

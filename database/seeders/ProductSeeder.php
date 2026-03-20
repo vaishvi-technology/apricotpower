@@ -30,6 +30,12 @@ class ProductSeeder extends AbstractSeeder
      */
     public function run(): void
     {
+        // Clean up old media files to avoid conflicts on fresh migration
+        $mediaPath = storage_path('app/public/products');
+        if (is_dir($mediaPath)) {
+            \Illuminate\Support\Facades\File::deleteDirectory($mediaPath);
+        }
+
         $products = $this->getSeedData('products');
 
         $attributes = Attribute::get();
