@@ -105,10 +105,14 @@ class Promo extends Model
     }
 
     /**
-     * Get status label.
+     * Get status code.
      */
     public function getActiveCodeAttribute(): string
     {
+        if ($this->is_hidden) {
+            return 'ARCHIVED';
+        }
+
         if (!$this->is_active) {
             return 'INACTIVE';
         }
@@ -126,6 +130,25 @@ class Promo extends Model
         }
 
         return 'ACTIVE';
+    }
+
+    /**
+     * Get human-readable status label matching legacy .NET display.
+     */
+    public function getActiveStatusAttribute(): string
+    {
+        if ($this->is_hidden) {
+            return 'Archived';
+        }
+
+        return match ($this->active_code) {
+            'INACTIVE' => 'Inactive',
+            'PENDING' => 'Pending',
+            'ACTIVE_UNTIL' => 'Active',
+            'EXPIRED' => 'Inactive',
+            'ACTIVE' => 'Active',
+            default => 'Unknown',
+        };
     }
 
     /**
